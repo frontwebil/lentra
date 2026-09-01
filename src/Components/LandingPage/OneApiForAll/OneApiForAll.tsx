@@ -47,7 +47,7 @@ Content-Type: application/json
 export function OneApiForAll() {
   return (
     <div className="container">
-      <section className="api-section">
+      <section className="api-section" id="api">
         <div className="section-header">
           <h2>
             Одне API для всіх

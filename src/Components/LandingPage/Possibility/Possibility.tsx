@@ -50,7 +50,7 @@ const NAV_ITEMS = [
 
 export function Possibility() {
   return (
-    <section className="possibility">
+    <section className="possibility" id="possibility">
       <div className="container">
         <h2 className="section-title">Можливості</h2>
         <div className="possibility-cards">
