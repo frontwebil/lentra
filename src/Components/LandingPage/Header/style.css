@@ -222,3 +222,15 @@ header .container {
     width: auto;
   }
 }
+
+.lang-switcher-mobile {
+  display: none;
+}
+
+@media (max-width: 1000px) {
+  .lang-switcher-mobile {
+    display: flex;
+    margin-top: 16px;
+    justify-content: center;
+  }
+}

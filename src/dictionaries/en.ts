@@ -21,6 +21,8 @@ export const en: Dictionary = {
     text: "Collect leads from your website and manage clients and requests in a single CRM.",
     button: "Start for free",
     consultButton: "Book a consultation",
+    image: "/images/hero-en.png",
+    imageAlt: "Lentra — all your leads in one place",
     underButtonLines: [
       "No developer? No problem.",
       "We will help you connect Lentra to your website and set up everything you need to start receiving leads.",
