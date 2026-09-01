@@ -30,8 +30,6 @@ export async function POST(req: Request) {
       },
     );
 
-    console.log(tgResponse);
-
     if (!tgResponse.ok) {
       const errBody = await tgResponse.json();
       console.error("Telegram error:", errBody);
