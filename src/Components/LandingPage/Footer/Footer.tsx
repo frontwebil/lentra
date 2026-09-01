@@ -45,16 +45,17 @@ export function Footer() {
               не втрачайте жодної заявки.
             </p>
             <div className="footer-contacts">
-              <a href="mailto:hello@lentra.tech" className="footer-contact">
-                <LuMail /> hello@lentra.tech
+              <a href="mailto:lentra.crm@gmail.com" className="footer-contact">
+                <LuMail /> lentra.crm@gmail.com
               </a>
               <a
-                href="https://t.me/"
+                href="https://t.me/iLyhaha1"
                 className="footer-contact"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <LuSend /> Telegram
+                <LuSend />
+                Telegram
               </a>
             </div>
           </div>

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { LuArrowRight, LuCheck } from "react-icons/lu";
 import "./style.css";
+import axios from "axios";
 
 type FormState = {
   name: string;
@@ -33,7 +34,10 @@ function validate(form: FormState): Errors {
     errors.phone = "Вкажіть коректний номер телефону";
   }
 
-  if (form.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) {
+  if (
+    form.email.trim() &&
+    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())
+  ) {
     errors.email = "Вкажіть коректний email";
   }
 
@@ -44,15 +48,15 @@ export function Consultation() {
   const [form, setForm] = useState<FormState>(emptyForm);
   const [errors, setErrors] = useState<Errors>({});
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">(
-    "idle"
+    "idle",
   );
 
-  const handleChange = (field: keyof FormState) => (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    setForm((prev) => ({ ...prev, [field]: e.target.value }));
-    setErrors((prev) => ({ ...prev, [field]: undefined }));
-  };
+  const handleChange =
+    (field: keyof FormState) =>
+    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      setForm((prev) => ({ ...prev, [field]: e.target.value }));
+      setErrors((prev) => ({ ...prev, [field]: undefined }));
+    };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -65,11 +69,9 @@ export function Consultation() {
     setStatus("sending");
 
     try {
-      // TODO: замінити на реальний ендпойнт Lentra API (POST /v1/leads)
-      await new Promise((resolve) => setTimeout(resolve, 600));
-
-      setStatus("sent");
+      await axios.post("/api/Telegram/SendMessageFromLanding", form);
       setForm(emptyForm);
+      setStatus("sent");
     } catch {
       setStatus("error");
     }
@@ -99,7 +101,11 @@ export function Consultation() {
             </ul>
           </div>
 
-          <form className="consultation-form" onSubmit={handleSubmit} noValidate>
+          <form
+            className="consultation-form"
+            onSubmit={handleSubmit}
+            noValidate
+          >
             <div className="consultation-field">
               <label htmlFor="consultation-name">Ім’я *</label>
               <input
@@ -182,7 +188,9 @@ export function Consultation() {
                 disabled={status === "sending"}
               >
                 <span>
-                  {status === "sending" ? "Надсилаємо…" : "Замовити консультацію"}
+                  {status === "sending"
+                    ? "Надсилаємо…"
+                    : "Замовити консультацію"}
                 </span>
                 <LuArrowRight />
               </button>
@@ -200,8 +208,8 @@ export function Consultation() {
 
             {status === "error" && (
               <p className="consultation-status error">
-                Не вдалося надіслати заявку. Спробуйте ще раз або напишіть нам на
-                email.
+                Не вдалося надіслати заявку. Спробуйте ще раз або напишіть нам
+                на email.
               </p>
             )}
           </form>
