@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
 import type { Dictionary } from "@/dictionaries/uk";
 import "./style.css";
@@ -9,6 +12,9 @@ type Props = {
 
 export function Header({ dict, locale }: Props) {
   const homeHref = locale === "en" ? "/en" : "/";
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const closeMenu = () => setMenuOpen(false);
 
   return (
     <header>
@@ -16,12 +22,21 @@ export function Header({ dict, locale }: Props) {
         <Link href={homeHref} className="header-logo">
           Lentra
         </Link>
-        <nav className="header-nav">
+        <nav className={`header-nav${menuOpen ? " open" : ""}`}>
           {dict.nav.map((link) => (
-            <a href={link.href} className="header-nav-link" key={link.href}>
+            <a
+              href={link.href}
+              className="header-nav-link"
+              key={link.href}
+              onClick={closeMenu}
+            >
               {link.label}
             </a>
           ))}
+          <div className="header-nav-mobile-buttons">
+            <button className="header-button login">{dict.login}</button>
+            <button className="header-button register">{dict.register}</button>
+          </div>
         </nav>
         <div className="header-buttons">
           {/* <div className="lang-switcher">
@@ -36,6 +51,16 @@ export function Header({ dict, locale }: Props) {
           <button className="header-button login">{dict.login}</button>
           <button className="header-button register">{dict.register}</button>
         </div>
+        <button
+          className={`header-burger${menuOpen ? " open" : ""}`}
+          aria-label="Menu"
+          aria-expanded={menuOpen}
+          onClick={() => setMenuOpen((v) => !v)}
+        >
+          <span />
+          <span />
+          <span />
+        </button>
       </div>
     </header>
   );
