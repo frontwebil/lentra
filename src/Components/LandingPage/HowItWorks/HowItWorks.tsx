@@ -46,7 +46,7 @@ export function HowItWorks({ dict }: Props) {
               </div>
             ))}
           </div>
-          <div className="api-example">
+          {/* <div className="api-example">
             {dict.nodes.map((label, i) => (
               <Fragment key={i}>
                 <div className="api-example-card">
@@ -58,7 +58,7 @@ export function HowItWorks({ dict }: Props) {
                 )}
               </Fragment>
             ))}
-          </div>
+          </div> */}
         </div>
       </div>
     </section>
