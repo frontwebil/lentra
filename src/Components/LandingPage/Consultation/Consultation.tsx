@@ -4,6 +4,7 @@ import { useState } from "react";
 import { LuArrowRight, LuCheck } from "react-icons/lu";
 import "./style.css";
 import axios from "axios";
+import type { Dictionary } from "@/dictionaries/uk";
 
 type FormState = {
   name: string;
@@ -23,28 +24,34 @@ const emptyForm: FormState = {
   message: "",
 };
 
-function validate(form: FormState): Errors {
+type ConsultationDict = Dictionary["consultation"];
+
+function validate(form: FormState, dict: ConsultationDict): Errors {
   const errors: Errors = {};
 
   if (form.name.trim().length < 2) {
-    errors.name = "Вкажіть ваше ім’я";
+    errors.name = dict.nameError;
   }
 
   if (!/^\+?[\d\s()-]{9,}$/.test(form.phone.trim())) {
-    errors.phone = "Вкажіть коректний номер телефону";
+    errors.phone = dict.phoneError;
   }
 
   if (
     form.email.trim() &&
     !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())
   ) {
-    errors.email = "Вкажіть коректний email";
+    errors.email = dict.emailError;
   }
 
   return errors;
 }
 
-export function Consultation() {
+type Props = {
+  dict: ConsultationDict;
+};
+
+export function Consultation({ dict }: Props) {
   const [form, setForm] = useState<FormState>(emptyForm);
   const [errors, setErrors] = useState<Errors>({});
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">(
@@ -61,7 +68,7 @@ export function Consultation() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const nextErrors = validate(form);
+    const nextErrors = validate(form, dict);
     setErrors(nextErrors);
 
     if (Object.keys(nextErrors).length > 0) return;
@@ -82,22 +89,15 @@ export function Consultation() {
       <div className="container">
         <div className="consultation-inner">
           <div className="consultation-text">
-            <h2 className="consultation-title">Замовити консультацію</h2>
-            <p className="consultation-subtitle">
-              Залиште заявку — покажемо Lentra в роботі, допоможемо підключити
-              ваш сайт та налаштувати прийом заявок.
-            </p>
+            <h2 className="consultation-title">{dict.title}</h2>
+            <p className="consultation-subtitle">{dict.subtitle}</p>
 
             <ul className="consultation-benefits">
-              <li>
-                <LuCheck /> Демо системи під ваш бізнес
-              </li>
-              <li>
-                <LuCheck /> Допомога з підключенням сайту та API
-              </li>
-              <li>
-                <LuCheck /> Відповідь протягом робочого дня
-              </li>
+              {dict.benefits.map((benefit) => (
+                <li key={benefit}>
+                  <LuCheck /> {benefit}
+                </li>
+              ))}
             </ul>
           </div>
 
@@ -107,13 +107,13 @@ export function Consultation() {
             noValidate
           >
             <div className="consultation-field">
-              <label htmlFor="consultation-name">Ім’я *</label>
+              <label htmlFor="consultation-name">{dict.nameLabel}</label>
               <input
                 id="consultation-name"
                 name="name"
                 type="text"
                 autoComplete="name"
-                placeholder="Іван"
+                placeholder={dict.namePlaceholder}
                 value={form.name}
                 onChange={handleChange("name")}
                 className={errors.name ? "has-error" : ""}
@@ -124,13 +124,13 @@ export function Consultation() {
             </div>
 
             <div className="consultation-field">
-              <label htmlFor="consultation-phone">Телефон *</label>
+              <label htmlFor="consultation-phone">{dict.phoneLabel}</label>
               <input
                 id="consultation-phone"
                 name="phone"
                 type="tel"
                 autoComplete="tel"
-                placeholder="+380 67 123 45 67"
+                placeholder={dict.phonePlaceholder}
                 value={form.phone}
                 onChange={handleChange("phone")}
                 className={errors.phone ? "has-error" : ""}
@@ -141,13 +141,13 @@ export function Consultation() {
             </div>
 
             <div className="consultation-field">
-              <label htmlFor="consultation-email">Email</label>
+              <label htmlFor="consultation-email">{dict.emailLabel}</label>
               <input
                 id="consultation-email"
                 name="email"
                 type="email"
                 autoComplete="email"
-                placeholder="ivan@example.com"
+                placeholder={dict.emailPlaceholder}
                 value={form.email}
                 onChange={handleChange("email")}
                 className={errors.email ? "has-error" : ""}
@@ -158,24 +158,24 @@ export function Consultation() {
             </div>
 
             <div className="consultation-field">
-              <label htmlFor="consultation-site">Сайт</label>
+              <label htmlFor="consultation-site">{dict.siteLabel}</label>
               <input
                 id="consultation-site"
                 name="site"
                 type="text"
-                placeholder="example.com"
+                placeholder={dict.sitePlaceholder}
                 value={form.site}
                 onChange={handleChange("site")}
               />
             </div>
 
             <div className="consultation-field consultation-field-full">
-              <label htmlFor="consultation-message">Коментар</label>
+              <label htmlFor="consultation-message">{dict.messageLabel}</label>
               <textarea
                 id="consultation-message"
                 name="message"
                 rows={3}
-                placeholder="Коротко опишіть, які заявки потрібно приймати"
+                placeholder={dict.messagePlaceholder}
                 value={form.message}
                 onChange={handleChange("message")}
               />
@@ -187,30 +187,19 @@ export function Consultation() {
                 className="button-try consultation-button"
                 disabled={status === "sending"}
               >
-                <span>
-                  {status === "sending"
-                    ? "Надсилаємо…"
-                    : "Замовити консультацію"}
-                </span>
+                <span>{status === "sending" ? dict.submitting : dict.submit}</span>
                 <LuArrowRight />
               </button>
 
-              <p className="consultation-note">
-                Натискаючи кнопку, ви погоджуєтесь на обробку своїх даних.
-              </p>
+              <p className="consultation-note">{dict.note}</p>
             </div>
 
             {status === "sent" && (
-              <p className="consultation-status success">
-                Дякуємо! Заявку отримано — зв’яжемось найближчим часом.
-              </p>
+              <p className="consultation-status success">{dict.success}</p>
             )}
 
             {status === "error" && (
-              <p className="consultation-status error">
-                Не вдалося надіслати заявку. Спробуйте ще раз або напишіть нам
-                на email.
-              </p>
+              <p className="consultation-status error">{dict.error}</p>
             )}
           </form>
         </div>
