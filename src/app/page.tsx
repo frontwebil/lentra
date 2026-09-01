@@ -8,10 +8,45 @@ import { ForAnyBusiness } from "@/Components/LandingPage/ForAnyBusiness/ForAnyBu
 import { Faq } from "@/Components/LandingPage/Faq/Faq";
 import { Consultation } from "@/Components/LandingPage/Consultation/Consultation";
 import { Footer } from "@/Components/LandingPage/Footer/Footer";
+import { questions } from "@/Components/LandingPage/Faq/questions";
+import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site";
+
+const structuredData = [
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    name: SITE_NAME,
+    description: SITE_DESCRIPTION,
+    url: SITE_URL,
+    applicationCategory: "BusinessApplication",
+    operatingSystem: "Web",
+    offers: {
+      "@type": "Offer",
+      price: "0",
+      priceCurrency: "UAH",
+    },
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: questions.map((q) => ({
+      "@type": "Question",
+      name: q.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: q.answer,
+      },
+    })),
+  },
+];
 
 export default function Home() {
   return (
     <div>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
       <Header />
       <Hero />
       <InOnePlace />

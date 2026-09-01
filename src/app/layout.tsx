@@ -2,6 +2,13 @@ import type { Metadata } from "next";
 
 import { Dela_Gothic_One, Unbounded, Montserrat } from "next/font/google";
 
+import {
+  SITE_DESCRIPTION,
+  SITE_NAME,
+  SITE_TITLE,
+  SITE_URL,
+} from "@/lib/site";
+
 import "./globals.css";
 import "./reset.css";
 
@@ -22,8 +29,40 @@ const montserrat = Montserrat({
 });
 
 export const metadata: Metadata = {
-  title: "Lentra",
-  description: "Lentra — CRM для керування заявками та клієнтами",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: SITE_TITLE,
+    template: `%s — ${SITE_NAME}`,
+  },
+  description: SITE_DESCRIPTION,
+  keywords: [
+    "CRM",
+    "CRM для заявок",
+    "заявки з сайту",
+    "облік клієнтів",
+    "CRM Україна",
+    "Lentra",
+  ],
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    type: "website",
+    url: SITE_URL,
+    siteName: SITE_NAME,
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    locale: "uk_UA",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({

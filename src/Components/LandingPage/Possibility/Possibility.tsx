@@ -57,7 +57,7 @@ export function Possibility() {
           {NAV_ITEMS.map((el, i) => (
             <div className="possibility-card" key={i}>
               <div className="possibility-card-icon">{el.icon}</div>
-              <h2 className="possibility-card-title">{el.label}</h2>
+              <h3 className="possibility-card-title">{el.label}</h3>
               <p className="possibility-card-text">{el.description}</p>
             </div>
           ))}
