@@ -71,11 +71,11 @@
 .hero-img {
   max-width: 700px;
   width: 100%;
+  height: auto;
 
-  background-color: gray;
-  aspect-ratio: 3 / 2;
   border: 1px solid #EEF0F7;
   border-radius: 12px;
+  box-shadow: 0 20px 45px rgba(15, 23, 48, 0.08);
 }
 
 @media (max-width: 1100px) {
