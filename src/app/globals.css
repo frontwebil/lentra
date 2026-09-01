@@ -2,6 +2,10 @@
 /* font-family: "DM Sans", sans-serif; */
 /* font-family: "Dela Gothic One", sans-serif; */
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   font-family: "Montserrat", sans-serif;
   color: #0f1730;

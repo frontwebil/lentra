@@ -50,7 +50,7 @@ const steps = [
 
 export function HowItWorks() {
   return (
-    <section className="HowItWorks">
+    <section className="HowItWorks" id="how-it-works">
       <div className="container">
         <h2 className="section-title">Як це працює</h2>
         <div className="HowItWorks-instruction">
