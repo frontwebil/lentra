@@ -5,7 +5,7 @@ export const SITE_URL =
 
 export const SITE_NAME = "Lentra";
 
-export const SITE_TITLE = "Lentra — CRM для заявок з сайту";
+export const SITE_TITLE = "Lentra - CRM для заявок з сайту";
 
 export const SITE_DESCRIPTION =
-  "Lentra — CRM для заявок: приймайте звернення з ваших сайтів через API, керуйте клієнтами, статусами та нотатками в одному місці. Підключення за кілька хвилин.";
+  "Lentra - CRM для заявок: приймайте звернення з ваших сайтів через API, керуйте клієнтами, статусами та нотатками в одному місці. Підключення за кілька хвилин.";
