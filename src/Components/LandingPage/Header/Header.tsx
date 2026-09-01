@@ -24,7 +24,7 @@ export function Header({ dict, locale }: Props) {
           ))}
         </nav>
         <div className="header-buttons">
-          <div className="lang-switcher">
+          {/* <div className="lang-switcher">
             <Link href="/" className={locale === "uk" ? "active" : ""}>
               UA
             </Link>
@@ -32,7 +32,7 @@ export function Header({ dict, locale }: Props) {
             <Link href="/en" className={locale === "en" ? "active" : ""}>
               EN
             </Link>
-          </div>
+          </div> */}
           <button className="header-button login">{dict.login}</button>
           <button className="header-button register">{dict.register}</button>
         </div>
