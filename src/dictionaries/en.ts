@@ -20,6 +20,7 @@ export const en: Dictionary = {
     titleLines: ["All your leads -", "in one place."],
     text: "Collect leads from your website and manage clients and requests in a single CRM.",
     button: "Start for free",
+    consultButton: "Book a consultation",
     underButtonLines: [
       "No developer? No problem.",
       "We will help you connect Lentra to your website and set up everything you need to start receiving leads.",

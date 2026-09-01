@@ -16,10 +16,15 @@ export function Hero({ dict }: Props) {
             {dict.titleLines[1]}
           </h1>
           <p className="hero-text">{dict.text}</p>
-          <button className="hero-button button-try">
-            <p>{dict.button}</p>
-            <FaArrowRight />
-          </button>
+          <div className="hero-buttons">
+            <button className="hero-button button-try">
+              <p>{dict.button}</p>
+              <FaArrowRight />
+            </button>
+            <a href="#consultation" className="hero-button hero-button-consult">
+              {dict.consultButton}
+            </a>
+          </div>
           <p className="hero-button-underbutton-text">
             {dict.underButtonLines[0]} <br /> {dict.underButtonLines[1]}
           </p>
