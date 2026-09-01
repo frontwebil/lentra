@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { FaArrowRight } from "react-icons/fa";
 import type { Dictionary } from "@/dictionaries/uk";
 import "./style.css";
@@ -29,7 +30,14 @@ export function Hero({ dict }: Props) {
             {dict.underButtonLines[0]} <br /> {dict.underButtonLines[1]}
           </p>
         </div>
-        <div className="hero-img"></div>
+        <Image
+          src={dict.image}
+          alt={dict.imageAlt}
+          width={1200}
+          height={630}
+          priority
+          className="hero-img"
+        />
       </div>
     </section>
   );
