@@ -1,67 +1,40 @@
 "use client";
 
 import "./style.css";
+import type { Dictionary } from "@/dictionaries/uk";
 
-const examples = [
-  {
-    type: "Backend",
-    title: "cURL / HTTP запит",
+type Props = {
+  dict: Dictionary["oneApiForAll"];
+};
 
-    code: `POST /api/v1/leads
-Authorization: Bearer sk_live_xxxxxxxx
-Content-Type: application/json
-
-{
-  "name": "Іван",
-  "phone": "+380671234567",
-  "email": "ivan@example.com",
-  "message": "Хочу зробити замовлення"
-}`,
-  },
-
-  {
-    type: "Frontend",
-    title: "JavaScript / fetch",
-
-    code: `const res = await fetch(
-  "https://api.lentra.tech/v1/leads",
-  {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "X-Site-ID": "site_abc123"
+export function OneApiForAll({ dict }: Props) {
+  const examples = [
+    {
+      type: "Backend",
+      title: dict.backendTitle,
+      code: dict.backendCode,
     },
-    body: JSON.stringify({
-      "name": "Іван",
-      "phone": "+380671234567",
-      "email": "ivan@example.com",
-      "message": "Потрібна консультація"
-    })
-  }
-);
+    {
+      type: "Frontend",
+      title: dict.frontendTitle,
+      code: dict.frontendCode,
+    },
+  ];
 
-// API перевіряє siteId та домен сайту`,
-  },
-];
-
-export function OneApiForAll() {
   return (
     <div className="container">
       <section className="api-section" id="api">
         <div className="section-header">
           <h2>
-            Одне API для всіх
+            {dict.titleLines[0]}
             <br />
-            ваших заявок
+            {dict.titleLines[1]}
           </h2>
 
-          <p>
-            Передавайте заявки з вашого сайту в Lentra - через backend або
-            безпосередньо з frontend.
-          </p>
+          <p>{dict.subtitle}</p>
 
           <a href="#">
-            Переглянути документацію <span>→</span>
+            {dict.docsLink} <span>→</span>
           </a>
         </div>
 

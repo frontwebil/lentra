@@ -2,19 +2,23 @@
 
 import { useState } from "react";
 import { LuChevronDown } from "react-icons/lu";
-import { questions } from "./questions";
+import type { Dictionary } from "@/dictionaries/uk";
 import "./style.css";
 
-export function Faq() {
+type Props = {
+  dict: Dictionary["faq"];
+};
+
+export function Faq({ dict }: Props) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   return (
     <section className="faq" id="faq">
       <div className="container">
-        <h2 className="section-title">Поширені запитання</h2>
+        <h2 className="section-title">{dict.title}</h2>
 
         <div className="faq-list">
-          {questions.map((el, i) => {
+          {dict.questions.map((el, i) => {
             const isOpen = openIndex === i;
 
             return (

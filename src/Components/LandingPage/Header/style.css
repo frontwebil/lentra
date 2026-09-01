@@ -82,3 +82,31 @@ header .container {
   background: #4e48e8;
   box-shadow: 0 10px 22px rgba(91, 85, 247, 0.25);
 }
+
+.lang-switcher {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-right: 4px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.lang-switcher a {
+  color: #9aa1b5;
+  text-decoration: none;
+  padding: 4px 2px;
+  transition: color 0.3s;
+}
+
+.lang-switcher a:hover {
+  color: #0f1730;
+}
+
+.lang-switcher a.active {
+  color: #5b55f7;
+}
+
+.lang-switcher-divider {
+  color: #d5d9e5;
+}
