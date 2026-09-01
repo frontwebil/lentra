@@ -1,8 +1,7 @@
 // Централізована конфігурація сайту для SEO.
-// ВАЖЛИВО: задай NEXT_PUBLIC_SITE_URL у змінних середовища (Vercel → Settings →
-// Environment Variables), наприклад: https://lentra.com.ua
+// За потреби можна перевизначити через NEXT_PUBLIC_SITE_URL у змінних середовища.
 export const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.lentra.tech";
 
 export const SITE_NAME = "Lentra";
 
