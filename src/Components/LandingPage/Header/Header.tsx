@@ -1,32 +1,40 @@
 import Link from "next/link";
+import type { Dictionary } from "@/dictionaries/uk";
 import "./style.css";
 
-export function Header() {
+type Props = {
+  dict: Dictionary["header"];
+  locale: "uk" | "en";
+};
+
+export function Header({ dict, locale }: Props) {
+  const homeHref = locale === "en" ? "/en" : "/";
+
   return (
     <header>
       <div className="container">
-        <Link href={"/"} className="header-logo">
+        <Link href={homeHref} className="header-logo">
           Lentra
         </Link>
         <nav className="header-nav">
-          <a href="#possibility" className="header-nav-link">
-            Можливості
-          </a>
-          <a href="#how-it-works" className="header-nav-link">
-            Як це працює
-          </a>
-          <a href="#api" className="header-nav-link">
-            API
-          </a>
-          <a href="#faq" className="header-nav-link">
-            FAQ
-          </a>
+          {dict.nav.map((link) => (
+            <a href={link.href} className="header-nav-link" key={link.href}>
+              {link.label}
+            </a>
+          ))}
         </nav>
         <div className="header-buttons">
-          <button className="header-button login">Увійти</button>
-          <button className="header-button register">
-            Спробувати безкоштовно
-          </button>
+          <div className="lang-switcher">
+            <Link href="/" className={locale === "uk" ? "active" : ""}>
+              UA
+            </Link>
+            <span className="lang-switcher-divider">/</span>
+            <Link href="/en" className={locale === "en" ? "active" : ""}>
+              EN
+            </Link>
+          </div>
+          <button className="header-button login">{dict.login}</button>
+          <button className="header-button register">{dict.register}</button>
         </div>
       </div>
     </header>

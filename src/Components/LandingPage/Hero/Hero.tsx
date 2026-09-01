@@ -1,29 +1,30 @@
 import { FaArrowRight } from "react-icons/fa";
+import type { Dictionary } from "@/dictionaries/uk";
 import "./style.css";
 
-export function Hero() {
+type Props = {
+  dict: Dictionary["hero"];
+};
+
+export function Hero({ dict }: Props) {
   return (
     <section className="hero">
       <div className="container">
         <div className="hero-text-wrapper">
           <h1 className="hero-title">
-            Усі заявки - <br />в одному місці.
+            {dict.titleLines[0]} <br />
+            {dict.titleLines[1]}
           </h1>
-          <p className="hero-text">
-            Приймайте заявки з сайту, керуйте клієнтами та заявками в одній CRM.
-          </p>
+          <p className="hero-text">{dict.text}</p>
           <button className="hero-button button-try">
-            <p>Почати безкоштовно</p>
+            <p>{dict.button}</p>
             <FaArrowRight />
           </button>
           <p className="hero-button-underbutton-text">
-            Не маєте розробника? Не проблема. <br /> Допоможемо підключити Lentra до
-            вашого сайту та налаштувати все необхідне для прийому заявок.
+            {dict.underButtonLines[0]} <br /> {dict.underButtonLines[1]}
           </p>
         </div>
-        <div className="hero-img">
-
-        </div>
+        <div className="hero-img"></div>
       </div>
     </section>
   );

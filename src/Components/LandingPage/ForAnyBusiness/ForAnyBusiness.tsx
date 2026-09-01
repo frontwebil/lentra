@@ -1,42 +1,31 @@
 import "./style.css";
 
 import { LuShoppingCart, LuBriefcase, LuUsers, LuGlobe } from "react-icons/lu";
+import type { Dictionary } from "@/dictionaries/uk";
 
-const cards = [
-  {
-    icon: <LuShoppingCart />,
-    title: "Інтернет-магазин",
-    description: "Приймайте та контролюйте замовлення з сайту.",
-  },
-  {
-    icon: <LuBriefcase />,
-    title: "Сервісний бізнес",
-    description: "Збирайте заявки на послуги та звернення клієнтів.",
-  },
-  {
-    icon: <LuUsers />,
-    title: "Агенства",
-    description: "Керуйте заявками з усіх ваших клієнтів в одному місці.",
-  },
-  {
-    icon: <LuGlobe />,
-    title: "Власні сайти",
-    description: "Підключайте будь-який сайт через API.",
-  },
+const icons = [
+  <LuShoppingCart key="cart" />,
+  <LuBriefcase key="briefcase" />,
+  <LuUsers key="users" />,
+  <LuGlobe key="globe" />,
 ];
 
-export function ForAnyBusiness() {
+type Props = {
+  dict: Dictionary["forAnyBusiness"];
+};
+
+export function ForAnyBusiness({ dict }: Props) {
   return (
     <section className="for-any-business">
       <div className="container">
         <h2 className="for-any-business-title">
-          Для будь–якого бізнесу, <br />
-          який отримує заявки онлайн
+          {dict.titleLines[0]} <br />
+          {dict.titleLines[1]}
         </h2>
         <div className="for-any-business-cards">
-          {cards.map((el, i) => (
+          {dict.cards.map((el, i) => (
             <div className="for-any-business-card" key={i}>
-              <div className="for-any-business-card-icon">{el.icon}</div>
+              <div className="for-any-business-card-icon">{icons[i]}</div>
               <h3 className="for-any-business-card-title">{el.title}</h3>
               <p className="for-any-business-card-text">{el.description}</p>
             </div>

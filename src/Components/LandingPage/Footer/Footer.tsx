@@ -1,49 +1,26 @@
 import Link from "next/link";
 import { LuMail, LuSend } from "react-icons/lu";
+import type { Dictionary } from "@/dictionaries/uk";
 import "./style.css";
 
-const columns = [
-  {
-    title: "Продукт",
-    links: [
-      { label: "Можливості", href: "#possibility" },
-      { label: "Як це працює", href: "#how-it-works" },
-      { label: "API", href: "#api" },
-    ],
-  },
-  {
-    title: "Підтримка",
-    links: [
-      { label: "Документація", href: "#api" },
-      { label: "Поширені запитання", href: "#faq" },
-      { label: "Замовити консультацію", href: "#consultation" },
-    ],
-  },
-  {
-    title: "Компанія",
-    links: [
-      { label: "Про Lentra", href: "#" },
-      { label: "Умови використання", href: "#" },
-      { label: "Політика конфіденційності", href: "#" },
-    ],
-  },
-];
+type Props = {
+  dict: Dictionary["footer"];
+  locale: "uk" | "en";
+};
 
-export function Footer() {
+export function Footer({ dict, locale }: Props) {
   const year = new Date().getFullYear();
+  const homeHref = locale === "en" ? "/en" : "/";
 
   return (
     <footer className="footer">
       <div className="container">
         <div className="footer-top">
           <div className="footer-brand">
-            <Link href="/" className="footer-logo">
+            <Link href={homeHref} className="footer-logo">
               Lentra
             </Link>
-            <p className="footer-brand-text">
-              CRM для заявок: приймайте звернення з сайту, керуйте клієнтами та
-              не втрачайте жодної заявки.
-            </p>
+            <p className="footer-brand-text">{dict.brandText}</p>
             <div className="footer-contacts">
               <a href="mailto:lentra.crm@gmail.com" className="footer-contact">
                 <LuMail /> lentra.crm@gmail.com
@@ -61,7 +38,7 @@ export function Footer() {
           </div>
 
           <div className="footer-columns">
-            {columns.map((col) => (
+            {dict.columns.map((col) => (
               <div className="footer-column" key={col.title}>
                 <h3 className="footer-column-title">{col.title}</h3>
                 <ul className="footer-column-links">
@@ -77,9 +54,11 @@ export function Footer() {
         </div>
 
         <div className="footer-bottom">
-          <p>© {year} Lentra. Усі права захищені.</p>
+          <p>
+            © {year} Lentra. {dict.rights}
+          </p>
           <a href="#consultation" className="footer-bottom-link">
-            Замовити консультацію →
+            {dict.consultationLink}
           </a>
         </div>
       </div>

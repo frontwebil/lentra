@@ -6,60 +6,40 @@ import { LuUsers } from "react-icons/lu";
 import { LuArrowRight } from "react-icons/lu";
 import { TbLayoutGrid } from "react-icons/tb";
 import { Fragment } from "react/jsx-runtime";
+import type { Dictionary } from "@/dictionaries/uk";
 
-const nodes = [
-  {
-    icon: <FaLaptop color="#5B55F7" />,
-    label: "Ваш сайт",
-    accent: false,
-  },
-  {
-    icon: <FaCode color="#5B55F7" />,
-    label: "API",
-    accent: true,
-  },
-  {
-    icon: <TbLayoutGrid color="#5B55F7" />,
-    label: "CRM",
-    accent: false,
-  },
+const nodeIcons = [
+  <FaLaptop color="#5B55F7" key="laptop" />,
+  <FaCode color="#5B55F7" key="code" />,
+  <TbLayoutGrid color="#5B55F7" key="grid" />,
 ];
 
-const steps = [
-  {
-    number: "01",
-    icon: <LuPlug color="#6366f1" />,
-    title: "Підключіть API",
-    description: "Створіть API-ключ та інтегруйте Lentra зі своїм сайтом.",
-  },
-  {
-    number: "02",
-    icon: <LuSend color="#6366f1" />,
-    title: "Надсилайте заявки",
-    description:
-      "Нові заявки автоматично надходять у CRM та зберігаються в одному місці.",
-  },
-  {
-    number: "03",
-    icon: <LuUsers color="#6366f1" />,
-    title: "Керуйте клієнтами",
-    description:
-      "Обробляйте заявки, змінюйте статуси та зберігайте всю історію взаємодії з клієнтами.",
-  },
+const stepNumbers = ["01", "02", "03"];
+
+const stepIcons = [
+  <LuPlug color="#6366f1" key="plug" />,
+  <LuSend color="#6366f1" key="send" />,
+  <LuUsers color="#6366f1" key="users" />,
 ];
 
-export function HowItWorks() {
+type Props = {
+  dict: Dictionary["howItWorks"];
+};
+
+export function HowItWorks({ dict }: Props) {
   return (
     <section className="HowItWorks" id="how-it-works">
       <div className="container">
-        <h2 className="section-title">Як це працює</h2>
+        <h2 className="section-title">{dict.title}</h2>
         <div className="HowItWorks-instruction">
           <div className="how-it-works-cards">
-            {steps.map((step, i) => (
+            {dict.steps.map((step, i) => (
               <div key={i} className="how-it-works-card">
                 <div className="how-it-works-card-top">
-                  <span className="how-it-works-step-num">{step.number}</span>
-                  <div className="how-it-works-icon-wrap">{step.icon}</div>
+                  <span className="how-it-works-step-num">
+                    {stepNumbers[i]}
+                  </span>
+                  <div className="how-it-works-icon-wrap">{stepIcons[i]}</div>
                 </div>
                 <h3 className="how-it-works-title">{step.title}</h3>
                 <p className="how-it-works-desc">{step.description}</p>
@@ -67,13 +47,13 @@ export function HowItWorks() {
             ))}
           </div>
           <div className="api-example">
-            {nodes.map((el, i) => (
+            {dict.nodes.map((label, i) => (
               <Fragment key={i}>
                 <div className="api-example-card">
-                  {el.icon}
-                  <p className="api-example-card-text">{el.label}</p>
+                  {nodeIcons[i]}
+                  <p className="api-example-card-text">{label}</p>
                 </div>
-                {i < nodes.length - 1 && (
+                {i < dict.nodes.length - 1 && (
                   <LuArrowRight className="api-example-wrapper-next" />
                 )}
               </Fragment>
