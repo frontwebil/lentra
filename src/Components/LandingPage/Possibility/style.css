@@ -1,0 +1,38 @@
+.possibility {
+  padding: 60px 0;
+}
+
+.possibility-cards {
+  max-width: 1200px;
+  margin: 30px auto 0;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(3, 1fr);
+}
+.possibility-card {
+  display: flex;
+  flex-direction: column;
+
+  border: 1px solid #ebedf4;
+  box-shadow: 0px 5px 14px 0px #18244c05;
+  border-radius: 8px;
+  padding: 16px;
+}
+.possibility-card-icon {
+  color: #5b55f7;
+  width: 24px;
+}
+
+.possibility-card-icon svg {
+  width: 100%;
+  height: auto;
+}
+
+.possibility-card-title {
+  margin-top: 12px;
+  font-size: 18px;
+  padding-bottom: 16px;
+}
+.possibility-card-text {
+  font-size: 16px;
+}

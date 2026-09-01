@@ -10,9 +10,9 @@ export function Header() {
         </Link>
         <nav className="header-nav">
           <a href="" className="header-nav-link">Text 1</a>
-          <a href="" className="header-nav-link">Text 1</a>
-          <a href="" className="header-nav-link">Як це працює</a>
-          <a href="" className="header-nav-link">Питання</a>
+          <a href="" className="header-nav-link">Text 2</a>
+          <a href="" className="header-nav-link">Text 3</a>
+          <a href="" className="header-nav-link">Text 4</a>
         </nav>
         <div className="header-buttons">
           <button className="header-button login">Увійти</button>

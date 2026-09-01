@@ -1,0 +1,220 @@
+.api-section {
+  background: #eef0f8;
+  border-radius: 20px;
+  padding: 48px 52px;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.section-header {
+  margin-bottom: 36px;
+}
+
+.section-header h2 {
+  font-size: 26px;
+  font-weight: 700;
+  color: #1a1d2e;
+  line-height: 1.3;
+  margin-bottom: 8px;
+}
+
+.section-header p {
+  font-size: 14px;
+  color: #6b7080;
+  line-height: 1.6;
+  max-width: 420px;
+}
+
+.section-header a {
+  color: #4f6ef7;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  display: inline-block;
+  margin-top: 8px;
+}
+
+.section-header a:hover {
+  text-decoration: underline;
+}
+
+/* Cards */
+
+.examples-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.example-card {
+  background: #1e2035;
+  border-radius: 14px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 18px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.card-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  padding: 3px 9px;
+  border-radius: 20px;
+  text-transform: uppercase;
+}
+
+.label-backend {
+  background: rgba(100, 180, 100, 0.15);
+  color: #6ee89a;
+}
+
+.label-frontend {
+  background: rgba(100, 140, 255, 0.15);
+  color: #8aabff;
+}
+
+.card-title {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.55);
+  font-weight: 400;
+}
+
+/* Code */
+
+.code-block {
+  padding: 18px 20px;
+  min-height: 310px;
+  overflow-x: auto;
+  flex: 1;
+}
+
+.code-block pre,
+.result-card-json pre {
+  margin: 0;
+  font-family: "JetBrains Mono", "Fira Code", "Courier New", monospace;
+
+  font-size: 12px;
+  line-height: 1.7;
+  color: #c9d1e8;
+  white-space: pre;
+}
+
+/* Result */
+
+.result-preview {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 18px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.arrow-api {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  font-size: 11px;
+  font-weight: 600;
+
+  color: rgba(255, 255, 255, 0.35);
+
+  letter-spacing: 0.06em;
+  flex-shrink: 0;
+}
+
+.arrow-api svg {
+  opacity: 0.5;
+}
+
+/* Lead card */
+
+.result-card {
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 10px 14px;
+  min-width: 155px;
+}
+
+.result-name {
+  font-size: 12px;
+  font-weight: 700;
+  color: #1a1d2e;
+  margin-bottom: 2px;
+}
+
+.result-phone {
+  font-size: 11px;
+  color: #5c6270;
+  margin-bottom: 6px;
+}
+
+.result-badge {
+  font-size: 10px;
+  font-weight: 600;
+
+  color: #4f6ef7;
+  background: rgba(79, 110, 247, 0.1);
+
+  border-radius: 20px;
+  padding: 2px 8px;
+
+  display: inline-block;
+}
+
+/* JSON result */
+
+.result-card-json {
+  min-width: 170px;
+}
+
+.result-card-json pre {
+  font-size: 11px;
+  line-height: 1.5;
+  color: #5c6270;
+}
+
+/* Responsive */
+
+@media (max-width: 720px) {
+  .examples-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .api-section {
+    padding: 28px 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .section-header h2 {
+    font-size: 22px;
+  }
+
+  .card-header {
+    padding: 12px 14px;
+  }
+
+  .code-block {
+    padding: 14px;
+  }
+
+  .code-block pre,
+  .result-card-json pre {
+    font-size: 10px;
+  }
+
+  .result-preview {
+    padding: 12px 14px;
+  }
+}

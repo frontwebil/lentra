@@ -3,8 +3,9 @@
 /* font-family: "Dela Gothic One", sans-serif; */
 
 body {
-font-family: "Montserrat", sans-serif;
-
+  font-family: "Montserrat", sans-serif;
+  color: #0f1730;
+  background: #FFFFFF;
 }
 
 .container {
@@ -12,4 +13,35 @@ font-family: "Montserrat", sans-serif;
   margin: 0 auto;
   width: 100%;
   padding: 0 20px;
+}
+
+.button-try {
+  font-size: 16px;
+  padding: 14px 16px;
+  border-radius: 24px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  background: #5b55f7;
+  color: #fff;
+  font-weight: 700;
+  box-shadow: 0px 7px 16px 0px #5b55f72b;
+}
+
+.button-try:hover {
+  background: #4e48e8;
+  box-shadow: 0 10px 22px rgba(91, 85, 247, 0.25);
+}
+
+.section-title {
+  font-size: 28px;
+  line-height: 100%;
+
+  color: #0f1730;
+  text-align: center;
+}
+.section-subtitle {
+  font-size: 20px;
+  line-height: 100%;
+  color: #30364b;
+  text-align: center;
 }
