@@ -2,7 +2,7 @@ import Image from "next/image";
 import { FaArrowRight } from "react-icons/fa";
 import type { Dictionary } from "@/dictionaries/uk";
 import "./style.css";
-import Link from "next/link";
+
 
 type Props = {
   dict: Dictionary["hero"];
