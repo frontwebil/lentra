@@ -1,18 +1,10 @@
-import { FaCode, FaLaptop } from "react-icons/fa";
 import "./style.css";
 import { LuPlug } from "react-icons/lu";
 import { LuSend } from "react-icons/lu";
 import { LuUsers } from "react-icons/lu";
-import { LuArrowRight } from "react-icons/lu";
-import { TbLayoutGrid } from "react-icons/tb";
-import { Fragment } from "react/jsx-runtime";
 import type { Dictionary } from "@/dictionaries/uk";
 
-const nodeIcons = [
-  <FaLaptop color="#5B55F7" key="laptop" />,
-  <FaCode color="#5B55F7" key="code" />,
-  <TbLayoutGrid color="#5B55F7" key="grid" />,
-];
+
 
 const stepNumbers = ["01", "02", "03"];
 
@@ -46,19 +38,6 @@ export function HowItWorks({ dict }: Props) {
               </div>
             ))}
           </div>
-          {/* <div className="api-example">
-            {dict.nodes.map((label, i) => (
-              <Fragment key={i}>
-                <div className="api-example-card">
-                  {nodeIcons[i]}
-                  <p className="api-example-card-text">{label}</p>
-                </div>
-                {i < dict.nodes.length - 1 && (
-                  <LuArrowRight className="api-example-wrapper-next" />
-                )}
-              </Fragment>
-            ))}
-          </div> */}
         </div>
       </div>
     </section>
