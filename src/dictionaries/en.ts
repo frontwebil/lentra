@@ -1,7 +1,5 @@
 import type { Dictionary } from "./uk";
 
-// English dictionary. Must match the shape of the Ukrainian one (see uk.ts).
-
 export const en: Dictionary = {
   locale: "en",
 

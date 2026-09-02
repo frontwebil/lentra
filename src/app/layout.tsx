@@ -2,15 +2,11 @@ import type { Metadata } from "next";
 
 import { Dela_Gothic_One, Unbounded, Montserrat } from "next/font/google";
 
-import {
-  SITE_DESCRIPTION,
-  SITE_NAME,
-  SITE_TITLE,
-  SITE_URL,
-} from "@/lib/site";
+import { SITE_DESCRIPTION, SITE_NAME, SITE_TITLE, SITE_URL } from "@/lib/site";
 
 import "./globals.css";
 import "./reset.css";
+import StoreProvider from "./redux/provider/Provider";
 
 const delaGothic = Dela_Gothic_One({
   variable: "--font-dela-gothic",
@@ -78,7 +74,9 @@ export default function RootLayout({
       lang="uk"
       className={`${delaGothic.variable} ${unbounded.variable} ${montserrat.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <StoreProvider>{children}</StoreProvider>
+      </body>
     </html>
   );
 }

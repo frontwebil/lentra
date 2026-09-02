@@ -1,13 +1,11 @@
 "use client";
 
+import { Language } from "@/app/redux/languague/languageSlice";
 import { useEffect } from "react";
 
-// The root layout renders <html lang="uk"> for the whole app.
-// This helper overrides the lang attribute on localized pages (e.g. /en).
-export function SetHtmlLang({ lang }: { lang: string }) {
+export function SetHtmlLang({ lang }: { lang: Language }) {
   useEffect(() => {
     document.documentElement.lang = lang;
-
     return () => {
       document.documentElement.lang = "uk";
     };
