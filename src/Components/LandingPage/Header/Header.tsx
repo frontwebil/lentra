@@ -34,11 +34,19 @@ export function Header({ dict, locale }: Props) {
             </a>
           ))}
           <div className="lang-switcher lang-switcher-mobile">
-            <Link href="/" className={locale === "uk" ? "active" : ""} onClick={closeMenu}>
+            <Link
+              href="/"
+              className={locale === "uk" ? "active" : ""}
+              onClick={closeMenu}
+            >
               UA
             </Link>
             <span className="lang-switcher-divider">/</span>
-            <Link href="/en" className={locale === "en" ? "active" : ""} onClick={closeMenu}>
+            <Link
+              href="/en"
+              className={locale === "en" ? "active" : ""}
+              onClick={closeMenu}
+            >
               EN
             </Link>
           </div>
@@ -57,8 +65,12 @@ export function Header({ dict, locale }: Props) {
               EN
             </Link>
           </div>
-          <Link href={'/login'} className="header-button login">{dict.login}</Link>
-          <button className="header-button register">{dict.register}</button>
+          <Link href={"/login"} className="header-button login">
+            {dict.login}
+          </Link>
+          <Link href={"/register"} className="header-button register">
+            {dict.register}
+          </Link>
         </div>
         <button
           className={`header-burger${menuOpen ? " open" : ""}`}
