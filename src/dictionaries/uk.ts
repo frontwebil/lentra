@@ -252,6 +252,8 @@ Content-Type: application/json
     rights: "Усі права захищені.",
     consultationLink: "Замовити консультацію →",
   },
+
+  
 };
 
 export type Dictionary = typeof uk;

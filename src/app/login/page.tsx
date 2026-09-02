@@ -1,3 +1,9 @@
-export default function page() {
-  return <section>Login Page</section>;
+import { Login } from "@/Components/LoginPage/Login/Login";
+
+export default function LoginPage() {
+  return (
+    <section className="login-page">
+      <Login />
+    </section>
+  );
 }
