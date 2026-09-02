@@ -53,7 +53,7 @@ export const en: Dictionary = {
     ],
     telegramTitle: "Telegram notifications - instantly",
     telegramText:
-      "A new lead, an order status change, or a manager's reminder - everything arrives right in your chat.",
+      "A new lead, an  status change, or a manager's reminder - everything arrives right in your chat.",
   },
 
   howItWorks: {
