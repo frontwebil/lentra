@@ -22,7 +22,7 @@ export const en: Dictionary = {
     button: "Start for free",
     consultButton: "Book a consultation",
     image: "/images/hero-en.png",
-    imageAlt: "Lentra — all your leads in one place",
+    imageAlt: "Lentra - all your leads in one place",
     underButtonLines: [
       "No developer? No problem.",
       "We will help you connect Lentra to your website and set up everything you need to start receiving leads.",
@@ -30,7 +30,7 @@ export const en: Dictionary = {
   },
 
   inOnePlace: {
-    title: "All your leads — in one place",
+    title: "All your leads - in one place",
     subtitle:
       "Every lead lands in the CRM automatically, so you can quickly find the one you need and never lose a client.",
     cards: [
@@ -195,7 +195,7 @@ Content-Type: application/json
   consultation: {
     title: "Book a consultation",
     subtitle:
-      "Leave a request — we will show Lentra in action, help you connect your website, and set up lead collection.",
+      "Leave a request - we will show Lentra in action, help you connect your website, and set up lead collection.",
     benefits: [
       "A demo tailored to your business",
       "Help with connecting your website and the API",
