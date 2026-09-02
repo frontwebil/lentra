@@ -65,10 +65,10 @@ export function Header({ dict, locale }: Props) {
               EN
             </Link>
           </div>
-          <Link href={"/login"} className="header-button login">
+          <Link href={homeHref} className="header-button login">
             {dict.login}
           </Link>
-          <Link href={"/register"} className="header-button register">
+          <Link href={homeHref} className="header-button register">
             {dict.register}
           </Link>
         </div>

@@ -19,10 +19,10 @@ export function Hero({ dict }: Props) {
           </h1>
           <p className="hero-text">{dict.text}</p>
           <div className="hero-buttons">
-            <Link href={"/register"} className="hero-button button-try">
+            <button className="hero-button button-try">
               <p>{dict.button}</p>
               <FaArrowRight />
-            </Link>
+            </button>
             <a href="#consultation" className="hero-button hero-button-consult">
               {dict.consultButton}
             </a>
