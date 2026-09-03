@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-export type Language = "uk" | "en" | null;
+export type Language = "uk" | "en";
 
 interface LanguageState {
   language: Language;
