@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
-  const request = req.json();
-  console.log(request);
   try {
     const { name, phone, email, site, message } = await req.json();
 
@@ -42,7 +40,7 @@ export async function POST(req: Request) {
   } catch (error) {
     console.error(error);
     return NextResponse.json(
-      { success: false, message: "Не вдалося відправити заявку" },
+      { success: false, message: "Не вдалося відправити заявку", error },
       { status: 500 },
     );
   }

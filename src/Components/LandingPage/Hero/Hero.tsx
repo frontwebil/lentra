@@ -2,7 +2,7 @@ import Image from "next/image";
 import { FaArrowRight } from "react-icons/fa";
 import type { Dictionary } from "@/dictionaries/uk";
 import "./style.css";
-
+import Link from "next/link";
 
 type Props = {
   dict: Dictionary["hero"];
@@ -19,10 +19,10 @@ export function Hero({ dict }: Props) {
           </h1>
           <p className="hero-text">{dict.text}</p>
           <div className="hero-buttons">
-            <button className="hero-button button-try">
+            <Link href={"/register"} className="hero-button button-try">
               <p>{dict.button}</p>
               <FaArrowRight />
-            </button>
+            </Link>
             <a href="#consultation" className="hero-button hero-button-consult">
               {dict.consultButton}
             </a>
