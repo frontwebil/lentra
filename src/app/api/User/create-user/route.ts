@@ -1,34 +1,11 @@
 import prisma from "@/lib/prisma";
-import { redis, registerRateLimit } from "@/lib/rate-limit";
+import { redis } from "@/lib/rate-limit";
 import { NextResponse } from "next/server";
 import bcrypt from "bcrypt";
 import { sendVerificationEmail } from "@/lib/nodemailer";
 
 export async function POST(req: Request) {
   const { name, surname, email, password } = await req.json();
-  const forwardedFor = req.headers.get("x-forwarded-for");
-
-  const ip =
-    forwardedFor?.split(",")[0]?.trim() ||
-    req.headers.get("x-real-ip") ||
-    "unknown";
-
-  const { success, remaining, reset } = await registerRateLimit.limit(ip);
-
-  if (!success) {
-    return NextResponse.json(
-      {
-        message: "TOO_MANY_REQUESTS",
-      },
-      {
-        status: 429,
-        headers: {
-          "Retry-After": String(Math.ceil((reset - Date.now()) / 1000)),
-          "X-RateLimit-Remaining": String(remaining),
-        },
-      },
-    );
-  }
 
   const isExistEmail = await prisma.user.findFirst({
     where: {

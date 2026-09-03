@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
+  const request = req.json();
+  console.log(request);
   try {
     const { name, phone, email, site, message } = await req.json();
 
