@@ -21,8 +21,6 @@ model User {
   password     String
 
   isConfirmed  Boolean   @default(false)
-  confirmToken String?   @unique
-  tokenExpired DateTime?
 
   options UserOptions?
 
