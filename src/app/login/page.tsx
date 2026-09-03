@@ -1,4 +1,5 @@
 import { Login } from "@/Components/LoginPage/Login/Login";
+import { LoginHeader } from "@/Components/LoginPage/LoginHeader/LoginHeader";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -9,6 +10,7 @@ export const metadata: Metadata = {
 export default function LoginPage() {
   return (
     <section className="login-page">
+      <LoginHeader />
       <Login />
     </section>
   );

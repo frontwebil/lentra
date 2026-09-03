@@ -1,0 +1,124 @@
+.login-header {
+  padding: 14px 0;
+}
+
+.login-header-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.login-header-logo {
+  font-family: "Unbounded", sans-serif;
+  font-size: 30px;
+  color: #0f1730;
+  text-decoration: none;
+}
+
+.login-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.login-header-lang {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-right: 4px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.login-header-lang button {
+  color: #9aa1b5;
+  text-decoration: none;
+  padding: 4px 2px;
+  transition: color 0.3s ease;
+
+  cursor: pointer;
+}
+
+.login-header-lang button:hover {
+  color: #0f1730;
+}
+
+.login-header-lang button.active {
+  color: #5b55f7;
+}
+
+.login-header-lang span {
+  color: #d5d9e5;
+}
+
+.login-header-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 14px 16px;
+  border-radius: 24px;
+
+  font-size: 16px;
+  text-decoration: none;
+
+  transition: all 0.3s ease;
+}
+
+.login-header-button.login {
+  border: 1px solid #e4e7f0;
+  color: #0f1730;
+}
+
+.login-header-button.login:hover {
+  border-color: #d5d9e5;
+  background: #f8f9fc;
+  box-shadow: 0 5px 14px rgba(15, 23, 48, 0.06);
+}
+
+.login-header-button.register {
+  background: #5b55f7;
+  color: #fff;
+  font-weight: 700;
+
+  box-shadow: 0 7px 16px rgba(91, 85, 247, 0.17);
+}
+
+.login-header-button.register:hover {
+  background: #4e48e8;
+  box-shadow: 0 10px 22px rgba(91, 85, 247, 0.25);
+}
+
+@media (max-width: 560px) {
+  .login-header {
+    padding: 12px 0;
+  }
+
+  .login-header-logo {
+    font-size: 24px;
+  }
+
+  .login-header-actions {
+    gap: 6px;
+  }
+
+  .login-header-lang {
+    margin-right: 2px;
+  }
+
+  .login-header-button {
+    padding: 11px 12px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 400px) {
+  .login-header-lang {
+    display: none;
+  }
+
+  .login-header-button {
+    padding: 10px 11px;
+    font-size: 13px;
+  }
+}

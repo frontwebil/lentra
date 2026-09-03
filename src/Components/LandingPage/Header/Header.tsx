@@ -1,9 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import type { Dictionary } from "@/dictionaries/uk";
 import "./style.css";
+import { useDispatch } from "react-redux";
+import { setLanguage } from "@/app/redux/languague/languageSlice";
 
 type Props = {
   dict: Dictionary["header"];
@@ -13,6 +15,11 @@ type Props = {
 export function Header({ dict, locale }: Props) {
   const homeHref = locale === "en" ? "/en" : "/";
   const [menuOpen, setMenuOpen] = useState(false);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(setLanguage(locale));
+  }, [locale]);
 
   const closeMenu = () => setMenuOpen(false);
 
