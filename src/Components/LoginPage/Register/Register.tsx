@@ -18,7 +18,7 @@ export function Register() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (language === null) {
+    if (!language) {
       const savedLanguage = localStorage.getItem("language");
 
       if (savedLanguage === "en" || savedLanguage === "uk") {
