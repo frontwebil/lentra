@@ -7,6 +7,7 @@ import { SITE_DESCRIPTION, SITE_NAME, SITE_TITLE, SITE_URL } from "@/lib/site";
 import "./globals.css";
 import "./reset.css";
 import StoreProvider from "./redux/provider/Provider";
+import Script from "next/script";
 
 const delaGothic = Dela_Gothic_One({
   variable: "--font-dela-gothic",
@@ -77,6 +78,20 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col">
         <StoreProvider>{children}</StoreProvider>
       </body>
+
+      <Script
+        src="https://www.googletagmanager.com/gtag/js?id=G-X03SRPNV14"
+        strategy="afterInteractive"
+      />
+
+      <Script id="google-analytics" strategy="afterInteractive">
+        {`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){window.dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-X03SRPNV14');
+        `}
+      </Script>
     </html>
   );
 }
