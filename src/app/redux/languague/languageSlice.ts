@@ -1,12 +1,16 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-export type Language = "uk" | "en";
+export type Language = "uk" | "en" | null;
 
 interface LanguageState {
   language: Language;
 }
 
 const getInitialLanguage = (): Language => {
+  if (typeof window === "undefined") {
+    return null;
+  }
+
   const savedLanguage = localStorage.getItem("language");
 
   if (!savedLanguage) {

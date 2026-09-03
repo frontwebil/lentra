@@ -4,15 +4,31 @@ import Link from "next/link";
 
 import "./style.css";
 
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import { RootState } from "@/app/redux/languague/store";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "sonner";
+import { setLanguage } from "@/app/redux/languague/languageSlice";
 
 export function Register() {
   const { language } = useSelector((store: RootState) => store.language);
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (language === null) {
+      const savedLanguage = localStorage.getItem("language");
+
+      if (savedLanguage === "en" || savedLanguage === "uk") {
+        dispatch(setLanguage(savedLanguage));
+      } else {
+        dispatch(setLanguage("en"));
+      }
+    }
+  }, [language, dispatch]);
+
   const [loading, setLoading] = useState(false);
   const isEnglish = language === "en";
 
