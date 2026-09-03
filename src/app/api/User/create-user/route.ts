@@ -1,9 +1,11 @@
 import prisma from "@/lib/prisma";
-import { registerRateLimit } from "@/lib/rate-limit";
+import { redis, registerRateLimit } from "@/lib/rate-limit";
 import { NextResponse } from "next/server";
 import bcrypt from "bcrypt";
+import { sendVerificationEmail } from "@/lib/nodemailer";
 
 export async function POST(req: Request) {
+  const { name, surname, email, password } = await req.json();
   const forwardedFor = req.headers.get("x-forwarded-for");
 
   const ip =
@@ -28,9 +30,24 @@ export async function POST(req: Request) {
     );
   }
 
-  try {
-    const { name, surname, email, password } = await req.json();
+  const isExistEmail = await prisma.user.findFirst({
+    where: {
+      email,
+    },
+  });
 
+  if (isExistEmail) {
+    return NextResponse.json(
+      {
+        message: "EMAIL_ALREADY_EXISTS",
+      },
+      {
+        status: 409,
+      },
+    );
+  }
+
+  try {
     if (!name || name.trim().length < 3) {
       return NextResponse.json(
         { message: "Name must be at least 3 characters" },
@@ -82,6 +99,14 @@ export async function POST(req: Request) {
         password: hashedPassword,
       },
     });
+
+    const code = Math.floor(100000 + Math.random() * 900000).toString();
+
+    await redis.set(`email-verification:${email}`, code, {
+      ex: 600,
+    });
+
+    await sendVerificationEmail(email, code);
 
     return NextResponse.json(
       { message: "User created successfully" },

@@ -115,6 +115,19 @@ export function Register() {
           return;
         }
 
+        console.log(error);
+        if (axios.isAxiosError(error)) {
+          if (error.response?.status === 409) {
+            toast.error(
+              isEnglish
+                ? "Email already exists"
+                : "Така пошта вже зареєстрована.",
+            );
+
+            return;
+          }
+        }
+
         toast.error(
           error.response?.data?.message ||
             (isEnglish ? "Something went wrong" : "Сталася помилка"),
