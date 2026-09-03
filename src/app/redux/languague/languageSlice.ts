@@ -9,6 +9,10 @@ interface LanguageState {
 const getInitialLanguage = (): Language => {
   const savedLanguage = localStorage.getItem("language");
 
+  if (!savedLanguage) {
+    return "en";
+  }
+
   return savedLanguage === "en" ? "en" : "uk";
 };
 
