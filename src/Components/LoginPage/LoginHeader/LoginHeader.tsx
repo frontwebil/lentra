@@ -15,6 +15,12 @@ export function LoginHeader() {
   const dispatch = useDispatch();
 
   const homeHref = language === "en" ? "/en" : "/";
+
+  const changeLanguage = (language: "uk" | "en") => {
+    dispatch(setLanguage(language));
+    localStorage.setItem("language", language);
+  };
+
   return (
     <header className="login-header">
       <div className="container login-header-container">
@@ -25,7 +31,7 @@ export function LoginHeader() {
         <div className="login-header-actions">
           <div className="login-header-lang">
             <button
-              onClick={() => dispatch(setLanguage("uk"))}
+              onClick={() => changeLanguage("uk")}
               className={language === "uk" ? "active" : ""}
             >
               UA
@@ -34,7 +40,7 @@ export function LoginHeader() {
             <span>/</span>
 
             <button
-              onClick={() => dispatch(setLanguage("en"))}
+              onClick={() => changeLanguage("en")}
               className={language === "en" ? "active" : ""}
             >
               EN

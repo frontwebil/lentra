@@ -31,11 +31,12 @@
 }
 
 .login-header-lang button {
+  border: none;
+  background: transparent;
   color: #9aa1b5;
   text-decoration: none;
   padding: 4px 2px;
   transition: color 0.3s ease;
-
   cursor: pointer;
 }
 
@@ -55,13 +56,10 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-
   padding: 14px 16px;
   border-radius: 24px;
-
   font-size: 16px;
   text-decoration: none;
-
   transition: all 0.3s ease;
 }
 
@@ -80,7 +78,6 @@
   background: #5b55f7;
   color: #fff;
   font-weight: 700;
-
   box-shadow: 0 7px 16px rgba(91, 85, 247, 0.17);
 }
 

@@ -6,8 +6,18 @@ interface LanguageState {
   language: Language;
 }
 
+const getInitialLanguage = (): Language => {
+  if (typeof window === "undefined") {
+    return "uk";
+  }
+
+  const savedLanguage = localStorage.getItem("language");
+
+  return savedLanguage === "en" ? "en" : "uk";
+};
+
 const initialState: LanguageState = {
-  language: "uk",
+  language: getInitialLanguage(),
 };
 
 const languageSlice = createSlice({

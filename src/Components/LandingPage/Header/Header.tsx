@@ -19,7 +19,8 @@ export function Header({ dict, locale }: Props) {
 
   useEffect(() => {
     dispatch(setLanguage(locale));
-  }, [locale]);
+    localStorage.setItem("language", locale);
+  }, [dispatch, locale]);
 
   const closeMenu = () => setMenuOpen(false);
 
@@ -31,14 +32,14 @@ export function Header({ dict, locale }: Props) {
         </Link>
         <nav className={`header-nav${menuOpen ? " open" : ""}`}>
           {dict.nav.map((link) => (
-            <a
+            <Link
               href={link.href}
               className="header-nav-link"
               key={link.href}
               onClick={closeMenu}
             >
               {link.label}
-            </a>
+            </Link>
           ))}
           <div className="lang-switcher lang-switcher-mobile">
             <Link
