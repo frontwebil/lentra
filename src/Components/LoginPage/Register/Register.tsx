@@ -7,11 +7,107 @@ import "./style.css";
 import { useSelector } from "react-redux";
 
 import { RootState } from "@/app/redux/languague/store";
+import { useState } from "react";
+import axios from "axios";
+import { toast } from "sonner";
 
 export function Register() {
   const { language } = useSelector((store: RootState) => store.language);
-
+  const [loading, setLoading] = useState(false);
   const isEnglish = language === "en";
+
+  const [formData, setFormData] = useState({
+    name: "",
+    surname: "",
+    email: "",
+    password: "",
+  });
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (loading) return;
+
+    setLoading(true);
+
+    if (formData.name.trim().length < 3) {
+      toast(
+        isEnglish
+          ? "Name must be at least 3 characters"
+          : "Ім'я має містити мінімум 3 символи",
+      );
+      setLoading(false);
+      return;
+    }
+
+    if (formData.surname.trim().length < 3) {
+      toast(
+        isEnglish
+          ? "Surname must be at least 3 characters"
+          : "Прізвище має містити мінімум 3 символи",
+      );
+      setLoading(false);
+      return;
+    }
+
+    if (!formData.email.trim()) {
+      toast(isEnglish ? "Enter your email" : "Введіть електронну пошту");
+      setLoading(false);
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailRegex.test(formData.email)) {
+      toast(
+        isEnglish ? "Enter a valid email" : "Введіть коректну електронну пошту",
+      );
+      setLoading(false);
+      return;
+    }
+
+    if (!formData.password) {
+      toast(isEnglish ? "Enter your password" : "Введіть пароль");
+      setLoading(false);
+      return;
+    }
+
+    if (formData.password.length < 8) {
+      toast(
+        isEnglish
+          ? "Password must be at least 8 characters"
+          : "Пароль має містити мінімум 8 символів",
+      );
+      setLoading(false);
+      return;
+    }
+    try {
+      await axios.post("/api/User/create-user", formData);
+
+      toast.success(
+        isEnglish ? "Account created successfully" : "Акаунт успішно створено",
+      );
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 429) {
+          toast.error(
+            isEnglish
+              ? "Too many attempts. Please try again later."
+              : "Забагато спроб. Спробуйте пізніше.",
+          );
+
+          return;
+        }
+
+        toast.error(
+          error.response?.data?.message ||
+            (isEnglish ? "Something went wrong" : "Сталася помилка"),
+        );
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <main className="register">
@@ -29,7 +125,7 @@ export function Register() {
             </p>
           </div>
 
-          <form className="register-form">
+          <form className="register-form" onSubmit={handleSubmit}>
             <div className="register-row">
               <div className="register-field">
                 <label htmlFor="firstName">
@@ -42,6 +138,11 @@ export function Register() {
                   type="text"
                   placeholder={isEnglish ? "First Name" : "Ім'я"}
                   autoComplete="given-name"
+                  required
+                  value={formData.name}
+                  onChange={(e) => {
+                    setFormData({ ...formData, name: e.target.value });
+                  }}
                 />
               </div>
 
@@ -56,6 +157,11 @@ export function Register() {
                   type="text"
                   placeholder={isEnglish ? "Last Name" : "Прізвище"}
                   autoComplete="family-name"
+                  required
+                  value={formData.surname}
+                  onChange={(e) => {
+                    setFormData({ ...formData, surname: e.target.value });
+                  }}
                 />
               </div>
             </div>
@@ -67,10 +173,15 @@ export function Register() {
                 id="email"
                 name="email"
                 type="email"
+                required
                 placeholder={
                   isEnglish ? "Enter your email" : "Введіть ваш email"
                 }
                 autoComplete="email"
+                value={formData.email}
+                onChange={(e) => {
+                  setFormData({ ...formData, email: e.target.value });
+                }}
               />
             </div>
 
@@ -78,19 +189,29 @@ export function Register() {
               <label htmlFor="password">
                 {isEnglish ? "Password" : "Пароль"}
               </label>
-
-              <input
-                id="password"
-                name="password"
-                type="password"
-                placeholder={
-                  isEnglish ? "Create a password" : "Створіть пароль"
-                }
-                autoComplete="new-password"
-              />
+              <div className="">
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  required
+                  placeholder={
+                    isEnglish ? "Create a password" : "Створіть пароль"
+                  }
+                  autoComplete="new-password"
+                  value={formData.password}
+                  onChange={(e) => {
+                    setFormData({ ...formData, password: e.target.value });
+                  }}
+                />
+              </div>
             </div>
 
-            <button type="submit" className="register-button">
+            <button
+              type="submit"
+              className="register-button"
+              disabled={loading}
+            >
               {isEnglish ? "Create Account" : "Створити акаунт"}
             </button>
           </form>

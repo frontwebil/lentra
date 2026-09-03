@@ -8,6 +8,7 @@ import "./globals.css";
 import "./reset.css";
 import StoreProvider from "./redux/provider/Provider";
 import Script from "next/script";
+import { Toaster } from "sonner";
 
 const delaGothic = Dela_Gothic_One({
   variable: "--font-dela-gothic",
@@ -77,6 +78,16 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <StoreProvider>{children}</StoreProvider>
+        <Toaster
+          position="top-right"
+          toastOptions={{
+            classNames: {
+              toast: "custom-toast",
+              title: "custom-toast-title",
+              description: "custom-toast-description",
+            },
+          }}
+        />
       </body>
 
       <Script

@@ -61,3 +61,22 @@ body {
     line-height: 130%;
   }
 }
+
+.custom-toast {
+  border: none !important;
+  border-radius: 24px !important;
+  background: #5b55f7 !important;
+  color: #ffffff !important;
+  box-shadow: 0 10px 25px rgba(91, 85, 247, 0.25) !important;
+  font-family: "Montserrat", sans-serif !important;
+}
+
+.custom-toast-title {
+  color: #ffffff !important;
+  font-size: 15px !important;
+  font-weight: 700 !important;
+}
+
+.custom-toast-description {
+  color: rgba(255, 255, 255, 0.75) !important;
+}
