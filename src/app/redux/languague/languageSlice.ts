@@ -7,10 +7,6 @@ interface LanguageState {
 }
 
 const getInitialLanguage = (): Language => {
-  if (typeof window === "undefined") {
-    return "uk";
-  }
-
   const savedLanguage = localStorage.getItem("language");
 
   return savedLanguage === "en" ? "en" : "uk";
