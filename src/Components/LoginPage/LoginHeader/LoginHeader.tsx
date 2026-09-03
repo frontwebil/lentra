@@ -49,13 +49,13 @@ export function LoginHeader() {
 
           {pathname == "/register" && (
             <Link href={"/login"} className="login-header-button login">
-              Увійти
+              {language == "en" ? "Sign In" : "Увійти"}
             </Link>
           )}
 
           {pathname == "/login" && (
             <Link href={"/register"} className="login-header-button register">
-              Реєстрація
+              {language == "en" ? "Sign Up" : "Зареєструватись"}
             </Link>
           )}
         </div>

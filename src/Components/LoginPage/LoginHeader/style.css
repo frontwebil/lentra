@@ -110,12 +110,23 @@
 }
 
 @media (max-width: 400px) {
-  .login-header-lang {
-    display: none;
-  }
-
   .login-header-button {
     padding: 10px 11px;
     font-size: 13px;
+  }
+}
+
+@media (max-width: 360px) {
+  .login-header-actions {
+    flex-direction: column-reverse;
+    align-items: flex-end;
+  }
+
+  .login-header-container {
+    align-items: flex-start;
+  }
+
+  .login-footer {
+    flex-direction: column;
   }
 }

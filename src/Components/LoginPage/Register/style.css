@@ -1,5 +1,5 @@
 main.register {
-  min-height: 100vh;
+  min-height: calc(100vh - 120px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -161,7 +161,7 @@ main.register {
 }
 
 @media (max-width: 560px) {
-  .register {
+  section.register {
     padding: 24px 16px;
   }
 

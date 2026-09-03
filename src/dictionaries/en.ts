@@ -10,7 +10,7 @@ export const en: Dictionary = {
       { label: "API", href: "#api" },
       { label: "FAQ", href: "#faq" },
     ],
-    login: "Log in",
+    login: "Sign in",
     register: "Try for free",
   },
 
