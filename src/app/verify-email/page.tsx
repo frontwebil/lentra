@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
@@ -11,9 +11,16 @@ import { setLanguage } from "@/app/redux/languague/languageSlice";
 
 import "./style.css";
 
-export default function Page() {
+function VerifyEmailContent() {
   const { language } = useSelector((store: RootState) => store.language);
   const dispatch = useDispatch();
+
+  const searchParams = useSearchParams();
+  const token = searchParams.get("token");
+
+  const [status, setStatus] = useState<"loading" | "success" | "error">(
+    "loading",
+  );
 
   useEffect(() => {
     if (!language) {
@@ -26,15 +33,6 @@ export default function Page() {
       }
     }
   }, [language, dispatch]);
-
-  const isEnglish = language === "en";
-
-  const searchParams = useSearchParams();
-  const token = searchParams.get("token");
-
-  const [status, setStatus] = useState<"loading" | "success" | "error">(
-    "loading",
-  );
 
   useEffect(() => {
     if (!token) {
@@ -57,6 +55,8 @@ export default function Page() {
 
     verifyEmail();
   }, [token]);
+
+  const isEnglish = language === "en";
 
   return (
     <main className="verify-page">
@@ -130,5 +130,13 @@ export default function Page() {
         </div>
       </div>
     </main>
+  );
+}
+
+export default function Page() {
+  return (
+    <Suspense fallback={null}>
+      <VerifyEmailContent />
+    </Suspense>
   );
 }
