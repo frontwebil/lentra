@@ -23,6 +23,29 @@ function VerifyEmailContent() {
   );
 
   useEffect(() => {
+    if (!token || token.length < 32) {
+      setStatus("error");
+      window.location.href = "/register";
+      return;
+    }
+
+    const verifyEmail = async () => {
+      try {
+        await axios.post("/api/User/verify-token", {
+          token,
+        });
+
+        setStatus("success");
+      } catch (error) {
+        console.error(error);
+        setStatus("error");
+      }
+    };
+
+    verifyEmail();
+  }, [token]);
+
+  useEffect(() => {
     if (!language) {
       const savedLanguage = localStorage.getItem("language");
 
