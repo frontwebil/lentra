@@ -1,15 +1,25 @@
 "use client";
 
 import Link from "next/link";
+import { signIn, useSession } from "next-auth/react";
 
 import "./style.css";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/app/redux/languague/store";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { setLanguage } from "@/app/redux/languague/languageSlice";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { toast } from "sonner";
 
 export function Login() {
   const { language } = useSelector((store: RootState) => store.language);
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -26,10 +36,77 @@ export function Login() {
   }, [language, dispatch]);
 
   const isEnglish = language === "en";
+
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (loading) {
+      return;
+    }
+
+    if (!formData.email || !formData.password) {
+      toast.error(
+        isEnglish
+          ? "Please fill in all fields"
+          : "Будь ласка, заповніть всі поля",
+      );
+      return;
+    }
+    setLoading(true);
+    try {
+      const result = await signIn("credentials", {
+        email: formData.email,
+        password: formData.password,
+        redirect: false,
+      });
+      if (!result) {
+        toast.error(isEnglish ? "Something went wrong" : "Щось пішло не так");
+        return;
+      }
+      if (result.error === "EMAIL_NOT_CONFIRMED") {
+        toast.error(
+          isEnglish
+            ? "Please check your email to confirm your account. If you don't see the email, check your Spam folder."
+            : "Перевірте вашу пошту, щоб підтвердити акаунт. Якщо листа немає - перевірте папку «Спам».",
+        );
+
+        return;
+      }
+
+      if (result.error) {
+        toast.error(
+          isEnglish ? "Invalid email or password" : "Невірний email або пароль",
+        );
+        return;
+      }
+      toast.success(
+        isEnglish ? "Successfully signed in" : "Ви успішно увійшли",
+      );
+      window.location.href = "/dashboard";
+    } catch (error) {
+      console.error("Login error:", error);
+      toast.error(
+        isEnglish
+          ? "Something went wrong. Please try again."
+          : "Щось пішло не так. Спробуйте ще раз.",
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <main className="login">
+      {loading && <div className="page-loader"></div>}
+
       <div className="login-container">
         <div className="login-card">
+          {loading && (
+            <div className="widget-loader">
+              <div className="loader" />
+            </div>
+          )}
+
           <div className="login-header">
             <h1 className="login-title">{isEnglish ? "Sign In" : "Вхід"}</h1>
 
@@ -40,7 +117,7 @@ export function Login() {
             </p>
           </div>
 
-          <form className="login-form">
+          <form className="login-form" onSubmit={handleLogin}>
             <div className="login-field">
               <label htmlFor="email">Email</label>
 
@@ -52,6 +129,10 @@ export function Login() {
                   isEnglish ? "Enter your email" : "Введіть ваш email"
                 }
                 autoComplete="email"
+                value={formData.email}
+                onChange={(e) =>
+                  setFormData({ ...formData, email: e.target.value })
+                }
               />
             </div>
 
@@ -64,19 +145,30 @@ export function Login() {
                   {isEnglish ? "Forgot password?" : "Забули пароль?"}
                 </Link>
               </div>
-
-              <input
-                id="password"
-                name="password"
-                type="password"
-                placeholder={
-                  isEnglish ? "Enter your password" : "Введіть ваш пароль"
-                }
-                autoComplete="current-password"
-              />
+              <div style={{ position: "relative" }}>
+                <input
+                  id="password"
+                  name="password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder={
+                    isEnglish ? "Enter your password" : "Введіть ваш пароль"
+                  }
+                  autoComplete="current-password"
+                  value={formData.password}
+                  onChange={(e) =>
+                    setFormData({ ...formData, password: e.target.value })
+                  }
+                />
+                <div
+                  className="login-field-password-wrap-button-show"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? <FaEye /> : <FaEyeSlash />}
+                </div>
+              </div>
             </div>
 
-            <button type="submit" className="login-button">
+            <button type="submit" className="login-button" disabled={loading}>
               {isEnglish ? "Sign In" : "Увійти"}
             </button>
           </form>

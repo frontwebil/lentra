@@ -18,6 +18,9 @@ main.login {
   border-radius: 24px;
   background: #ffffff;
   box-shadow: 0 20px 45px rgba(15, 23, 48, 0.06);
+
+  position: relative;
+  z-index: 2;
 }
 
 .login-header {
@@ -169,4 +172,25 @@ main.login {
   .login-description {
     font-size: 15px;
   }
+}
+
+.login-field-password-wrap-button-show {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: 20px;
+
+  color: #0f1730;
+
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.login-field-password-wrap-button-show:hover {
+  color: #7474be;
+}
+
+.login-field-password-wrap-button-show svg {
+  width: 20px;
+  height: auto;
 }
