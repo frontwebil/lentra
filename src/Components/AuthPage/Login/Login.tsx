@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { signIn, useSession } from "next-auth/react";
+import { signIn } from "next-auth/react";
 
 import "./style.css";
 import { useDispatch, useSelector } from "react-redux";
@@ -141,9 +141,9 @@ export function Login() {
                 <label htmlFor="password">
                   {isEnglish ? "Password" : "Пароль"}
                 </label>
-                <Link href="/forgot-password">
+                {/* <Link href="/forgot-password">
                   {isEnglish ? "Forgot password?" : "Забули пароль?"}
-                </Link>
+                </Link> */}
               </div>
               <div style={{ position: "relative" }}>
                 <input
