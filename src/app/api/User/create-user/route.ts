@@ -2,10 +2,11 @@ import prisma from "@/lib/prisma";
 import { redis } from "@/lib/rate-limit";
 import { NextResponse } from "next/server";
 import bcrypt from "bcrypt";
+import { randomBytes } from "crypto";
 import { sendVerificationEmail } from "@/lib/nodemailer";
 
 export async function POST(req: Request) {
-  const { name, surname, email, password } = await req.json();
+  const { name, surname, email, password, language } = await req.json();
 
   const isExistEmail = await prisma.user.findFirst({
     where: {
@@ -77,13 +78,15 @@ export async function POST(req: Request) {
       },
     });
 
-    const code = Math.floor(100000 + Math.random() * 900000).toString();
+    const token = randomBytes(32).toString("hex");
 
-    await redis.set(`email-verification:${email}`, code, {
+    const key = `email-verification:${token}`;
+
+    await redis.set(key, email, {
       ex: 600,
     });
 
-    await sendVerificationEmail(email, code);
+    await sendVerificationEmail(email, token, language);
 
     return NextResponse.json(
       { message: "User created successfully" },

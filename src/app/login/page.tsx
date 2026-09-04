@@ -1,5 +1,5 @@
-import { Login } from "@/Components/LoginPage/Login/Login";
-import { LoginHeader } from "@/Components/LoginPage/LoginHeader/LoginHeader";
+import { Login } from "@/Components/AuthPage/Login/Login";
+import { LoginHeader } from "@/Components/AuthPage/LoginHeader/LoginHeader";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {

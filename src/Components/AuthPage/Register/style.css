@@ -14,6 +14,8 @@ main.register {
 }
 
 .register-card {
+  position: relative;
+  z-index: 2;
   padding: 40px;
 
   border: 1px solid #eef0f7;
@@ -158,6 +160,31 @@ main.register {
 .register-footer a:hover {
   color: #4e48e8;
   text-decoration: underline;
+}
+
+.register-field-password-wrap {
+  position: relative;
+}
+
+.register-field-password-wrap-button-show {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: 20px;
+
+  color: #0f1730;
+
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.register-field-password-wrap-button-show:hover {
+  color: #7474be;
+}
+
+.register-field-password-wrap-button-show svg {
+  width: 20px;
+  height: auto;
 }
 
 @media (max-width: 560px) {
