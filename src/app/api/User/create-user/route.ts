@@ -8,24 +8,24 @@ import { sendVerificationEmail } from "@/lib/nodemailer";
 export async function POST(req: Request) {
   const { name, surname, email, password, language } = await req.json();
 
-  const isExistEmail = await prisma.user.findFirst({
-    where: {
-      email,
-    },
-  });
-
-  if (isExistEmail) {
-    return NextResponse.json(
-      {
-        message: "EMAIL_ALREADY_EXISTS",
-      },
-      {
-        status: 409,
-      },
-    );
-  }
-
   try {
+    const isExistEmail = await prisma.user.findFirst({
+      where: {
+        email,
+      },
+    });
+
+    if (isExistEmail) {
+      return NextResponse.json(
+        {
+          message: "EMAIL_ALREADY_EXISTS",
+        },
+        {
+          status: 409,
+        },
+      );
+    }
+
     if (!name || name.trim().length < 3) {
       return NextResponse.json(
         { message: "Name must be at least 3 characters" },
