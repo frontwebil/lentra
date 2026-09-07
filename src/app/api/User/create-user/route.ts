@@ -6,9 +6,15 @@ import { randomBytes } from "crypto";
 import { sendVerificationEmail } from "@/lib/nodemailer";
 
 export async function POST(req: Request) {
-  const { name, surname, email, password, language } = await req.json();
-
   try {
+    const origin = req.headers.get("origin");
+
+    if (origin !== process.env.NEXT_PUBLIC_APP_URL) {
+      return NextResponse.json({ message: "Forbidden" }, { status: 403 });
+    }
+
+    const { name, surname, email, password, language } = await req.json();
+
     const isExistEmail = await prisma.user.findFirst({
       where: {
         email,

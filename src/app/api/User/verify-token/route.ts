@@ -4,6 +4,12 @@ import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   try {
+    const origin = req.headers.get("origin");
+
+    if (origin !== process.env.NEXT_PUBLIC_APP_URL) {
+      return NextResponse.json({ message: "Forbidden" }, { status: 403 });
+    }
+
     const { token } = await req.json();
     if (!token) {
       return NextResponse.json(
