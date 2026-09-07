@@ -55,7 +55,7 @@ export const authOptions: AuthOptions = {
               ex: 600,
             });
 
-            await sendVerificationEmail(user.email, token, "uk");
+            await sendVerificationEmail(user.email, token, user.language);
             throw new Error("EMAIL_NOT_CONFIRMED");
           }
         }
@@ -71,9 +71,10 @@ export const authOptions: AuthOptions = {
 
         return {
           id: user.id,
-          name: user.firstName,
-          lastName: user.lastName,
           email: user.email,
+          phone: user.phone,
+          companyName: user.companyName,
+          language: user.language,
         };
       },
     }),
@@ -91,9 +92,10 @@ export const authOptions: AuthOptions = {
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
-        token.name = user.name;
         token.email = user.email;
-        token.lastName = user.lastName;
+        token.phone = user.phone;
+        token.companyName = user.companyName;
+        token.language = user.language;
       }
 
       return token;
@@ -102,9 +104,10 @@ export const authOptions: AuthOptions = {
     async session({ session, token }) {
       session.user = {
         id: token.id as string,
-        name: token.name,
-        email: token.email,
-        lastName: token.lastName as string,
+        email: token.email as string,
+        phone: token.phone as string,
+        companyName: token.companyName as string,
+        language: token.language as "uk" | "en",
       };
 
       return session;
