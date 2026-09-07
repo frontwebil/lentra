@@ -12,20 +12,27 @@ datasource db {
   provider = "postgresql"
 }
 
+enum CrmLanguage {
+  uk
+  en
+}
+
 model User {
-  id           String    @id @default(cuid())
+  id          String        @id @default(cuid())
 
-  firstName    String
-  lastName     String
-  email        String    @unique
-  password     String
+  phone       String        @unique
+  companyName String
+  email       String        @unique
+  password    String
 
-  isConfirmed  Boolean   @default(false)
+  language    CrmLanguage   @default(uk)
 
-  options UserOptions?
+  isConfirmed Boolean       @default(false)
 
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
+  options     UserOptions?
+
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
 }
 
 model UserOptions {
@@ -33,5 +40,5 @@ model UserOptions {
   userId     String   @unique
   websiteUrl String?
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user       User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

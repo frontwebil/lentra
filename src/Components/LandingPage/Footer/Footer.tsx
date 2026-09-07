@@ -14,26 +14,8 @@ export function Footer({ dict, locale }: Props) {
   const year = new Date().getFullYear();
   const homeHref = locale === "en" ? "/en" : "/";
 
-  const handleClick = async () => {
-    const response = await fetch("/api/test-origin", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        name: "Illia",
-        message: "Hello",
-      }),
-    });
-
-    const data = await response.json();
-
-    console.log(data);
-  };
-
   return (
     <footer className="footer">
-      <button onClick={handleClick}>Send</button>
       <div className="container">
         <div className="footer-top">
           <div className="footer-brand">

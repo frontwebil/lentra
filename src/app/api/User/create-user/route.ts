@@ -13,53 +13,36 @@ export async function POST(req: Request) {
       return NextResponse.json({ message: "Forbidden" }, { status: 403 });
     }
 
-    const { name, surname, email, password, language } = await req.json();
+    const { phone, companyName, email, password, language } = await req.json();
 
-    const isExistEmail = await prisma.user.findFirst({
-      where: {
-        email,
-      },
-    });
-
-    if (isExistEmail) {
+    if (!phone || typeof phone !== "string" || !phone.trim()) {
       return NextResponse.json(
-        {
-          message: "EMAIL_ALREADY_EXISTS",
-        },
-        {
-          status: 409,
-        },
-      );
-    }
-
-    if (!name || name.trim().length < 3) {
-      return NextResponse.json(
-        { message: "Name must be at least 3 characters" },
+        { message: "Phone is required" },
         { status: 400 },
       );
     }
 
-    if (!surname || surname.trim().length < 3) {
+    if (
+      !companyName ||
+      typeof companyName !== "string" ||
+      companyName.trim().length < 3
+    ) {
       return NextResponse.json(
-        { message: "Surname must be at least 3 characters" },
+        {
+          message: "Company name must be at least 3 characters",
+        },
         { status: 400 },
       );
     }
 
-    if (!email || !email.trim()) {
+    if (!email || typeof email !== "string" || !email.trim()) {
       return NextResponse.json(
         { message: "Email is required" },
         { status: 400 },
       );
     }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-    if (!emailRegex.test(email)) {
-      return NextResponse.json({ message: "Invalid email" }, { status: 400 });
-    }
-
-    if (!password) {
+    if (!password || typeof password !== "string") {
       return NextResponse.json(
         { message: "Password is required" },
         { status: 400 },
@@ -68,41 +51,105 @@ export async function POST(req: Request) {
 
     if (password.length < 8) {
       return NextResponse.json(
-        { message: "Password must be at least 8 characters" },
+        {
+          message: "Password must be at least 8 characters",
+        },
         { status: 400 },
+      );
+    }
+
+    if (language !== "uk" && language !== "en") {
+      return NextResponse.json(
+        { message: "Invalid language" },
+        { status: 400 },
+      );
+    }
+
+    const normalizedPhone = phone.trim();
+    const normalizedCompanyName = companyName.trim();
+    const normalizedEmail = email.trim().toLowerCase();
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailRegex.test(normalizedEmail)) {
+      return NextResponse.json({ message: "Invalid email" }, { status: 400 });
+    }
+
+    const isExistEmail = await prisma.user.findUnique({
+      where: {
+        email: normalizedEmail,
+      },
+    });
+
+    const isExistPhone = await prisma.user.findUnique({
+      where: {
+        phone: phone.trim(),
+      },
+    });
+
+    if (isExistEmail) {
+      return NextResponse.json(
+        {
+          message: "EMAIL_ALREADY_EXISTS",
+        },
+        { status: 409 },
+      );
+    }
+
+    if (isExistPhone) {
+      return NextResponse.json(
+        {
+          message: "PHONE_ALREADY_EXISTS",
+        },
+        { status: 408 },
       );
     }
 
     const hashedPassword = await bcrypt.hash(password, 12);
 
-    await prisma.user.create({
+    const user = await prisma.user.create({
       data: {
-        firstName: name,
-        lastName: surname,
-        email,
+        phone: normalizedPhone,
+        companyName: normalizedCompanyName,
+        email: normalizedEmail,
         password: hashedPassword,
+        language,
       },
     });
 
-    const token = randomBytes(32).toString("hex");
+    try {
+      const token = randomBytes(32).toString("hex");
 
-    const key = `email-verification:${token}`;
+      const key = `email-verification:${token}`;
 
-    await redis.set(key, email, {
-      ex: 600,
-    });
+      await redis.set(key, normalizedEmail, {
+        ex: 600,
+      });
 
-    await sendVerificationEmail(email, token, language);
+      await sendVerificationEmail(normalizedEmail, token, language);
+    } catch (error) {
+      await prisma.user.delete({
+        where: {
+          id: user.id,
+        },
+      });
+
+      throw error;
+    }
 
     return NextResponse.json(
-      { message: "User created successfully" },
+      {
+        message: "User created successfully",
+      },
       { status: 201 },
     );
   } catch (error) {
     console.error(error);
 
     return NextResponse.json(
-      { message: "Something went wrong" },
+      {
+        message: "Something went wrong",
+      },
       { status: 500 },
     );
   }
