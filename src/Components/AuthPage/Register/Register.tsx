@@ -258,7 +258,11 @@ export function Register() {
                       id="phone"
                       name="phone"
                       type="tel"
-                      placeholder="+380 00 000 00 00"
+                      placeholder={
+                        isEnglish
+                          ? "Enter your phone number"
+                          : "Введіть номер телефону"
+                      }
                       autoComplete="tel"
                       required
                       value={formData.phone}
