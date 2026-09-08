@@ -48,7 +48,7 @@ export function LoginHeader() {
           </div>
 
           {pathname == "/register" ||
-            (pathname == "/recovery" && (
+            (pathname == "/forgot-password" && (
               <Link href={"/login"} className="login-header-button login">
                 {language == "en" ? "Sign In" : "Увійти"}
               </Link>
