@@ -53,8 +53,18 @@ export function ForgotPassword() {
 
       setSent(true);
     } catch (error) {
-      console.error("Forgot password error:", error);
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 429) {
+          toast.error(
+            isEnglish
+              ? "Too many attempts. Please try again later."
+              : "Забагато спроб. Спробуйте пізніше.",
+          );
+          return;
+        }
+      }
 
+      console.error("Forgot password error:", error);
       toast.error(
         isEnglish
           ? "Something went wrong. Please try again."

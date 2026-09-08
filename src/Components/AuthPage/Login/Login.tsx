@@ -86,6 +86,7 @@ export function Login() {
       );
       router.push("/dashboard");
     } catch (error) {
+      console.log(error);
       console.error("Login error:", error);
       toast.error(
         isEnglish

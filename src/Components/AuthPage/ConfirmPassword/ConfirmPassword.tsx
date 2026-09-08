@@ -7,7 +7,6 @@ import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
 import "./style.css";
-import axios from "axios";
 
 export function ConfirmPassword() {
   const router = useRouter();
@@ -61,6 +60,17 @@ export function ConfirmPassword() {
           },
           body: JSON.stringify({ token }),
         });
+
+        if (res.status === 429) {
+          toast.error(
+            isEnglish
+              ? "Too many attempts. Please try again later."
+              : "Забагато спроб. Спробуйте пізніше.",
+          );
+          router.replace("/login");
+          return;
+        }
+
         const data = await res.json();
 
         if (data.isValid) {
@@ -108,6 +118,16 @@ export function ConfirmPassword() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ token, password }),
       });
+
+      if (res.status === 429) {
+        toast.error(
+          isEnglish
+            ? "Too many attempts. Please try again later."
+            : "Забагато спроб. Спробуйте пізніше.",
+        );
+        return;
+      }
+
       if (!res.ok) {
         toast.error(
           isEnglish
