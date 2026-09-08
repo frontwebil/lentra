@@ -9,6 +9,7 @@ import { RootState } from "@/app/redux/languague/store";
 import { setLanguage } from "@/app/redux/languague/languageSlice";
 
 import "./style.css";
+import axios from "axios";
 
 export function ForgotPassword() {
   const dispatch = useDispatch();
@@ -48,27 +49,9 @@ export function ForgotPassword() {
     setLoading(true);
 
     try {
-      // Тут пізніше буде API:
-      //
-      // const response = await fetch("/api/auth/forgot-password", {
-      //   method: "POST",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      //   body: JSON.stringify({ email }),
-      // });
-      //
-      // if (!response.ok) {
-      //   throw new Error("Failed to send reset email");
-      // }
+      await axios.post("/api/User/forgot-password", { email });
 
       setSent(true);
-
-      toast.success(
-        isEnglish
-          ? "Reset link sent to your email"
-          : "Посилання для відновлення надіслано на вашу пошту",
-      );
     } catch (error) {
       console.error("Forgot password error:", error);
 
@@ -89,6 +72,11 @@ export function ForgotPassword() {
 
       <div className="forgot-password-container">
         <div className="forgot-password-card">
+          {loading && (
+            <div className="widget-loader">
+              <div className="loader" />
+            </div>
+          )}
           {!sent ? (
             <>
               <div className="forgot-password-header">

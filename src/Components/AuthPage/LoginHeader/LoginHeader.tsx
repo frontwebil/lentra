@@ -47,12 +47,17 @@ export function LoginHeader() {
             </button>
           </div>
 
-          {pathname == "/register" ||
-            (pathname == "/forgot-password" && (
-              <Link href={"/login"} className="login-header-button login">
-                {language == "en" ? "Sign In" : "Увійти"}
-              </Link>
-            ))}
+          {pathname == "/register" && (
+            <Link href={"/login"} className="login-header-button login">
+              {language == "en" ? "Sign In" : "Увійти"}
+            </Link>
+          )}
+
+          {pathname == "/forgot-password" && (
+            <Link href={"/login"} className="login-header-button login">
+              {language == "en" ? "Sign In" : "Увійти"}
+            </Link>
+          )}
 
           {pathname == "/login" && (
             <Link href={"/register"} className="login-header-button register">
