@@ -72,7 +72,6 @@ export function ForgotPassword() {
       );
     } finally {
       setLoading(false);
-      setEmail("");
     }
   };
 
