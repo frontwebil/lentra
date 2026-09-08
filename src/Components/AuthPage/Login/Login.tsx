@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 
 import "./style.css";
@@ -12,6 +13,7 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { toast } from "sonner";
 
 export function Login() {
+  const router = useRouter();
   const { language } = useSelector((store: RootState) => store.language);
   const [formData, setFormData] = useState({
     email: "",
@@ -82,7 +84,7 @@ export function Login() {
       toast.success(
         isEnglish ? "Successfully signed in" : "Ви успішно увійшли",
       );
-      window.location.href = "/dashboard";
+      router.push("/dashboard");
     } catch (error) {
       console.error("Login error:", error);
       toast.error(
@@ -141,9 +143,9 @@ export function Login() {
                 <label htmlFor="password">
                   {isEnglish ? "Password" : "Пароль"}
                 </label>
-                {/* <Link href="/forgot-password">
+                <Link href="/forgot-password">
                   {isEnglish ? "Forgot password?" : "Забули пароль?"}
-                </Link> */}
+                </Link>
               </div>
               <div style={{ position: "relative" }}>
                 <input
