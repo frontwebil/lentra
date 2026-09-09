@@ -13,11 +13,12 @@ import {
   RxGlobe,
   RxExit,
 } from "react-icons/rx";
+import { usePathname } from "next/navigation";
 
 export function SideBar() {
   const [isOpen, setIsOpen] = useState(true);
-
   const { data: session } = useSession();
+  const pathname = usePathname();
 
   const language = session?.user.language;
   const companyName = session?.user.companyName;
@@ -69,7 +70,7 @@ export function SideBar() {
               <Link
                 key={item.href}
                 href={item.href}
-                className="side-bar-nav-item"
+                className={`side-bar-nav-item ${pathname == item.href && "active"}`}
               >
                 <span className="side-bar-nav-icon">{item.icon}</span>
 
