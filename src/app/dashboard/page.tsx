@@ -11,10 +11,5 @@ export default function Dashboard() {
     router.replace("/login");
   }
 
-  return (
-    <div onClick={() => signOut()}>
-      Вийти <br />
-      Ця сторінка знаходиться в розробці  / This page is under development
-    </div>
-  );
+  return <div>1</div>;
 }

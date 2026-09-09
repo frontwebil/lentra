@@ -1,3 +1,4 @@
+import { SideBar } from "@/Components/Dashboard/SideBar/SideBar";
 import AuthSessionProvider from "@/lib/sessionProvider";
 
 export default function DashboardLayout({
@@ -8,6 +9,7 @@ export default function DashboardLayout({
   return (
     <AuthSessionProvider>
       <div className="dashboard">
+        <SideBar />
         <main>{children}</main>
       </div>
     </AuthSessionProvider>
