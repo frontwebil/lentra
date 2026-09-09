@@ -18,27 +18,35 @@ enum CrmLanguage {
 }
 
 model User {
-  id          String        @id @default(cuid())
+  id          String       @id @default(cuid())
 
-  phone       String        @unique
+  phone       String       @unique
   companyName String
-  email       String        @unique
+  email       String       @unique
   password    String
 
-  language    CrmLanguage   @default(uk)
+  language    CrmLanguage  @default(uk)
+  isConfirmed Boolean      @default(false)
 
-  isConfirmed Boolean       @default(false)
+  websites    Website[]
 
-  options     UserOptions?
-
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
 }
 
-model UserOptions {
-  id         String   @id @default(cuid())
-  userId     String   @unique
-  websiteUrl String?
+model Website {
+  id          String    @id @default(cuid())
+  userId      String
 
-  user       User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  xSiteId     String   @unique
+
+  websiteName String
+  websiteUrl  String
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([userId])
 }

@@ -10,7 +10,7 @@ export default function DashboardLayout({
     <AuthSessionProvider>
       <div className="dashboard">
         <SideBar />
-        <main>{children}</main>
+        {children}
       </div>
     </AuthSessionProvider>
   );

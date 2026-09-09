@@ -2,7 +2,7 @@
 
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./style.css";
 
 import {
@@ -15,12 +15,14 @@ import {
   RxLink2,
 } from "react-icons/rx";
 import { usePathname } from "next/navigation";
+import { useDispatch } from "react-redux";
+import { setLanguage } from "@/app/redux/languague/languageSlice";
 
 export function SideBar() {
   const [isOpen, setIsOpen] = useState(true);
   const { data: session } = useSession();
   const pathname = usePathname();
-
+  const dispatch = useDispatch();
   const language = session?.user.language;
   const companyName = session?.user.companyName;
 
@@ -36,7 +38,7 @@ export function SideBar() {
       label: language === "en" ? "Leads" : "Заявки",
     },
     {
-      href: "/sites",
+      href: "/dashboard/sites-config",
       icon: <RxGlobe />,
       label: language === "en" ? "Sites" : "Сайти",
     },
@@ -46,6 +48,13 @@ export function SideBar() {
       label: language === "en" ? "Connect Leads" : "Підключити заявки",
     },
   ];
+
+  useEffect(() => {
+    if (!language) return;
+
+    dispatch(setLanguage(language));
+    localStorage.setItem("language", language);
+  }, [dispatch, language]);
 
   return (
     <>
