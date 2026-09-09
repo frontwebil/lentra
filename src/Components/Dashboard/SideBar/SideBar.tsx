@@ -12,6 +12,7 @@ import {
   RxGear,
   RxGlobe,
   RxExit,
+  RxLink2,
 } from "react-icons/rx";
 import { usePathname } from "next/navigation";
 
@@ -41,8 +42,8 @@ export function SideBar() {
     },
     {
       href: "/settings",
-      icon: <RxGear />,
-      label: language === "en" ? "Settings" : "Налаштування",
+      icon: <RxLink2 />,
+      label: language === "en" ? "Connect Leads" : "Підключити заявки",
     },
   ];
 
@@ -85,10 +86,12 @@ export function SideBar() {
         <div className="side-bard-buttons">
           <Link href="/profile" className="side-bar-button">
             <span className="side-bar-button-icon">
-              <RxPerson />
+              <RxGear />
             </span>
 
-            {isOpen && <span>{language === "en" ? "Profile" : "Профіль"}</span>}
+            {isOpen && (
+              <span>{language === "en" ? "Setting" : "Налаштування"}</span>
+            )}
           </Link>
 
           <button
