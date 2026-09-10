@@ -1,5 +1,6 @@
 import { Login } from "@/Components/AuthPage/Login/Login";
 import { LoginHeader } from "@/Components/AuthPage/LoginHeader/LoginHeader";
+import { authOptions } from "@/lib/auth";
 import AuthSessionProvider from "@/lib/sessionProvider";
 import { Metadata } from "next";
 import { getServerSession } from "next-auth";
@@ -10,7 +11,7 @@ export const metadata: Metadata = {
 };
 
 export default async function LoginPage() {
-  const session = await getServerSession();
+  const session = await getServerSession(authOptions);
 
   if (session) {
     redirect("/dashboard");

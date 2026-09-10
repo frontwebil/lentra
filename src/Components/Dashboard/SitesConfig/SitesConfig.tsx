@@ -1,5 +1,10 @@
 "use client";
 
+// type LeadField = {
+//   name: string;
+//   required: boolean;
+// };
+
 import { useSession } from "next-auth/react";
 import { RxCross2, RxGlobe, RxPencil1, RxPlus, RxTrash } from "react-icons/rx";
 import "./style.css";
@@ -20,6 +25,23 @@ export function SitesConfig() {
     url: "",
   });
 
+  const [formLoading, setFormLoading] = useState(false);
+
+  // const [leadFields, setLeadFields] = useState<LeadField[]>([
+  //   {
+  //     name: "Ім'я",
+  //     required: true,
+  //   },
+  //   {
+  //     name: "Номер телефону",
+  //     required: true,
+  //   },
+  //   {
+  //     name: "Коментар",
+  //     required: false,
+  //   },
+  // ]);
+
   useEffect(() => {
     const getWebsites = async () => {
       try {
@@ -39,11 +61,87 @@ export function SitesConfig() {
     getWebsites();
   }, [language]);
 
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (formLoading || loading) {
+      return;
+    }
+
+    if (!formData.url || !formData.websiteName) {
+      toast.error(
+        language === "en"
+          ? "Please fill in all fields"
+          : "Будь ласка, заповніть всі поля",
+      );
+      return;
+    }
+
+    setFormLoading(true);
+
+    try {
+      const response = await axios.post(
+        "/api/crm/sites-config/create-site",
+        formData,
+      );
+
+      setWebsites((prev) => [...prev, response.data.website]);
+
+      toast.success(
+        language === "en"
+          ? "Website added successfully"
+          : "Сайт успішно додано",
+      );
+
+      setFormData({
+        websiteName: "",
+        url: "",
+      });
+
+      setIsModalOpen(false);
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        toast.error(
+          error.response?.data?.message ||
+            (language === "en"
+              ? "Failed to add website"
+              : "Не вдалося додати сайт"),
+        );
+      } else {
+        toast.error(
+          language === "en" ? "Something went wrong" : "Щось пішло не так",
+        );
+      }
+    } finally {
+      setFormLoading(false);
+    }
+  };
+
+  const deleteSite = async (id: string) => {
+    try {
+      await axios.delete("/api/crm/sites-config/create-site", {
+        data: { id },
+      });
+      toast.success(
+        language === "en"
+          ? "Website deleted successfully"
+          : "Сайт успішно видалено",
+      );
+
+      setWebsites((prev) => prev.filter((website) => website.id !== id));
+    } catch (error) {
+      console.error(error);
+      toast.error(
+        language === "en" ? "Something went wrong" : "Щось пішло не так",
+      );
+    }
+  };
+
   return (
     <div className="websites-page">
       {loading && (
         <div className="widget-loader">
-          <div className="loader" />
+          <div className="loader" style={{ borderTopColor: "#000" }} />
         </div>
       )}
       <div className="websites-page-top">
@@ -135,7 +233,10 @@ export function SitesConfig() {
                         <RxPencil1 />
                       </button>
 
-                      <button className="website-action website-delete">
+                      <button
+                        className="website-action website-delete"
+                        onClick={() => deleteSite(website.id)}
+                      >
                         <RxTrash />
                       </button>
                     </div>
@@ -208,7 +309,7 @@ export function SitesConfig() {
               </button>
             </div>
 
-            <form className="website-form">
+            <form className="website-form" onSubmit={handleSubmit}>
               <div className="website-form-field">
                 <label>
                   {language === "en" ? "Website name" : "Назва сайту"}
@@ -237,13 +338,94 @@ export function SitesConfig() {
                 />
               </div>
 
+              {/* <div className="website-form-field">
+                <div className="lead-schema-title-top">
+                  <span className="lead-schema-label">
+                    {language === "en"
+                      ? "Data received from website"
+                      : "Дані які приймаємо з сайту"}
+                  </span>
+                  <button
+                    type="button"
+                    className="lead-schema-title-button"
+                    onClick={() =>
+                      setLeadFields([
+                        ...leadFields,
+                        { name: "", required: false },
+                      ])
+                    }
+                  >
+                    <span>
+                      {language === "en" ? "Add field" : "Додати поле"}
+                    </span>
+                    <RxPlus />
+                  </button>
+                </div>
+
+                <div className="lead-schema-fields">
+                  {leadFields.map((field, index) => (
+                    <div className="lead-schema-field-row" key={index}>
+                      <input
+                        type="text"
+                        placeholder={
+                          language === "en" ? "Field name" : "Назва поля"
+                        }
+                        value={field.name}
+                        onChange={(e) => {
+                          const updated = [...leadFields];
+                          updated[index] = {
+                            ...updated[index],
+                            name: e.target.value,
+                          };
+                          setLeadFields(updated);
+                        }}
+                      />
+                      <label className="lead-schema-required-label">
+                        <input
+                          type="checkbox"
+                          checked={field.required}
+                          onChange={(e) => {
+                            const updated = [...leadFields];
+                            updated[index] = {
+                              ...updated[index],
+                              required: e.target.checked,
+                            };
+                            setLeadFields(updated);
+                          }}
+                        />
+                        {language === "en" ? "Required" : "Обов'язкове"}
+                      </label>
+                      <button
+                        type="button"
+                        className="lead-schema-field-remove"
+                        onClick={() =>
+                          setLeadFields(
+                            leadFields.filter((_, i) => i !== index),
+                          )
+                        }
+                      >
+                        <RxCross2 />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div> */}
+
               <button
                 type="submit"
                 className="websites-add-button website-form-submit"
+                disabled={formLoading}
               >
                 <RxPlus />
-
-                <span>{language === "en" ? "Add website" : "Додати сайт"}</span>
+                <span>
+                  {formLoading
+                    ? language === "en"
+                      ? "Adding..."
+                      : "Додавання..."
+                    : language === "en"
+                      ? "Add website"
+                      : "Додати сайт"}
+                </span>
               </button>
             </form>
           </div>
