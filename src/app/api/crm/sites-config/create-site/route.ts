@@ -102,3 +102,58 @@ export async function DELETE(req: Request) {
     success: true,
   });
 }
+
+export async function PUT(req: Request) {
+  const session = await getServerSession(authOptions);
+
+  if (!session?.user?.id) {
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  }
+
+  const { id, websiteName, url, leadFields } = await req.json();
+
+  if (!id || !websiteName || !url) {
+    return NextResponse.json(
+      { message: "Website ID, name and URL are required" },
+      { status: 400 },
+    );
+  }
+
+  const website = await prisma.website.findFirst({
+    where: {
+      id,
+      userId: session.user.id,
+    },
+  });
+
+  if (!website) {
+    return NextResponse.json({ message: "Website not found" }, { status: 404 });
+  }
+
+  const isValidSite = await validateWebsiteUrl(url);
+
+  if (!isValidSite) {
+    return NextResponse.json(
+      { message: "Website is invalid" },
+      { status: 403 },
+    );
+  }
+
+  const updatedWebsite = await prisma.website.update({
+    where: {
+      id: website.id,
+    },
+    data: {
+      websiteName,
+      websiteUrl: normalizeUrl(url),
+      leadSchema: leadFields,
+    },
+  });
+
+  return NextResponse.json(
+    {
+      website: updatedWebsite,
+    },
+    { status: 200 },
+  );
+}
