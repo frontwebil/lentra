@@ -29,6 +29,7 @@ model User {
   isConfirmed Boolean      @default(false)
 
   websites    Website[]
+  leeds       Lead[]
 
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
@@ -43,6 +44,7 @@ model Website {
   websiteName String
   websiteUrl  String
   leadSchema  Json?
+  leads       Lead[]
 
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -50,4 +52,23 @@ model Website {
   updatedAt   DateTime  @updatedAt
 
   @@index([userId])
+}
+
+
+model Lead {
+  id        String     @id @default(cuid())
+  userId    String
+  websiteId String     
+
+  fields    Json
+  status    String     @default("NEW")
+
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  website   Website    @relation(fields: [websiteId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  @@index([userId])
+  @@index([websiteId])
 }

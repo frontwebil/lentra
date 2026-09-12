@@ -1,18 +1,16 @@
 "use client";
 
-// type LeadField = {
-//   name: string;
-//   required: boolean;
-// };
-
 import { useSession } from "next-auth/react";
-import { RxCross2, RxGlobe, RxPencil1, RxPlus, RxTrash } from "react-icons/rx";
+import { RxGlobe, RxLink2, RxPencil1, RxPlus, RxTrash } from "react-icons/rx";
 import "./style.css";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Website } from "@/generated/prisma/client";
 import axios from "axios";
 import { toast } from "sonner";
+import { SitesConfigAddModal } from "./SitesConfigAddModal";
+import { DeleteSiteModal } from "./DeleteSiteModal";
+import { SitesConfigEditModal } from "./SitesConfigEditModal";
 
 export function SitesConfig() {
   const { data: session } = useSession();
@@ -20,27 +18,10 @@ export function SitesConfig() {
   const [websites, setWebsites] = useState<Website[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [formData, setFormData] = useState({
-    websiteName: "",
-    url: "",
-  });
-
-  const [formLoading, setFormLoading] = useState(false);
-
-  // const [leadFields, setLeadFields] = useState<LeadField[]>([
-  //   {
-  //     name: "Ім'я",
-  //     required: true,
-  //   },
-  //   {
-  //     name: "Номер телефону",
-  //     required: true,
-  //   },
-  //   {
-  //     name: "Коментар",
-  //     required: false,
-  //   },
-  // ]);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [siteToDelete, setSiteToDelete] = useState<Website | null>(null);
+  const [isModalEditOpen, setIsModalEditOpen] = useState(false);
+  const [selectedWebsite, setSelectedWebsite] = useState<Website | null>(null);
 
   useEffect(() => {
     const getWebsites = async () => {
@@ -61,67 +42,18 @@ export function SitesConfig() {
     getWebsites();
   }, [language]);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    if (formLoading || loading) {
-      return;
-    }
-
-    if (!formData.url || !formData.websiteName) {
-      toast.error(
-        language === "en"
-          ? "Please fill in all fields"
-          : "Будь ласка, заповніть всі поля",
-      );
-      return;
-    }
-
-    setFormLoading(true);
-
-    try {
-      const response = await axios.post(
-        "/api/crm/sites-config/create-site",
-        formData,
-      );
-
-      setWebsites((prev) => [...prev, response.data.website]);
-
-      toast.success(
-        language === "en"
-          ? "Website added successfully"
-          : "Сайт успішно додано",
-      );
-
-      setFormData({
-        websiteName: "",
-        url: "",
-      });
-
-      setIsModalOpen(false);
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        toast.error(
-          error.response?.data?.message ||
-            (language === "en"
-              ? "Failed to add website"
-              : "Не вдалося додати сайт"),
-        );
-      } else {
-        toast.error(
-          language === "en" ? "Something went wrong" : "Щось пішло не так",
-        );
-      }
-    } finally {
-      setFormLoading(false);
-    }
-  };
-
   const deleteSite = async (id: string) => {
+    if (loading) {
+      return;
+    }
+
+    setLoading(true);
+
     try {
       await axios.delete("/api/crm/sites-config/create-site", {
         data: { id },
       });
+
       toast.success(
         language === "en"
           ? "Website deleted successfully"
@@ -129,11 +61,16 @@ export function SitesConfig() {
       );
 
       setWebsites((prev) => prev.filter((website) => website.id !== id));
+      setIsDeleteModalOpen(false);
+      setSiteToDelete(null);
     } catch (error) {
       console.error(error);
+
       toast.error(
         language === "en" ? "Something went wrong" : "Щось пішло не так",
       );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -229,20 +166,62 @@ export function SitesConfig() {
 
                   <td>
                     <div className="website-actions">
-                      <button className="website-action">
+                      <button
+                        className="website-action"
+                        onClick={() => {
+                          setSelectedWebsite(website);
+                          setIsModalEditOpen(true);
+                        }}
+                      >
                         <RxPencil1 />
                       </button>
 
                       <button
                         className="website-action website-delete"
-                        onClick={() => deleteSite(website.id)}
+                        onClick={() => {
+                          setSiteToDelete(website);
+                          setIsDeleteModalOpen(true);
+                        }}
+                        disabled={loading}
                       >
                         <RxTrash />
                       </button>
+                      <Link
+                        href={`/settings/${website.id}`}
+                        className="website-actions-connect"
+                      >
+                        <span>
+                          {language === "en"
+                            ? "Connect Leads"
+                            : "Підключити заявки"}
+                        </span>
+                        <button className="website-action">
+                          <RxLink2 />
+                        </button>
+                      </Link>
                     </div>
                   </td>
                 </tr>
               ))}
+              {isDeleteModalOpen && siteToDelete && (
+                <DeleteSiteModal
+                  setIsModalOpen={setIsDeleteModalOpen}
+                  onConfirm={() => deleteSite(siteToDelete.id)}
+                  websiteName={siteToDelete.websiteName}
+                  language={language}
+                  loading={loading}
+                />
+              )}
+
+              {isModalEditOpen && selectedWebsite && (
+                <SitesConfigEditModal
+                  setIsModalEditOpen={setIsModalEditOpen}
+                  language={language}
+                  loading={loading}
+                  setWebsites={setWebsites}
+                  website={selectedWebsite}
+                />
+              )}
             </tbody>
           </table>
         ) : (
@@ -280,156 +259,12 @@ export function SitesConfig() {
       </div>
 
       {isModalOpen && (
-        <div
-          className="website-modal-overlay"
-          onClick={() => setIsModalOpen(false)}
-        >
-          <div
-            className="website-modal"
-            onClick={(event) => event.stopPropagation()}
-          >
-            <div className="website-modal-top">
-              <div>
-                <h2 className="website-modal-title">
-                  {language === "en" ? "Add website" : "Додати сайт"}
-                </h2>
-
-                <p className="website-modal-description">
-                  {language === "en"
-                    ? "Connect a website to start receiving leads."
-                    : "Підключіть сайт, щоб почати отримувати заявки."}
-                </p>
-              </div>
-
-              <button
-                className="website-modal-close"
-                onClick={() => setIsModalOpen(false)}
-              >
-                <RxCross2 />
-              </button>
-            </div>
-
-            <form className="website-form" onSubmit={handleSubmit}>
-              <div className="website-form-field">
-                <label>
-                  {language === "en" ? "Website name" : "Назва сайту"}
-                </label>
-
-                <input
-                  type="text"
-                  placeholder={language === "en" ? "My website" : "Мій сайт"}
-                  value={formData.websiteName}
-                  onChange={(e) =>
-                    setFormData({ ...formData, websiteName: e.target.value })
-                  }
-                />
-              </div>
-
-              <div className="website-form-field">
-                <label>URL</label>
-
-                <input
-                  type="url"
-                  placeholder="https://example.com"
-                  value={formData.url}
-                  onChange={(e) =>
-                    setFormData({ ...formData, url: e.target.value })
-                  }
-                />
-              </div>
-
-              {/* <div className="website-form-field">
-                <div className="lead-schema-title-top">
-                  <span className="lead-schema-label">
-                    {language === "en"
-                      ? "Data received from website"
-                      : "Дані які приймаємо з сайту"}
-                  </span>
-                  <button
-                    type="button"
-                    className="lead-schema-title-button"
-                    onClick={() =>
-                      setLeadFields([
-                        ...leadFields,
-                        { name: "", required: false },
-                      ])
-                    }
-                  >
-                    <span>
-                      {language === "en" ? "Add field" : "Додати поле"}
-                    </span>
-                    <RxPlus />
-                  </button>
-                </div>
-
-                <div className="lead-schema-fields">
-                  {leadFields.map((field, index) => (
-                    <div className="lead-schema-field-row" key={index}>
-                      <input
-                        type="text"
-                        placeholder={
-                          language === "en" ? "Field name" : "Назва поля"
-                        }
-                        value={field.name}
-                        onChange={(e) => {
-                          const updated = [...leadFields];
-                          updated[index] = {
-                            ...updated[index],
-                            name: e.target.value,
-                          };
-                          setLeadFields(updated);
-                        }}
-                      />
-                      <label className="lead-schema-required-label">
-                        <input
-                          type="checkbox"
-                          checked={field.required}
-                          onChange={(e) => {
-                            const updated = [...leadFields];
-                            updated[index] = {
-                              ...updated[index],
-                              required: e.target.checked,
-                            };
-                            setLeadFields(updated);
-                          }}
-                        />
-                        {language === "en" ? "Required" : "Обов'язкове"}
-                      </label>
-                      <button
-                        type="button"
-                        className="lead-schema-field-remove"
-                        onClick={() =>
-                          setLeadFields(
-                            leadFields.filter((_, i) => i !== index),
-                          )
-                        }
-                      >
-                        <RxCross2 />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </div> */}
-
-              <button
-                type="submit"
-                className="websites-add-button website-form-submit"
-                disabled={formLoading}
-              >
-                <RxPlus />
-                <span>
-                  {formLoading
-                    ? language === "en"
-                      ? "Adding..."
-                      : "Додавання..."
-                    : language === "en"
-                      ? "Add website"
-                      : "Додати сайт"}
-                </span>
-              </button>
-            </form>
-          </div>
-        </div>
+        <SitesConfigAddModal
+          setIsModalOpen={setIsModalOpen}
+          language={language}
+          loading={loading}
+          setWebsites={setWebsites}
+        />
       )}
     </div>
   );

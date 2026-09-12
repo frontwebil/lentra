@@ -39,7 +39,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
 
-  const { websiteName, url } = await req.json();
+  const { websiteName, url, leadFields } = await req.json();
 
   if (!websiteName || !url) {
     return NextResponse.json(
@@ -63,8 +63,9 @@ export async function POST(req: Request) {
     data: {
       userId: session.user.id,
       websiteName,
-      websiteUrl: url,
+      websiteUrl: normalizeUrl(url),
       xSiteId,
+      leadSchema: leadFields,
     },
   });
 
