@@ -44,7 +44,7 @@ export async function POST(req: Request) {
   console.log(data, siteSchema);
 
   for (const field of siteSchema) {
-    
+
   }
 
   // console.log("Origin:", origin);

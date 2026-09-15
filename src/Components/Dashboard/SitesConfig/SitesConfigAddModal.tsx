@@ -297,6 +297,7 @@ export function SitesConfigAddModal({
                   <button
                     type="button"
                     className="lead-schema-field-remove"
+                    disabled={leadFields.length <= 1}
                     onClick={() =>
                       setLeadFields(leadFields.filter((_, i) => i !== index))
                     }
