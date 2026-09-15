@@ -14,6 +14,13 @@ export async function GET() {
     where: {
       userId: session.user.id,
     },
+    include: {
+      _count: {
+        select: {
+          leads: true,
+        },
+      },
+    },
   });
 
   return NextResponse.json({ websites }, { status: 200 });

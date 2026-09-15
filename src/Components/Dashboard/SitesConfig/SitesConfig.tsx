@@ -145,8 +145,13 @@ export function SitesConfig() {
                     <span className="website-x-site-id">{website.xSiteId}</span>
                   </td>
 
-                  <td>
-                    <span className="website-leads">0</span>
+                  <td style={{ textAlign: "center" }}>
+                    <span className="website-leads">
+                      {
+                        (website as Website & { _count: { leads: number } })
+                          ._count.leads
+                      }
+                    </span>
                   </td>
 
                   <td>
@@ -187,7 +192,7 @@ export function SitesConfig() {
                         <RxTrash />
                       </button>
                       <Link
-                        href={`/settings/${website.id}`}
+                        href={`/dashboard/connect-leads/${website.id}`}
                         className="website-actions-connect"
                       >
                         <span>
