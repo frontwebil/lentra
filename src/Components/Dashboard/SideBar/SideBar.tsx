@@ -43,7 +43,7 @@ export function SideBar() {
       label: language === "en" ? "Sites" : "Сайти",
     },
     {
-      href: "/settings",
+      href: "/dashboard/connect-leads",
       icon: <RxLink2 />,
       label: language === "en" ? "Connect Leads" : "Підключити заявки",
     },

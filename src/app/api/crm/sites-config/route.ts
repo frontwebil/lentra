@@ -18,4 +18,3 @@ export async function GET() {
 
   return NextResponse.json({ websites }, { status: 200 });
 }
-

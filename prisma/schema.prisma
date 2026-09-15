@@ -43,7 +43,7 @@ model Website {
 
   websiteName String
   websiteUrl  String
-  leadSchema  Json?
+  leadSchema  Json
   leads       Lead[]
 
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
