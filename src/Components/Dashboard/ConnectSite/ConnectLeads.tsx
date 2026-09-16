@@ -97,7 +97,7 @@ export function ConnectLeads() {
 
     schema.forEach((field) => {
       if (field.type === "date") {
-        data[field.key] = new Date().toISOString();
+        data[field.key] = new Date().toISOString().split("T")[0];
       } else {
         data[field.key] = `Example ${field.label}`;
       }
@@ -111,14 +111,14 @@ export function ConnectLeads() {
       return "";
     }
 
-    return `fetch("https://lentra.tech/api/leed", {
+    return `fetch("https://www.lentra.tech/api/leed", {
   method: "POST",
   headers: {
     "Content-Type": "application/json",
     "x-site-id": "${selectedWebsite.xSiteId}",
   },
   body: JSON.stringify(${JSON.stringify(exampleData, null, 2)}),
-`;
+});`;
   }, [selectedWebsite, exampleData]);
 
   const jsonCode = JSON.stringify(exampleData, null, 2);
@@ -168,260 +168,270 @@ export function ConnectLeads() {
 
   return (
     <div className="connect-leads">
-      {loading && (
+      {loading || !language ? (
         <div className="widget-loader">
           <div className="loader" style={{ borderTopColor: "#000" }} />
         </div>
-      )}
+      ) : (
+        <>
+          <div className="connect-leads-header">
+            <h1>
+              {language === "en" ? "Connect leads" : "Підключення заявок"}
+            </h1>
 
-      <div className="connect-leads-header">
-        <h1>{language === "en" ? "Connect leads" : "Підключення заявок"}</h1>
-
-        <p>
-          {language === "en"
-            ? "Connect your websites to Lentra and send leads directly to your CRM."
-            : "Підключіть свої сайти до Lentra та надсилайте заявки прямо у вашу CRM."}
-        </p>
-      </div>
-
-      <div className="connect-leads-layout">
-        <aside className="connect-leads-sidebar">
-          <div className="connect-leads-sidebar-title">
-            {language === "en" ? "Websites" : "Сайти"}
+            <p>
+              {language === "en"
+                ? "Connect your websites to Lentra and send leads directly to your CRM."
+                : "Підключіть свої сайти до Lentra та надсилайте заявки прямо у вашу CRM."}
+            </p>
           </div>
 
-          <div className="connect-leads-websites">
-            {websites.map((website) => (
-              <button
-                key={website.id}
-                type="button"
-                className={
-                  selectedWebsite?.id === website.id
-                    ? "connect-leads-website active"
-                    : "connect-leads-website"
-                }
-                onClick={() => setSelectedWebsite(website)}
-              >
-                <span className="connect-leads-website-icon">
-                  <RxGlobe />
-                </span>
+          <div className="connect-leads-layout">
+            <aside className="connect-leads-sidebar">
+              <div className="connect-leads-sidebar-title">
+                {language === "en" ? "Websites" : "Сайти"}
+              </div>
 
-                <span className="connect-leads-website-info">
-                  <span className="connect-leads-website-name">
-                    {website.websiteName}
-                  </span>
+              <div className="connect-leads-websites">
+                {websites.map((website) => (
+                  <button
+                    key={website.id}
+                    type="button"
+                    className={
+                      selectedWebsite?.id === website.id
+                        ? "connect-leads-website active"
+                        : "connect-leads-website"
+                    }
+                    onClick={() => setSelectedWebsite(website)}
+                  >
+                    <span className="connect-leads-website-icon">
+                      <RxGlobe />
+                    </span>
 
-                  <span className="connect-leads-website-url">
-                    {website.websiteUrl}
-                  </span>
-                </span>
-              </button>
-            ))}
-          </div>
-        </aside>
+                    <span className="connect-leads-website-info">
+                      <span className="connect-leads-website-name">
+                        {website.websiteName}
+                      </span>
 
-        {selectedWebsite && (
-          <main className="connect-leads-content">
-            <div className="connect-leads-site-header">
-              <div>
-                <div className="connect-leads-site-title-row">
-                  <div className="connect-leads-site-icon">
-                    <RxGlobe />
-                  </div>
+                      <span className="connect-leads-website-url">
+                        {website.websiteUrl}
+                      </span>
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </aside>
 
+            {selectedWebsite && (
+              <main className="connect-leads-content">
+                <div className="connect-leads-site-header">
                   <div>
-                    <h2>{selectedWebsite.websiteName}</h2>
-
-                    <p>{selectedWebsite.websiteUrl}</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <section className="connect-leads-section">
-              <div className="connect-leads-section-top">
-                <div>
-                  <h3>Site ID</h3>
-
-                  <p>
-                    {language === "en"
-                      ? "Use this ID when sending leads to Lentra."
-                      : "Використовуйте цей ID для надсилання заявок у Lentra."}
-                  </p>
-                </div>
-
-                <button
-                  type="button"
-                  className="connect-leads-copy-button"
-                  onClick={() =>
-                    copyToClipboard(selectedWebsite.xSiteId, "site-id")
-                  }
-                >
-                  {copied === "site-id" ? <RxCheck /> : <RxCopy />}
-
-                  {copied === "site-id"
-                    ? language === "en"
-                      ? "Copied"
-                      : "Скопійовано"
-                    : language === "en"
-                      ? "Copy"
-                      : "Копіювати"}
-                </button>
-              </div>
-
-              <div className="connect-leads-site-id">
-                {selectedWebsite.xSiteId}
-              </div>
-            </section>
-
-            <section className="connect-leads-section">
-              <div className="connect-leads-section-top">
-                <div>
-                  <h3>
-                    {language === "en" ? "Send leads" : "Надсилання заявок"}
-                  </h3>
-
-                  <p>
-                    {language === "en"
-                      ? "Add this request to your website to send leads to Lentra."
-                      : "Додайте цей запит на свій сайт, щоб надсилати заявки в Lentra."}
-                  </p>
-                </div>
-
-                <button
-                  type="button"
-                  className="connect-leads-copy-button"
-                  onClick={() => copyToClipboard(fetchCode, "fetch")}
-                >
-                  {copied === "fetch" ? <RxCheck /> : <RxClipboard />}
-
-                  {copied === "fetch"
-                    ? language === "en"
-                      ? "Copied"
-                      : "Скопійовано"
-                    : language === "en"
-                      ? "Copy code"
-                      : "Копіювати код"}
-                </button>
-              </div>
-
-              <pre className="connect-leads-code">
-                <code>{fetchCode}</code>
-              </pre>
-            </section>
-
-            <section className="connect-leads-section">
-              <div className="connect-leads-section-top">
-                <div>
-                  <h3>{language === "en" ? "Lead fields" : "Поля заявки"}</h3>
-
-                  <p>
-                    {language === "en"
-                      ? "These fields are configured for this website."
-                      : "Ці поля налаштовані для цього сайту."}
-                  </p>
-                </div>
-              </div>
-
-              <div className="connect-leads-fields">
-                {leadSchema.length === 0 ? (
-                  <div className="connect-leads-no-fields">
-                    {language === "en"
-                      ? "No lead fields configured."
-                      : "Поля заявки не налаштовані."}
-                  </div>
-                ) : (
-                  leadSchema.map((field) => (
-                    <div className="connect-leads-field" key={field.key}>
-                      <div className="connect-leads-field-info">
-                        <span className="connect-leads-field-label">
-                          {field.label}
-                        </span>
-
-                        <span className="connect-leads-field-key">
-                          {field.key}
-                        </span>
+                    <div className="connect-leads-site-title-row">
+                      <div className="connect-leads-site-icon">
+                        <RxGlobe />
                       </div>
 
-                      <span className="connect-leads-field-type">
-                        {field.type === "date" ? "date (ISO 8601)" : field.type}
-                      </span>
+                      <div>
+                        <h2>{selectedWebsite.websiteName}</h2>
 
-                      <span
-                        className={
-                          field.required
-                            ? "connect-leads-required"
-                            : "connect-leads-optional"
-                        }
-                      >
-                        {field.required
-                          ? language === "en"
-                            ? "Required"
-                            : "Обов'язкове"
-                          : language === "en"
-                            ? "Optional"
-                            : "Необов'язкове"}
-                      </span>
+                        <p>{selectedWebsite.websiteUrl}</p>
+                      </div>
                     </div>
-                  ))
-                )}
-              </div>
-            </section>
-
-            <section className="connect-leads-section">
-              <div className="connect-leads-section-top">
-                <div>
-                  <h3>{language === "en" ? "Request body" : "Тіло запиту"}</h3>
-
-                  <p>
-                    {language === "en"
-                      ? "Example JSON that can be sent to the API."
-                      : "Приклад JSON, який можна надіслати до API."}
-                  </p>
+                  </div>
                 </div>
 
-                <button
-                  type="button"
-                  className="connect-leads-copy-button"
-                  onClick={() => copyToClipboard(jsonCode, "json")}
-                >
-                  {copied === "json" ? <RxCheck /> : <RxClipboard />}
+                <section className="connect-leads-section">
+                  <div className="connect-leads-section-top">
+                    <div>
+                      <h3>Site ID</h3>
 
-                  {copied === "json"
-                    ? language === "en"
-                      ? "Copied"
-                      : "Скопійовано"
-                    : language === "en"
-                      ? "Copy JSON"
-                      : "Копіювати JSON"}
-                </button>
-              </div>
+                      <p>
+                        {language === "en"
+                          ? "Use this ID when sending leads to Lentra."
+                          : "Використовуйте цей ID для надсилання заявок у Lentra."}
+                      </p>
+                    </div>
 
-              <pre className="connect-leads-code">
-                <code>{jsonCode}</code>
-              </pre>
-            </section>
+                    <button
+                      type="button"
+                      className="connect-leads-copy-button"
+                      onClick={() =>
+                        copyToClipboard(selectedWebsite.xSiteId, "site-id")
+                      }
+                    >
+                      {copied === "site-id" ? <RxCheck /> : <RxCopy />}
 
-            <section className="connect-leads-section">
-              <div className="connect-leads-domain">
-                <div>
-                  <h3>
-                    {language === "en" ? "Allowed domain" : "Дозволений домен"}
-                  </h3>
+                      {copied === "site-id"
+                        ? language === "en"
+                          ? "Copied"
+                          : "Скопійовано"
+                        : language === "en"
+                          ? "Copy"
+                          : "Копіювати"}
+                    </button>
+                  </div>
 
-                  <p>
-                    {language === "en"
-                      ? "Requests must come from the connected website domain."
-                      : "Запити повинні надходити з домену підключеного сайту."}
-                  </p>
-                </div>
+                  <div className="connect-leads-site-id">
+                    {selectedWebsite.xSiteId}
+                  </div>
+                </section>
 
-                <span>{selectedWebsite.websiteUrl}</span>
-              </div>
-            </section>
-          </main>
-        )}
-      </div>
+                <section className="connect-leads-section">
+                  <div className="connect-leads-section-top">
+                    <div>
+                      <h3>
+                        {language === "en" ? "Send leads" : "Надсилання заявок"}
+                      </h3>
+
+                      <p>
+                        {language === "en"
+                          ? "Add this request to your website to send leads to Lentra."
+                          : "Додайте цей запит на свій сайт, щоб надсилати заявки в Lentra."}
+                      </p>
+                    </div>
+
+                    <button
+                      type="button"
+                      className="connect-leads-copy-button"
+                      onClick={() => copyToClipboard(fetchCode, "fetch")}
+                    >
+                      {copied === "fetch" ? <RxCheck /> : <RxClipboard />}
+
+                      {copied === "fetch"
+                        ? language === "en"
+                          ? "Copied"
+                          : "Скопійовано"
+                        : language === "en"
+                          ? "Copy code"
+                          : "Копіювати код"}
+                    </button>
+                  </div>
+
+                  <pre className="connect-leads-code">
+                    <code>{fetchCode}</code>
+                  </pre>
+                </section>
+
+                <section className="connect-leads-section">
+                  <div className="connect-leads-section-top">
+                    <div>
+                      <h3>
+                        {language === "en" ? "Lead fields" : "Поля заявки"}
+                      </h3>
+
+                      <p>
+                        {language === "en"
+                          ? "These fields are configured for this website."
+                          : "Ці поля налаштовані для цього сайту."}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="connect-leads-fields">
+                    {leadSchema.length === 0 ? (
+                      <div className="connect-leads-no-fields">
+                        {language === "en"
+                          ? "No lead fields configured."
+                          : "Поля заявки не налаштовані."}
+                      </div>
+                    ) : (
+                      leadSchema.map((field) => (
+                        <div className="connect-leads-field" key={field.key}>
+                          <div className="connect-leads-field-info">
+                            <span className="connect-leads-field-label">
+                              {field.label}
+                            </span>
+
+                            <span className="connect-leads-field-key">
+                              {field.key}
+                            </span>
+                          </div>
+
+                          <span className="connect-leads-field-type">
+                            {field.type === "date" ? "date" : field.type}
+                          </span>
+
+                          <span
+                            className={
+                              field.required
+                                ? "connect-leads-required"
+                                : "connect-leads-optional"
+                            }
+                          >
+                            {field.required
+                              ? language === "en"
+                                ? "Required"
+                                : "Обов'язкове"
+                              : language === "en"
+                                ? "Optional"
+                                : "Необов'язкове"}
+                          </span>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </section>
+
+                <section className="connect-leads-section">
+                  <div className="connect-leads-section-top">
+                    <div>
+                      <h3>
+                        {language === "en" ? "Request body" : "Тіло запиту"}
+                      </h3>
+
+                      <p>
+                        {language === "en"
+                          ? "Example JSON that can be sent to the API."
+                          : "Приклад JSON, який можна надіслати до API."}
+                      </p>
+                    </div>
+
+                    <button
+                      type="button"
+                      className="connect-leads-copy-button"
+                      onClick={() => copyToClipboard(jsonCode, "json")}
+                    >
+                      {copied === "json" ? <RxCheck /> : <RxClipboard />}
+
+                      {copied === "json"
+                        ? language === "en"
+                          ? "Copied"
+                          : "Скопійовано"
+                        : language === "en"
+                          ? "Copy JSON"
+                          : "Копіювати JSON"}
+                    </button>
+                  </div>
+
+                  <pre className="connect-leads-code">
+                    <code>{jsonCode}</code>
+                  </pre>
+                </section>
+
+                <section className="connect-leads-section">
+                  <div className="connect-leads-domain">
+                    <div>
+                      <h3>
+                        {language === "en"
+                          ? "Allowed domain"
+                          : "Дозволений домен"}
+                      </h3>
+
+                      <p>
+                        {language === "en"
+                          ? "Requests must come from the connected website domain."
+                          : "Запити повинні надходити з домену підключеного сайту."}
+                      </p>
+                    </div>
+
+                    <span>{selectedWebsite.websiteUrl}</span>
+                  </div>
+                </section>
+              </main>
+            )}
+          </div>
+        </>
+      )}
     </div>
   );
 }

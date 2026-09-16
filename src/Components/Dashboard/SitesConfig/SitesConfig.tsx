@@ -76,195 +76,202 @@ export function SitesConfig() {
 
   return (
     <div className="websites-page">
-      {loading && (
+      {loading || !language ? (
         <div className="widget-loader">
           <div className="loader" style={{ borderTopColor: "#000" }} />
         </div>
-      )}
-      <div className="websites-page-top">
-        <div>
-          <h1 className="websites-page-title">
-            {language === "en" ? "Websites" : "Сайти"}
-          </h1>
+      ) : (
+        <>
+          <div className="websites-page-top">
+            <div>
+              <h1 className="websites-page-title">
+                {language === "en" ? "Websites" : "Сайти"}
+              </h1>
 
-          <p className="websites-page-description">
-            {language === "en"
-              ? "Manage your connected websites."
-              : "Керуйте підключеними сайтами."}
-          </p>
-        </div>
+              <p className="websites-page-description">
+                {language === "en"
+                  ? "Manage your connected websites."
+                  : "Керуйте підключеними сайтами."}
+              </p>
+            </div>
 
-        <button
-          className="websites-add-button"
-          onClick={() => setIsModalOpen(true)}
-        >
-          <RxPlus />
+            <button
+              className="websites-add-button"
+              onClick={() => setIsModalOpen(true)}
+            >
+              <RxPlus />
 
-          <span>{language === "en" ? "Add website" : "Додати сайт"}</span>
-        </button>
-      </div>
+              <span>{language === "en" ? "Add website" : "Додати сайт"}</span>
+            </button>
+          </div>
 
-      {!loading && (
-        <div className="websites-table-wrapper">
-          {websites.length > 0 ? (
-            <table className="websites-table">
-              <thead>
-                <tr>
-                  <th>{language === "en" ? "Website" : "Сайт"}</th>
+          <div className="websites-table-wrapper">
+            {websites.length > 0 ? (
+              <table className="websites-table">
+                <thead>
+                  <tr>
+                    <th>{language === "en" ? "Website" : "Сайт"}</th>
 
-                  <th>{language === "en" ? "URL" : "URL"}</th>
+                    <th>{language === "en" ? "URL" : "URL"}</th>
 
-                  <th>{language === "en" ? "x-site-id" : "x-site-id"}</th>
+                    <th>{language === "en" ? "x-site-id" : "x-site-id"}</th>
 
-                  <th>{language === "en" ? "Leads" : "Заявки"}</th>
+                    <th>{language === "en" ? "Leads" : "Заявки"}</th>
 
-                  <th>{language === "en" ? "Created" : "Дата створення"}</th>
+                    <th>{language === "en" ? "Created" : "Дата створення"}</th>
 
-                  <th></th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {websites.map((website) => (
-                  <tr key={website.id}>
-                    <td>
-                      <div className="website-name">
-                        <div className="website-icon">
-                          <RxGlobe />
-                        </div>
-
-                        <span>{website.websiteName}</span>
-                      </div>
-                    </td>
-
-                    <td>
-                      <Link href={website.websiteUrl} target="_blank">
-                        <span className="website-url">
-                          {website.websiteUrl}
-                        </span>
-                      </Link>
-                    </td>
-                    <td>
-                      <span className="website-x-site-id">
-                        {website.xSiteId}
-                      </span>
-                    </td>
-
-                    <td style={{ textAlign: "center" }}>
-                      <span className="website-leads">
-                        {(website as Website & { _count?: { leads?: number } })
-                          ._count?.leads ?? 0}
-                      </span>
-                    </td>
-
-                    <td>
-                      <span className="website-date">
-                        {new Date(website.createdAt).toLocaleString(
-                          language === "en" ? "en-US" : "uk-UA",
-                          {
-                            day: "2-digit",
-                            month: "2-digit",
-                            year: "numeric",
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          },
-                        )}
-                      </span>
-                    </td>
-
-                    <td>
-                      <div className="website-actions">
-                        <button
-                          className="website-action"
-                          onClick={() => {
-                            setSelectedWebsite(website);
-                            setIsModalEditOpen(true);
-                          }}
-                        >
-                          <RxPencil1 />
-                        </button>
-
-                        <button
-                          className="website-action website-delete"
-                          onClick={() => {
-                            setSiteToDelete(website);
-                            setIsDeleteModalOpen(true);
-                          }}
-                          disabled={loading}
-                        >
-                          <RxTrash />
-                        </button>
-                        <Link
-                          href={`/dashboard/connect-leads?x-site-id=${website.xSiteId}`}
-                          className="website-actions-connect"
-                        >
-                          <span>
-                            {language === "en"
-                              ? "Connect Leads"
-                              : "Підключити заявки"}
-                          </span>
-                          <button className="website-action">
-                            <RxLink2 />
-                          </button>
-                        </Link>
-                      </div>
-                    </td>
+                    <th></th>
                   </tr>
-                ))}
-                {isDeleteModalOpen && siteToDelete && (
-                  <DeleteSiteModal
-                    setIsModalOpen={setIsDeleteModalOpen}
-                    onConfirm={() => deleteSite(siteToDelete.id)}
-                    websiteName={siteToDelete.websiteName}
-                    language={language}
-                    loading={loading}
-                  />
-                )}
+                </thead>
 
-                {isModalEditOpen && selectedWebsite && (
-                  <SitesConfigEditModal
-                    setIsModalEditOpen={setIsModalEditOpen}
-                    language={language}
-                    loading={loading}
-                    setWebsites={setWebsites}
-                    website={selectedWebsite}
-                  />
-                )}
-              </tbody>
-            </table>
-          ) : (
-            <>
-              <div className="websites-empty">
-                <div className="websites-empty-icon">
-                  <RxGlobe />
+                <tbody>
+                  {websites.map((website) => (
+                    <tr key={website.id}>
+                      <td>
+                        <div className="website-name">
+                          <div className="website-icon">
+                            <RxGlobe />
+                          </div>
+
+                          <span>{website.websiteName}</span>
+                        </div>
+                      </td>
+
+                      <td>
+                        <Link href={website.websiteUrl} target="_blank">
+                          <span className="website-url">
+                            {website.websiteUrl}
+                          </span>
+                        </Link>
+                      </td>
+                      <td>
+                        <span className="website-x-site-id">
+                          {website.xSiteId}
+                        </span>
+                      </td>
+
+                      <td style={{ textAlign: "center" }}>
+                        <Link
+                          href={`/dashboard/leads/${website.xSiteId}`}
+                          className="website-leads"
+                        >
+                          {(
+                            website as Website & {
+                              _count?: { leads?: number };
+                            }
+                          )._count?.leads ?? 0}
+                        </Link>
+                      </td>
+
+                      <td>
+                        <span className="website-date">
+                          {new Date(website.createdAt).toLocaleString(
+                            language === "en" ? "en-US" : "uk-UA",
+                            {
+                              day: "2-digit",
+                              month: "2-digit",
+                              year: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            },
+                          )}
+                        </span>
+                      </td>
+
+                      <td>
+                        <div className="website-actions">
+                          <button
+                            className="website-action"
+                            onClick={() => {
+                              setSelectedWebsite(website);
+                              setIsModalEditOpen(true);
+                            }}
+                          >
+                            <RxPencil1 />
+                          </button>
+
+                          <button
+                            className="website-action website-delete"
+                            onClick={() => {
+                              setSiteToDelete(website);
+                              setIsDeleteModalOpen(true);
+                            }}
+                            disabled={loading}
+                          >
+                            <RxTrash />
+                          </button>
+                          <Link
+                            href={`/dashboard/connect-leads?x-site-id=${website.xSiteId}`}
+                            className="website-actions-connect"
+                          >
+                            <span>
+                              {language === "en"
+                                ? "Connect Leads"
+                                : "Підключити заявки"}
+                            </span>
+                            <button className="website-action">
+                              <RxLink2 />
+                            </button>
+                          </Link>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                  {isDeleteModalOpen && siteToDelete && (
+                    <DeleteSiteModal
+                      setIsModalOpen={setIsDeleteModalOpen}
+                      onConfirm={() => deleteSite(siteToDelete.id)}
+                      websiteName={siteToDelete.websiteName}
+                      language={language}
+                      loading={loading}
+                    />
+                  )}
+
+                  {isModalEditOpen && selectedWebsite && (
+                    <SitesConfigEditModal
+                      setIsModalEditOpen={setIsModalEditOpen}
+                      language={language}
+                      loading={loading}
+                      setWebsites={setWebsites}
+                      website={selectedWebsite}
+                    />
+                  )}
+                </tbody>
+              </table>
+            ) : (
+              <>
+                <div className="websites-empty">
+                  <div className="websites-empty-icon">
+                    <RxGlobe />
+                  </div>
+
+                  <h2>
+                    {language === "en"
+                      ? "No websites yet"
+                      : "У вас ще немає сайтів"}
+                  </h2>
+
+                  <p>
+                    {language === "en"
+                      ? "Add your first website to start receiving and managing leads."
+                      : "Додайте свій перший сайт, щоб почати отримувати та керувати заявками."}
+                  </p>
+
+                  <button
+                    className="websites-add-button websites-empty-button"
+                    onClick={() => setIsModalOpen(true)}
+                  >
+                    <RxPlus />
+
+                    <span>
+                      {language === "en" ? "Add website" : "Додайте сайт"}
+                    </span>
+                  </button>
                 </div>
-
-                <h2>
-                  {language === "en"
-                    ? "No websites yet"
-                    : "У вас ще немає сайтів"}
-                </h2>
-
-                <p>
-                  {language === "en"
-                    ? "Add your first website to start receiving and managing leads."
-                    : "Додайте свій перший сайт, щоб почати отримувати та керувати заявками."}
-                </p>
-
-                <button
-                  className="websites-add-button websites-empty-button"
-                  onClick={() => setIsModalOpen(true)}
-                >
-                  <RxPlus />
-
-                  <span>
-                    {language === "en" ? "Add website" : "Додайте сайт"}
-                  </span>
-                </button>
-              </div>
-            </>
-          )}
-        </div>
+              </>
+            )}
+          </div>
+        </>
       )}
 
       {isModalOpen && (
