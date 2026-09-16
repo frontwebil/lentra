@@ -1,4 +1,4 @@
-import { ConnectSite } from "@/Components/Dashboard/ConnectSite/ConnectSite";
+import { ConnectLeads } from "@/Components/Dashboard/ConnectSite/ConnectLeads";
 import { authOptions } from "@/lib/auth";
 import { Metadata } from "next";
 import { getServerSession } from "next-auth";
@@ -21,5 +21,5 @@ export default async function page() {
     redirect("/login");
   }
 
-  return <ConnectSite />;
+  return <ConnectLeads />;
 }
