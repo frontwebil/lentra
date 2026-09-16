@@ -27,9 +27,12 @@ async function validateWebsiteUrl(value: string) {
 }
 
 function normalizeUrl(value: string) {
-  return value.startsWith("http://") || value.startsWith("https://")
-    ? value
-    : `https://${value}`;
+  const withProtocol =
+    value.startsWith("http://") || value.startsWith("https://")
+      ? value
+      : `https://${value}`;
+
+  return withProtocol.replace(/\/$/, "");
 }
 
 export async function POST(req: Request) {
