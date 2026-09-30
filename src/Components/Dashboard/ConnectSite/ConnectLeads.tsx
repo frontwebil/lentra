@@ -139,29 +139,40 @@ export function ConnectLeads() {
 
   if (!loading && websites.length <= 0) {
     return (
-      <div className="websites-empty">
-        <div className="websites-empty-icon">
-          <RxGlobe />
+      <div className="connect-leads">
+        <div className="connect-leads-header">
+          <h1>{language === "en" ? "Connect leads" : "Підключення заявок"}</h1>
+
+          <p>
+            {language === "en"
+              ? "Connect your websites to Lentra and send leads directly to your CRM."
+              : "Підключіть свої сайти до Lentra та надсилайте заявки прямо у вашу CRM."}
+          </p>
         </div>
+        <div className="websites-empty">
+          <div className="websites-empty-icon">
+            <RxGlobe />
+          </div>
 
-        <h2>
-          {language === "en" ? "No websites yet" : "У вас ще немає сайтів"}
-        </h2>
+          <h2>
+            {language === "en" ? "No websites yet" : "У вас ще немає сайтів"}
+          </h2>
 
-        <p>
-          {language === "en"
-            ? "Add your first website to start receiving and managing leads."
-            : "Додайте свій перший сайт, щоб почати отримувати та керувати заявками."}
-        </p>
+          <p>
+            {language === "en"
+              ? "Add your first website to start receiving and managing leads."
+              : "Додайте свій перший сайт, щоб почати отримувати та керувати заявками."}
+          </p>
 
-        <Link
-          href="/dashboard/sites-config"
-          className="websites-add-button websites-empty-button"
-        >
-          <RxPlus />
+          <Link
+            href="/dashboard/sites-config"
+            className="websites-add-button websites-empty-button"
+          >
+            <RxPlus />
 
-          <span>{language === "en" ? "Add website" : "Додайте сайт"}</span>
-        </Link>
+            <span>{language === "en" ? "Add website" : "Додайте сайт"}</span>
+          </Link>
+        </div>
       </div>
     );
   }

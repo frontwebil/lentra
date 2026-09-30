@@ -33,7 +33,7 @@ export function SideBar() {
       label: language === "en" ? "Dashboard" : "Дашборд",
     },
     {
-      href: "/leads",
+      href: "/dashboard/leads",
       icon: <RxPerson />,
       label: language === "en" ? "Leads" : "Заявки",
     },

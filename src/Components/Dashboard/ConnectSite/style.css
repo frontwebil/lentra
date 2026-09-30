@@ -446,7 +446,10 @@
 }
 
 .websites-empty {
+  background: #fff;
+  border: 1px solid #e8e8e8;
   display: flex;
+  border-radius: 10px;
   flex-direction: column;
   align-items: center;
   justify-content: center;
