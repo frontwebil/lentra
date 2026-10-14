@@ -54,9 +54,7 @@ export default async function Page({
 
   return (
     <div>
-      {website?.leads.map((website) => (
-        <p>{website.fields.name}</p>
-      ))}
+1 
     </div>
   );
 }
