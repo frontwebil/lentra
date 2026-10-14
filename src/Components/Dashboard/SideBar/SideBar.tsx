@@ -56,6 +56,8 @@ export function SideBar() {
     localStorage.setItem("language", language);
   }, [dispatch, language]);
 
+  console.log(pathname.split("/"));
+
   return (
     <>
       <div className={`padding-left-sidebar ${!isOpen && "close"}`}></div>
@@ -67,7 +69,7 @@ export function SideBar() {
             )}
 
             <button
-              className="side-bar-menu-button"
+              className="dashboard-icon-button side-bar-menu-button"
               onClick={() => setIsOpen(!isOpen)}
               aria-label="Toggle sidebar"
             >
@@ -80,7 +82,15 @@ export function SideBar() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`side-bar-nav-item ${pathname == item.href && "active"}`}
+                className={`dashboard-sidebar-item side-bar-nav-item ${
+                  (
+                    item.href === "/dashboard"
+                      ? pathname === item.href
+                      : pathname === item.href || pathname.startsWith(item.href)
+                  )
+                    ? "active"
+                    : ""
+                }`}
               >
                 <span className="side-bar-nav-icon">{item.icon}</span>
 
@@ -93,7 +103,10 @@ export function SideBar() {
         </div>
 
         <div className="side-bard-buttons">
-          <Link href="/profile" className="side-bar-button">
+          <Link
+            href="/profile"
+            className="dashboard-sidebar-item side-bar-button"
+          >
             <span className="side-bar-button-icon">
               <RxGear />
             </span>
@@ -104,7 +117,7 @@ export function SideBar() {
           </Link>
 
           <button
-            className="side-bar-button side-bar-logout"
+            className="dashboard-sidebar-item side-bar-button side-bar-logout"
             onClick={() => signOut()}
           >
             <span className="side-bar-button-icon">

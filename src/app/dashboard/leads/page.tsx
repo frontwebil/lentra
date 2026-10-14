@@ -1,4 +1,6 @@
+import { Leeds } from "@/Components/Dashboard/Leeds/Leeds";
 import { authOptions } from "@/lib/auth";
+import { Metadata } from "next";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 
@@ -19,5 +21,9 @@ export default async function LeedsPage() {
     redirect("/login");
   }
 
-  return <section>page</section>;
+  return (
+    <section className="LeedsPage">
+      <Leeds />
+    </section>
+  );
 }

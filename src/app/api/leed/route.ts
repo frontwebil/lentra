@@ -84,6 +84,17 @@ export async function POST(req: Request) {
       );
     }
 
+    if (field.type === "date" && value) {
+      const isValidFormat = /^\d{4}-\d{2}-\d{2}$/.test(String(value));
+
+      if (!isValidFormat) {
+        return NextResponse.json(
+          { message: `${field.label} has an invalid date format` },
+          { status: 400 },
+        );
+      }
+    }
+
     leadData[field.key] = value ?? "";
   }
 

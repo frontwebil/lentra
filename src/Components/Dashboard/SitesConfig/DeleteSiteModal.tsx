@@ -18,10 +18,10 @@ export function DeleteSiteModal({
   loading,
 }: DeleteSiteModalProps) {
   return (
-    <div className="delete-modal-overlay">
+    <div className="dashboard-modal-overlay delete-modal-overlay">
       <div className="delete-modal">
         <button
-          className="delete-modal-close"
+          className="dashboard-icon-button delete-modal-close"
           onClick={() => setIsModalOpen(false)}
           disabled={loading}
         >
@@ -32,7 +32,7 @@ export function DeleteSiteModal({
           <RxTrash />
         </div>
 
-        <h2 className="delete-modal-title">
+        <h2 className="dashboard-semibold delete-modal-title">
           {language === "en" ? "Delete website?" : "Видалити сайт?"}
         </h2>
 

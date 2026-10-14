@@ -42,7 +42,15 @@ export default async function Page({
     },
   });
 
-  console.log(website?.leads);
+  await prisma.lead.updateMany({
+    where: {
+      websiteId: website?.id,
+      isNew: true,
+    },
+    data: {
+      isNew: false,
+    },
+  });
 
   return (
     <div>

@@ -139,26 +139,28 @@ export function ConnectLeads() {
 
   if (!loading && websites.length <= 0) {
     return (
-      <div className="connect-leads">
+      <div className="dashboard-page connect-leads">
         <div className="connect-leads-header">
-          <h1>{language === "en" ? "Connect leads" : "Підключення заявок"}</h1>
+          <h1 className="dashboard-page-title dashboard-semibold">
+            {language === "en" ? "Connect leads" : "Підключення заявок"}
+          </h1>
 
-          <p>
+          <p className="dashboard-page-description">
             {language === "en"
               ? "Connect your websites to Lentra and send leads directly to your CRM."
               : "Підключіть свої сайти до Lentra та надсилайте заявки прямо у вашу CRM."}
           </p>
         </div>
-        <div className="websites-empty">
-          <div className="websites-empty-icon">
+        <div className="dashboard-empty-state dashboard-empty-state-card websites-empty">
+          <div className="dashboard-icon-tile dashboard-empty-icon websites-empty-icon">
             <RxGlobe />
           </div>
 
-          <h2>
+          <h2 className="dashboard-empty-title dashboard-semibold">
             {language === "en" ? "No websites yet" : "У вас ще немає сайтів"}
           </h2>
 
-          <p>
+          <p className="dashboard-empty-description">
             {language === "en"
               ? "Add your first website to start receiving and managing leads."
               : "Додайте свій перший сайт, щоб почати отримувати та керувати заявками."}
@@ -166,7 +168,7 @@ export function ConnectLeads() {
 
           <Link
             href="/dashboard/sites-config"
-            className="websites-add-button websites-empty-button"
+            className="dashboard-primary-button dashboard-primary-button-standard dashboard-empty-action websites-add-button websites-empty-button"
           >
             <RxPlus />
 
@@ -178,7 +180,7 @@ export function ConnectLeads() {
   }
 
   return (
-    <div className="connect-leads">
+    <div className="dashboard-page connect-leads">
       {loading || !language ? (
         <div className="widget-loader">
           <div className="loader" style={{ borderTopColor: "#000" }} />
@@ -186,11 +188,11 @@ export function ConnectLeads() {
       ) : (
         <>
           <div className="connect-leads-header">
-            <h1>
+            <h1 className="dashboard-page-title dashboard-semibold">
               {language === "en" ? "Connect leads" : "Підключення заявок"}
             </h1>
 
-            <p>
+            <p className="dashboard-page-description">
               {language === "en"
                 ? "Connect your websites to Lentra and send leads directly to your CRM."
                 : "Підключіть свої сайти до Lentra та надсилайте заявки прямо у вашу CRM."}
@@ -198,7 +200,7 @@ export function ConnectLeads() {
           </div>
 
           <div className="connect-leads-layout">
-            <aside className="connect-leads-sidebar">
+            <aside className="dashboard-surface connect-leads-sidebar">
               <div className="connect-leads-sidebar-title">
                 {language === "en" ? "Websites" : "Сайти"}
               </div>
@@ -215,12 +217,12 @@ export function ConnectLeads() {
                     }
                     onClick={() => setSelectedWebsite(website)}
                   >
-                    <span className="connect-leads-website-icon">
+                    <span className="dashboard-icon-tile connect-leads-website-icon">
                       <RxGlobe />
                     </span>
 
                     <span className="connect-leads-website-info">
-                      <span className="connect-leads-website-name">
+                      <span className="dashboard-form-label connect-leads-website-name">
                         {website.websiteName}
                       </span>
 
@@ -235,15 +237,17 @@ export function ConnectLeads() {
 
             {selectedWebsite && (
               <main className="connect-leads-content">
-                <div className="connect-leads-site-header">
+                <div className="dashboard-surface connect-leads-site-header">
                   <div>
                     <div className="connect-leads-site-title-row">
-                      <div className="connect-leads-site-icon">
+                      <div className="dashboard-icon-tile connect-leads-site-icon">
                         <RxGlobe />
                       </div>
 
                       <div>
-                        <h2>{selectedWebsite.websiteName}</h2>
+                        <h2 className="dashboard-site-title dashboard-semibold">
+                          {selectedWebsite.websiteName}
+                        </h2>
 
                         <p>{selectedWebsite.websiteUrl}</p>
                       </div>
@@ -251,10 +255,10 @@ export function ConnectLeads() {
                   </div>
                 </div>
 
-                <section className="connect-leads-section">
+                <section className="dashboard-surface connect-leads-section">
                   <div className="connect-leads-section-top">
                     <div>
-                      <h3>Site ID</h3>
+                      <h3 className="dashboard-semibold">Site ID</h3>
 
                       <p>
                         {language === "en"
@@ -265,7 +269,7 @@ export function ConnectLeads() {
 
                     <button
                       type="button"
-                      className="connect-leads-copy-button"
+                      className="dashboard-primary-button dashboard-primary-button-copy connect-leads-copy-button"
                       onClick={() =>
                         copyToClipboard(selectedWebsite.xSiteId, "site-id")
                       }
@@ -287,10 +291,10 @@ export function ConnectLeads() {
                   </div>
                 </section>
 
-                <section className="connect-leads-section">
+                <section className="dashboard-surface connect-leads-section">
                   <div className="connect-leads-section-top">
                     <div>
-                      <h3>
+                      <h3 className="dashboard-semibold">
                         {language === "en" ? "Send leads" : "Надсилання заявок"}
                       </h3>
 
@@ -303,7 +307,7 @@ export function ConnectLeads() {
 
                     <button
                       type="button"
-                      className="connect-leads-copy-button"
+                      className="dashboard-primary-button dashboard-primary-button-copy connect-leads-copy-button"
                       onClick={() => copyToClipboard(fetchCode, "fetch")}
                     >
                       {copied === "fetch" ? <RxCheck /> : <RxClipboard />}
@@ -323,10 +327,10 @@ export function ConnectLeads() {
                   </pre>
                 </section>
 
-                <section className="connect-leads-section">
+                <section className="dashboard-surface connect-leads-section">
                   <div className="connect-leads-section-top">
                     <div>
-                      <h3>
+                      <h3 className="dashboard-semibold">
                         {language === "en" ? "Lead fields" : "Поля заявки"}
                       </h3>
 
@@ -383,10 +387,10 @@ export function ConnectLeads() {
                   </div>
                 </section>
 
-                <section className="connect-leads-section">
+                <section className="dashboard-surface connect-leads-section">
                   <div className="connect-leads-section-top">
                     <div>
-                      <h3>
+                      <h3 className="dashboard-semibold">
                         {language === "en" ? "Request body" : "Тіло запиту"}
                       </h3>
 
@@ -399,7 +403,7 @@ export function ConnectLeads() {
 
                     <button
                       type="button"
-                      className="connect-leads-copy-button"
+                      className="dashboard-primary-button dashboard-primary-button-copy connect-leads-copy-button"
                       onClick={() => copyToClipboard(jsonCode, "json")}
                     >
                       {copied === "json" ? <RxCheck /> : <RxClipboard />}
@@ -419,10 +423,10 @@ export function ConnectLeads() {
                   </pre>
                 </section>
 
-                <section className="connect-leads-section">
+                <section className="dashboard-surface connect-leads-section">
                   <div className="connect-leads-domain">
                     <div>
-                      <h3>
+                      <h3 className="dashboard-semibold">
                         {language === "en"
                           ? "Allowed domain"
                           : "Дозволений домен"}

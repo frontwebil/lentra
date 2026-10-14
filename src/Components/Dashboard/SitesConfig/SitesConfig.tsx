@@ -1,7 +1,14 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { RxGlobe, RxLink2, RxPencil1, RxPlus, RxTrash } from "react-icons/rx";
+import {
+  RxEyeOpen,
+  RxGlobe,
+  RxLink2,
+  RxPencil1,
+  RxPlus,
+  RxTrash,
+} from "react-icons/rx";
 import "./style.css";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -75,7 +82,7 @@ export function SitesConfig() {
   };
 
   return (
-    <div className="websites-page">
+    <div className="dashboard-page websites-page">
       {loading || !language ? (
         <div className="widget-loader">
           <div className="loader" style={{ borderTopColor: "#000" }} />
@@ -84,11 +91,11 @@ export function SitesConfig() {
         <>
           <div className="websites-page-top">
             <div>
-              <h1 className="websites-page-title">
+              <h1 className="dashboard-page-title dashboard-semibold websites-page-title">
                 {language === "en" ? "Websites" : "Сайти"}
               </h1>
 
-              <p className="websites-page-description">
+              <p className="dashboard-page-description websites-page-description">
                 {language === "en"
                   ? "Manage your connected websites."
                   : "Керуйте підключеними сайтами."}
@@ -96,7 +103,7 @@ export function SitesConfig() {
             </div>
 
             <button
-              className="websites-add-button"
+              className="dashboard-primary-button dashboard-primary-button-standard websites-add-button"
               onClick={() => setIsModalOpen(true)}
             >
               <RxPlus />
@@ -105,7 +112,7 @@ export function SitesConfig() {
             </button>
           </div>
 
-          <div className="websites-table-wrapper">
+          <div className="dashboard-surface websites-table-wrapper">
             {websites.length > 0 ? (
               <table className="websites-table">
                 <thead>
@@ -129,7 +136,7 @@ export function SitesConfig() {
                     <tr key={website.id}>
                       <td>
                         <div className="website-name">
-                          <div className="website-icon">
+                          <div className="dashboard-icon-tile website-icon">
                             <RxGlobe />
                           </div>
 
@@ -181,7 +188,7 @@ export function SitesConfig() {
                       <td>
                         <div className="website-actions">
                           <button
-                            className="website-action"
+                            className="dashboard-icon-button website-action"
                             onClick={() => {
                               setSelectedWebsite(website);
                               setIsModalEditOpen(true);
@@ -191,7 +198,7 @@ export function SitesConfig() {
                           </button>
 
                           <button
-                            className="website-action website-delete"
+                            className="dashboard-icon-button website-action website-delete"
                             onClick={() => {
                               setSiteToDelete(website);
                               setIsDeleteModalOpen(true);
@@ -202,15 +209,24 @@ export function SitesConfig() {
                           </button>
                           <Link
                             href={`/dashboard/connect-leads?x-site-id=${website.xSiteId}`}
-                            className="website-actions-connect"
+                            className="dashboard-primary-button dashboard-primary-button-standard website-actions-connect"
                           >
                             <span>
-                              {language === "en"
-                                ? "Connect Leads"
-                                : "Підключити заявки"}
+                              {language === "en" ? "Connect" : "Підключити"}
                             </span>
-                            <button className="website-action">
+                            <button className="dashboard-icon-button website-action">
                               <RxLink2 />
+                            </button>
+                          </Link>
+                          <Link
+                            href={`/dashboard/leads/${website.xSiteId}`}
+                            className="dashboard-primary-button dashboard-primary-button-standard website-actions-connect"
+                          >
+                            <span>
+                              {language === "en" ? "Leads" : "Заявки"}
+                            </span>
+                            <button className="dashboard-icon-button website-action">
+                              <RxEyeOpen />
                             </button>
                           </Link>
                         </div>
@@ -240,25 +256,25 @@ export function SitesConfig() {
               </table>
             ) : (
               <>
-                <div className="websites-empty">
-                  <div className="websites-empty-icon">
+                <div className="dashboard-empty-state websites-empty">
+                  <div className="dashboard-icon-tile dashboard-empty-icon websites-empty-icon">
                     <RxGlobe />
                   </div>
 
-                  <h2>
+                  <h2 className="dashboard-empty-title dashboard-semibold">
                     {language === "en"
                       ? "No websites yet"
                       : "У вас ще немає сайтів"}
                   </h2>
 
-                  <p>
+                  <p className="dashboard-empty-description">
                     {language === "en"
                       ? "Add your first website to start receiving and managing leads."
                       : "Додайте свій перший сайт, щоб почати отримувати та керувати заявками."}
                   </p>
 
                   <button
-                    className="websites-add-button websites-empty-button"
+                    className="dashboard-primary-button dashboard-primary-button-standard dashboard-empty-action websites-add-button websites-empty-button"
                     onClick={() => setIsModalOpen(true)}
                   >
                     <RxPlus />

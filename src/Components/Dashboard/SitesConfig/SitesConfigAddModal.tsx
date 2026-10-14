@@ -106,11 +106,11 @@ export function SitesConfigAddModal({
 
   return (
     <div
-      className="website-modal-overlay"
+      className="dashboard-modal-overlay website-modal-overlay"
       onClick={() => setIsModalOpen(false)}
     >
       <div
-        className="website-modal"
+        className="dashboard-surface website-modal"
         style={{ position: "relative" }}
         onClick={(event) => event.stopPropagation()}
       >
@@ -121,7 +121,7 @@ export function SitesConfigAddModal({
         )}
         <div className="website-modal-top">
           <div>
-            <h2 className="website-modal-title">
+            <h2 className="dashboard-semibold website-modal-title">
               {language === "en" ? "Add website" : "Додати сайт"}
             </h2>
 
@@ -133,7 +133,7 @@ export function SitesConfigAddModal({
           </div>
 
           <button
-            className="website-modal-close"
+            className="dashboard-icon-button website-modal-close"
             onClick={() => setIsModalOpen(false)}
           >
             <RxCross2 />
@@ -142,10 +142,13 @@ export function SitesConfigAddModal({
 
         <form className="website-form" onSubmit={handleSubmit}>
           <div className="website-form-field">
-            <label>{language === "en" ? "Website name" : "Назва сайту"}</label>
+            <label className="dashboard-form-label">
+              {language === "en" ? "Website name" : "Назва сайту"}
+            </label>
 
             <input
               type="text"
+              className="dashboard-input"
               placeholder={language === "en" ? "My website" : "Мій сайт"}
               value={formData.websiteName}
               onChange={(e) =>
@@ -155,10 +158,11 @@ export function SitesConfigAddModal({
           </div>
 
           <div className="website-form-field">
-            <label>URL</label>
+            <label className="dashboard-form-label">URL</label>
 
             <input
               type="text"
+              className="dashboard-input"
               placeholder="https://example.com"
               value={formData.url}
               onChange={(e) =>
@@ -168,7 +172,7 @@ export function SitesConfigAddModal({
           </div>
 
           <div className="website-form-field">
-            <div className="lead-schema-title-top">
+            <div className="dashboard-form-label lead-schema-title-top">
               <span className="lead-schema-label">
                 {language === "en"
                   ? "Data received from website"
@@ -177,7 +181,7 @@ export function SitesConfigAddModal({
 
               <button
                 type="button"
-                className="lead-schema-title-button"
+                className="dashboard-primary-button dashboard-primary-button-schema lead-schema-title-button"
                 onClick={() =>
                   setLeadFields([
                     ...leadFields,
@@ -204,6 +208,7 @@ export function SitesConfigAddModal({
 
                     <input
                       type="text"
+                      className="dashboard-input"
                       placeholder={
                         language === "en"
                           ? "e.g. Phone number"
@@ -230,6 +235,7 @@ export function SitesConfigAddModal({
 
                     <input
                       type="text"
+                      className="dashboard-input"
                       placeholder={
                         language === "en" ? "e.g. phone" : "Наприклад, phone"
                       }
@@ -253,6 +259,7 @@ export function SitesConfigAddModal({
                     </span>
 
                     <select
+                      className="dashboard-input"
                       value={field.type}
                       onChange={(e) => {
                         const updated = [...leadFields];
@@ -296,7 +303,7 @@ export function SitesConfigAddModal({
 
                   <button
                     type="button"
-                    className="lead-schema-field-remove"
+                    className="dashboard-icon-button lead-schema-field-remove"
                     disabled={leadFields.length <= 1}
                     onClick={() =>
                       setLeadFields(leadFields.filter((_, i) => i !== index))
@@ -311,7 +318,7 @@ export function SitesConfigAddModal({
 
           <button
             type="submit"
-            className="websites-add-button website-form-submit"
+            className="dashboard-primary-button dashboard-primary-button-standard websites-add-button website-form-submit"
             disabled={formLoading}
           >
             <RxPlus />

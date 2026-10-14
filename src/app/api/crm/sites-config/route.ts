@@ -20,8 +20,20 @@ export async function GET() {
           leads: true,
         },
       },
+      leads: {
+        where: {
+          isNew: true,
+        },
+      },
     },
   });
 
-  return NextResponse.json({ websites }, { status: 200 });
+  const result = websites.map((website) => ({
+    ...website,
+    totalLeads: website._count.leads,
+    newLeads: website.leads.length,
+    leads: undefined,
+  }));
+
+  return NextResponse.json({ websites: result }, { status: 200 });
 }

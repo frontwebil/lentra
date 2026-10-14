@@ -1,0 +1,212 @@
+.dashboard-page {
+  width: 100%;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.dashboard-page-title {
+  margin: 0 0 6px;
+  color: #171717;
+  font-size: 24px;
+}
+
+.dashboard-semibold {
+  font-weight: 600;
+}
+
+.dashboard-page-description {
+  margin: 0;
+  font-size: 14px;
+  color: #777;
+}
+
+.websites-page-description {
+  color: #666;
+}
+
+.dashboard-primary-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  background: #171717;
+  color: #fff;
+  font-family: inherit;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.dashboard-primary-button-standard {
+  gap: 9px;
+  min-height: 42px;
+  padding: 0 15px;
+  border-radius: 9px;
+  font-size: 14px;
+}
+
+.dashboard-primary-button-standard:hover {
+  background: #333;
+}
+
+.dashboard-primary-button-copy {
+  gap: 7px;
+  min-height: 36px;
+  padding: 0 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  flex-shrink: 0;
+  font-weight: 600;
+}
+
+.dashboard-primary-button-schema {
+  gap: 5px;
+  min-height: 36px;
+  padding: 0 15px;
+  border-radius: 9px;
+  transition: background 0.3s;
+}
+
+.dashboard-surface {
+  border: 1px solid #e8e8e8;
+  background: #fff;
+}
+
+.dashboard-icon-tile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f5f5f5;
+  color: #666;
+}
+
+.dashboard-empty-icon {
+  width: 52px;
+  height: 52px;
+  margin-bottom: 18px;
+  border-radius: 12px;
+}
+
+.dashboard-empty-icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.dashboard-empty-title {
+  margin: 0 0 8px;
+  color: #171717;
+  font-size: 18px;
+}
+
+.dashboard-site-title {
+  color: #171717;
+  font-size: 18px;
+}
+
+.dashboard-empty-description {
+  max-width: 400px;
+  margin: 0 0 22px;
+  line-height: 1.5;
+  color: #777;
+  font-size: 14px;
+}
+
+.dashboard-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 360px;
+  max-width: 100%;
+  width: 100%;
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.dashboard-empty-state-card {
+  border: 1px solid #e8e8e8;
+  border-radius: 10px;
+  background: #fff;
+}
+
+.dashboard-empty-action {
+  width: 100%;
+  min-height: 40px;
+  max-width: 450px;
+}
+
+.dashboard-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.dashboard-input {
+  width: 100%;
+  border: 1px solid #e0e0e0;
+  outline: none;
+  background: #fff;
+  color: #171717;
+  font-family: inherit;
+}
+
+.dashboard-form-label {
+  color: #171717;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.dashboard-input::placeholder {
+  color: #aaa;
+}
+
+.dashboard-input:focus {
+  border-color: #171717;
+}
+
+.dashboard-sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  width: 100%;
+  min-height: 44px;
+  padding: 0 12px;
+  border-radius: 9px;
+  color: #666;
+  text-decoration: none;
+  transition:
+    background 0.3s ease,
+    color 0.3s ease;
+}
+
+.dashboard-icon-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  cursor: pointer;
+}
+
+.LeedsPage {
+  max-width: 100%;
+  width: 100%;
+}
+
+.connect-leads-site-id {
+  color: #171717;
+  letter-spacing: 0.3px;
+  background: #f7f7f7;
+  border-radius: 9px;
+  width: 100%;
+  padding: 14px 16px;
+  font-family: monospace;
+  font-size: 14px;
+  font-weight: 600;
+}
