@@ -32,7 +32,7 @@ type WebsiteType = Website & {
 };
 
 export function Leeds() {
-  const [websites, setWebsites] = useState<WebsiteRow[]>([]);
+  const [websites, setWebsites] = useState<Website[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedWebsite, setSelectedWebsite] = useState<Website | null>(null);
 
@@ -100,7 +100,7 @@ export function Leeds() {
                 </thead>
                 <tbody>
                   {websites.map((website) => {
-                    const row = website;
+                    const row = website as WebsiteRow;
                     const fields = Array.isArray(website.leadSchema)
                       ? (website.leadSchema as LeadField[])
                       : [];
