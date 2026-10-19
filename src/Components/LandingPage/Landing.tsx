@@ -57,7 +57,7 @@ export function Landing({ dict, locale, description }: Props) {
       />
       <Header dict={dict.header} locale={locale} />
       <Hero dict={dict.hero} />
-      <InOnePlace dict={dict.inOnePlace} />
+      {/* <InOnePlace dict={dict.inOnePlace} /> */}
       <HowItWorks dict={dict.howItWorks} />
       <Possibility dict={dict.possibility} />
       <OneApiForAll dict={dict.oneApiForAll} />
