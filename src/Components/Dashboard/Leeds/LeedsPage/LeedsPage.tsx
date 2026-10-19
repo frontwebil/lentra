@@ -1,10 +1,13 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { Lead, Website } from "@/generated/prisma/client";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
+import { RxPencil1 } from "react-icons/rx";
 import "./style.css";
+import { SitesConfigEditModal } from "../../SitesConfig/SitesConfigEditModal";
 
 type LeadField = {
   key: string;
@@ -19,8 +22,16 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
   const { data: session } = useSession();
   const language = session?.user?.language || "uk";
 
-  const schema = Array.isArray(website.leadSchema)
-    ? (website.leadSchema as unknown as LeadField[])
+  const [currentWebsite, setCurrentWebsite] =
+    useState<WebsiteWithLeads>(website);
+  const [isModalEditOpen, setIsModalEditOpen] = useState(false);
+
+  useEffect(() => {
+    setCurrentWebsite(website);
+  }, [website]);
+
+  const schema = Array.isArray(currentWebsite.leadSchema)
+    ? (currentWebsite.leadSchema as unknown as LeadField[])
     : [];
 
   const [visibleKeys, setVisibleKeys] = useState<string[]>(() =>
@@ -79,16 +90,26 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
           <div className="leads-overview-top">
             <div>
               <h1 className="dashboard-page-title dashboard-semibold">
-                {website.websiteName}
+                {currentWebsite.websiteName}
               </h1>
               <Link
-                href={website.websiteUrl}
+                href={currentWebsite.websiteUrl}
                 className="dashboard-page-description"
                 target="_blank"
               >
-                {website.websiteUrl}
+                {currentWebsite.websiteUrl}
               </Link>
             </div>
+
+            <button
+              className="dashboard-primary-button dashboard-primary-button-standard"
+              onClick={() => setIsModalEditOpen(true)}
+            >
+              <RxPencil1 />
+              <span>
+                {language === "en" ? "Edit website" : "Редагувати сайт"}
+              </span>
+            </button>
           </div>
 
           <div className="table-nav">
@@ -126,7 +147,7 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
           </div>
 
           <div className="dashboard-surface leads-table-wrapper">
-            {website.leads?.length ? (
+            {currentWebsite.leads?.length ? (
               <table className="leads-overview-table">
                 <thead>
                   <tr>
@@ -141,7 +162,7 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
                   </tr>
                 </thead>
                 <tbody>
-                  {website.leads.map((lead) => {
+                  {currentWebsite.leads.map((lead) => {
                     const fields = (lead.fields as Record<string, any>) || {};
 
                     return (
@@ -185,6 +206,26 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
             )}
           </div>
         </>
+      )}
+
+      {isModalEditOpen && (
+        <SitesConfigEditModal
+          setIsModalEditOpen={setIsModalEditOpen}
+          language={language === "en" ? "en" : "uk"}
+          loading={false}
+          setWebsites={(action) => {
+            if (typeof action === "function") {
+              const updatedList = action([currentWebsite]);
+              if (updatedList[0]) {
+                setCurrentWebsite((prev) => ({
+                  ...prev,
+                  ...updatedList[0],
+                }));
+              }
+            }
+          }}
+          website={currentWebsite}
+        />
       )}
     </div>
   );

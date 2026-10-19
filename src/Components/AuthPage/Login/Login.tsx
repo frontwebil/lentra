@@ -84,7 +84,7 @@ export function Login() {
       toast.success(
         isEnglish ? "Successfully signed in" : "Ви успішно увійшли",
       );
-      router.push("/dashboard");
+      router.push("/dashboard/leads");
     } catch (error) {
       console.log(error);
       console.error("Login error:", error);
