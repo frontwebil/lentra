@@ -32,10 +32,10 @@ export function OneApiForAll({ dict }: Props) {
           </h2>
 
           <p>{dict.subtitle}</p>
-
+{/* 
           <a href="#">
             {dict.docsLink} <span>→</span>
-          </a>
+          </a> */}
         </div>
 
         <div className="examples-grid">
