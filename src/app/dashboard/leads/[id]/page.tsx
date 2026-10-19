@@ -3,6 +3,7 @@ import { authOptions } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { Metadata } from "next";
 import { getServerSession } from "next-auth";
+import { notFound } from "next/navigation";
 
 export async function generateMetadata({
   params,
@@ -53,7 +54,9 @@ export default async function Page({
     },
   });
 
-  console.log(website);
+  if(!website) {
+    notFound();
+  }
 
   return <LeedsPage website={website}/>;
 }

@@ -19,21 +19,17 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
   const { data: session } = useSession();
   const language = session?.user?.language || "uk";
 
-  // 1. Поля зі схеми
   const schema = Array.isArray(website.leadSchema)
     ? (website.leadSchema as unknown as LeadField[])
     : [];
 
-  // 2. Стан видимих колонок (початково увімкнені всі)
   const [visibleKeys, setVisibleKeys] = useState<string[]>(() =>
     schema.map((f) => f.key),
   );
 
-  // 3. Стан відкриття випадаючого меню та ref для виявлення кліку зовні
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Закриваємо меню при кліку за його межами
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -53,19 +49,16 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
     };
   }, [isOpen]);
 
-  // Перемикач колонки
   const toggleColumn = (key: string) => {
     setVisibleKeys((prev) =>
       prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key],
     );
   };
 
-  // Фільтруємо поля для відображення в таблиці
   const visibleSchema = schema.filter((field) =>
     visibleKeys.includes(field.key),
   );
 
-  // Форматування дати
   const formatDate = (date: Date | string) =>
     new Date(date).toLocaleString(language === "en" ? "en-US" : "uk-UA", {
       day: "2-digit",
@@ -83,7 +76,6 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
         </div>
       ) : (
         <>
-          {/* Верхній блок: назва сайту */}
           <div className="leads-overview-top">
             <div>
               <h1 className="dashboard-page-title dashboard-semibold">
@@ -99,7 +91,6 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
             </div>
           </div>
 
-          {/* Навігація таблиці з випадаючим меню */}
           <div className="table-nav">
             {schema.length > 0 && (
               <div className="columns-dropdown-wrapper" ref={dropdownRef}>
@@ -134,21 +125,17 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
             )}
           </div>
 
-          {/* Таблиця */}
           <div className="dashboard-surface leads-table-wrapper">
             {website.leads?.length ? (
               <table className="leads-overview-table">
                 <thead>
                   <tr>
-                    {/* Фіксована колонка 1: Статус */}
                     <th>{language === "en" ? "Status" : "Статус"}</th>
 
-                    {/* Динамічні обрані колонки */}
                     {visibleSchema.map((field) => (
                       <th key={field.key}>{field.label || field.key}</th>
                     ))}
 
-                    {/* Фіксовані колонки: Дати */}
                     <th>{language === "en" ? "Created At" : "Створено"}</th>
                     <th>{language === "en" ? "Updated At" : "Оновлено"}</th>
                   </tr>
@@ -159,7 +146,6 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
 
                     return (
                       <tr key={lead.id}>
-                        {/* 1. Статус */}
                         <td>
                           <span
                             className={`status-badge ${lead.status.toLowerCase()}`}
@@ -168,7 +154,6 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
                           </span>
                         </td>
 
-                        {/* 2. Значення для обраних колонок */}
                         {visibleSchema.map((field) => (
                           <td key={field.key}>
                             {fields[field.key] !== undefined &&
@@ -178,7 +163,6 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
                           </td>
                         ))}
 
-                        {/* 3. Дати */}
                         <td className="leads-date">
                           {formatDate(lead.createdAt)}
                         </td>
