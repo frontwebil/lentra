@@ -1,3 +1,4 @@
+import { LeedsPage } from "@/Components/Dashboard/Leeds/LeedsPage/LeedsPage";
 import { authOptions } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { Metadata } from "next";
@@ -52,9 +53,7 @@ export default async function Page({
     },
   });
 
-  return (
-    <div>
-1 
-    </div>
-  );
+  console.log(website);
+
+  return <LeedsPage website={website}/>;
 }

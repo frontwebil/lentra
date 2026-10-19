@@ -27,11 +27,11 @@ export function SideBar() {
   const companyName = session?.user.companyName;
 
   const navigation = [
-    {
-      href: "/dashboard",
-      icon: <RxDashboard />,
-      label: language === "en" ? "Dashboard" : "Дашборд",
-    },
+    // {
+    //   href: "/dashboard",
+    //   icon: <RxDashboard />,
+    //   label: language === "en" ? "Dashboard" : "Дашборд",
+    // },
     {
       href: "/dashboard/leads",
       icon: <RxPerson />,
@@ -55,8 +55,6 @@ export function SideBar() {
     dispatch(setLanguage(language));
     localStorage.setItem("language", language);
   }, [dispatch, language]);
-
-  console.log(pathname.split("/"));
 
   return (
     <>

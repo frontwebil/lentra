@@ -1,0 +1,153 @@
+.leads-overview-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+/* Контейнер кнопки та випадаючого меню */
+.columns-dropdown-wrapper {
+  position: relative;
+}
+
+/* Кнопка відкриття меню */
+.columns-trigger-btn {
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+  background: #ffffff;
+  color: #171717;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.columns-trigger-btn:hover {
+  background: #f5f5f5;
+  border-color: #d0d0d0;
+}
+
+/* Випадаюча абсолютна форма */
+.columns-dropdown-menu {
+  position: absolute;
+  left: 0;
+  top: calc(100% + 6px);
+  z-index: 100;
+  min-width: 200px;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #e5e5e5;
+  background: #ffffff;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+.dropdown-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: #888;
+  text-transform: uppercase;
+  padding: 4px 6px 8px 6px;
+  border-bottom: 1px solid #f0f0f0;
+  margin-bottom: 6px;
+}
+
+.dropdown-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px;
+  border-radius: 6px;
+  font-size: 13px;
+  color: #333;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.1s ease;
+}
+
+.dropdown-item:hover {
+  background: #f5f5f5;
+}
+
+.dropdown-item input[type="checkbox"] {
+  cursor: pointer;
+  width: 15px;
+  height: 15px;
+  accent-color: #171717;
+}
+
+/* Таблиця */
+.leads-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: 10px;
+  border: 1px solid #e8e8e8;
+  background: #ffffff;
+}
+
+.leads-overview-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.leads-overview-table th {
+  height: 44px;
+  padding: 0 16px;
+  border-bottom: 1px solid #e8e8e8;
+  color: #888;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.leads-overview-table td {
+  height: 52px;
+  padding: 10px 16px;
+  border-bottom: 1px solid #f0f0f0;
+  color: #171717;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.leads-overview-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.leads-overview-table tbody tr:hover {
+  background: #fafafa;
+}
+
+.leads-date {
+  color: #777;
+  font-size: 12px;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  background: #f0f0f0;
+  color: #555;
+  text-transform: uppercase;
+}
+
+.status-badge.new {
+  background: #edf7f0;
+  color: #287a45;
+}
+
+.table-nav{
+  display: flex;
+  margin-bottom: 20px;
+}
