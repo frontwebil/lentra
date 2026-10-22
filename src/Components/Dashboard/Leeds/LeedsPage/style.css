@@ -1,3 +1,8 @@
+body.is-resizing {
+  cursor: col-resize !important;
+  user-select: none;
+}
+
 .leads-overview-top {
   display: flex;
   align-items: center;
@@ -11,7 +16,6 @@
   position: relative;
 }
 
-/* Кнопка відкриття меню */
 .columns-trigger-btn {
   padding: 8px 14px;
   border-radius: 8px;
@@ -29,7 +33,7 @@
   border-color: #d0d0d0;
 }
 
-/* Випадаюча абсолютна форма */
+/* Випадаюче меню */
 .columns-dropdown-menu {
   position: absolute;
   left: 0;
@@ -96,26 +100,71 @@
   width: 100%;
   border-collapse: collapse;
   text-align: left;
+  table-layout: fixed; /* Обов'язково для ресайзу колонок */
+}
+
+/* Дозволяємо тексту переноситися */
+.leads-overview-table th,
+.leads-overview-table td {
+  padding: 10px 16px;
+  border-bottom: 1px solid #e8e8e8;
+  white-space: normal; /* Замість nowrap */
+  word-break: break-word; /* Дозволяємо довгим словам або тексту розриватись */
+  vertical-align: middle;
 }
 
 .leads-overview-table th {
-  height: 44px;
-  padding: 0 16px;
-  border-bottom: 1px solid #e8e8e8;
+  position: relative; /* Необхідно для абсолютного позиціонування .resizer */
   color: #888;
   font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
-  white-space: nowrap;
+  min-height: 44px;
 }
 
 .leads-overview-table td {
-  height: 52px;
-  padding: 10px 16px;
-  border-bottom: 1px solid #f0f0f0;
   color: #171717;
   font-size: 13px;
-  white-space: nowrap;
+  min-height: 52px;
+}
+
+/* --- СТИЛІ ПОВЗУНКА КОЛОНКИ (RESIZER) --- */
+.resizer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 10px; /* Зона кліку мишею */
+  height: 100%;
+  cursor: col-resize;
+  user-select: none;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Тонка напівпрозора лінія всередині ползунка */
+.resizer::after {
+  content: "";
+  width: 2px;
+  height: 50%; /* Висота лінії (можна змінити на 100%, якщо треба на всю висоту) */
+  background: rgba(0, 0, 0, 0.15); /* Напівпрозорий колір */
+  border-radius: 1px;
+  transition: background 0.2s ease, width 0.2s ease, height 0.2s ease;
+}
+
+/* При наведенні або перетягуванні лінія стає чіткішою та трохи товщою */
+.resizer:hover::after,
+.resizer:active::after {
+  background: #171717; /* Активний колір */
+  width: 3px;
+  height: 70%;
+}
+
+/* Інші стилі */
+.leads-overview-table .leads-date {
+  color: #777;
+  font-size: 12px;
 }
 
 .leads-overview-table tbody tr:last-child td {
@@ -124,11 +173,6 @@
 
 .leads-overview-table tbody tr:hover {
   background: #fafafa;
-}
-
-.leads-date {
-  color: #777;
-  font-size: 12px;
 }
 
 .status-badge {
@@ -140,6 +184,7 @@
   background: #f0f0f0;
   color: #555;
   text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .status-badge.new {
@@ -153,7 +198,7 @@
 }
 
 /* ==========================================
-   Website Edit/Add Modal Base
+   Website Edit/Add Modal Base & Schema
    ========================================== */
 .website-modal-overlay {
   background: rgba(0, 0, 0, 0.35);
@@ -210,9 +255,6 @@
   height: 18px;
 }
 
-/* ==========================================
-   Modal Form Fields
-   ========================================== */
 .website-form {
   display: flex;
   flex-direction: column;
@@ -238,9 +280,6 @@
   margin-top: 4px;
 }
 
-/* ==========================================
-   Lead Schema Builder
-   ========================================== */
 .lead-schema-title-top {
   display: flex;
   justify-content: space-between;
@@ -342,24 +381,19 @@
   height: 16px;
 }
 
-/* Responsive schema layout */
 @media (max-width: 700px) {
   .lead-schema-field-row {
     flex-wrap: wrap;
   }
-
   .lead-schema-field-input {
     flex: 1 1 calc(50% - 5px);
   }
-
   .lead-schema-field-type {
     flex: 1 1 calc(50% - 5px);
   }
-
   .lead-schema-required-label {
     height: 36px;
   }
-
   .lead-schema-field-remove {
     margin-left: auto;
   }
@@ -370,7 +404,6 @@
   .lead-schema-field-type {
     flex: 1 1 100%;
   }
-
   .lead-schema-required-label {
     margin-top: 2px;
   }

@@ -18,6 +18,21 @@ type WebsiteWithLeads = Website & {
   leads: Lead[];
 };
 
+// Хелпери для роботи з Cookie
+const setCookie = (name: string, value: string, days = 365) => {
+  if (typeof document === "undefined") return;
+  const expires = new Date(Date.now() + days * 864e5).toUTCString();
+  document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/; SameSite=Lax`;
+};
+
+const getCookie = (name: string): string => {
+  if (typeof document === "undefined") return "";
+  return document.cookie.split("; ").reduce((r, v) => {
+    const parts = v.split("=");
+    return parts[0] === name ? decodeURIComponent(parts[1] || "") : r;
+  }, "");
+};
+
 export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
   const { data: session } = useSession();
   const language = session?.user?.language || "uk";
@@ -41,6 +56,48 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
+  // Стейт та реф для ширини колонок
+  const [colWidths, setColWidths] = useState<Record<string, number>>({});
+  const dragData = useRef<{
+    key: string;
+    startX: number;
+    startWidth: number;
+  } | null>(null);
+
+  // Ключі для Cookie на основі ID сайту
+  const visibleKeysCookieName = `leads_visible_keys_${website.id}`;
+  const colWidthsCookieName = `leads_col_widths_${website.id}`;
+
+  // 1. Читання з Cookie при маунті (hydration-safe)
+  useEffect(() => {
+    // Зчитуємо видимі колонки
+    const savedKeysJson = getCookie(visibleKeysCookieName);
+    if (savedKeysJson) {
+      try {
+        const parsed = JSON.parse(savedKeysJson);
+        if (Array.isArray(parsed)) {
+          setVisibleKeys(parsed);
+        }
+      } catch (e) {
+        console.error("Error parsing visible keys cookie", e);
+      }
+    }
+
+    // Зчитуємо ширину колонок
+    const savedWidthsJson = getCookie(colWidthsCookieName);
+    if (savedWidthsJson) {
+      try {
+        const parsed = JSON.parse(savedWidthsJson);
+        if (typeof parsed === "object" && parsed !== null) {
+          setColWidths(parsed);
+        }
+      } catch (e) {
+        console.error("Error parsing column widths cookie", e);
+      }
+    }
+  }, [website.id, visibleKeysCookieName, colWidthsCookieName]);
+
+  // Закриття дропдауну при кліку ззовні
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -51,19 +108,20 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
       }
     };
 
-    if (isOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    if (isOpen) document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isOpen]);
 
+  // Перемикання колонок та збереження в Cookie
   const toggleColumn = (key: string) => {
-    setVisibleKeys((prev) =>
-      prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key],
-    );
+    setVisibleKeys((prev) => {
+      const next = prev.includes(key)
+        ? prev.filter((k) => k !== key)
+        : [...prev, key];
+
+      setCookie(visibleKeysCookieName, JSON.stringify(next));
+      return next;
+    });
   };
 
   const visibleSchema = schema.filter((field) =>
@@ -78,6 +136,55 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
       hour: "2-digit",
       minute: "2-digit",
     });
+
+  // Логіка зміни розміру колонок
+  const handleMouseDown = (e: React.MouseEvent, key: string) => {
+    e.preventDefault();
+    const th = (e.currentTarget as HTMLElement).closest("th");
+    if (!th) return;
+
+    dragData.current = {
+      key,
+      startX: e.clientX,
+      startWidth: th.getBoundingClientRect().width,
+    };
+
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
+    document.body.classList.add("is-resizing");
+  };
+
+  const handleMouseMove = (e: MouseEvent) => {
+    if (!dragData.current) return;
+    const { key, startX, startWidth } = dragData.current;
+    const diff = e.clientX - startX;
+
+    setColWidths((prev) => ({
+      ...prev,
+      [key]: Math.max(60, startWidth + diff), // Мін. ширина: 60px
+    }));
+  };
+
+  const handleMouseUp = () => {
+    dragData.current = null;
+    document.removeEventListener("mousemove", handleMouseMove);
+    document.removeEventListener("mouseup", handleMouseUp);
+    document.body.classList.remove("is-resizing");
+
+    // Зберігаємо оновлені ширини в Cookie при завершенні drag-and-drop
+    setColWidths((latestWidths) => {
+      setCookie(colWidthsCookieName, JSON.stringify(latestWidths));
+      return latestWidths;
+    });
+  };
+
+  useEffect(() => {
+    return () => {
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
+      document.body.classList.remove("is-resizing");
+    };
+  }, []);
 
   return (
     <div className="dashboard-page leads-overview-page">
@@ -151,14 +258,64 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
               <table className="leads-overview-table">
                 <thead>
                   <tr>
-                    <th>{language === "en" ? "Status" : "Статус"}</th>
+                    <th
+                      style={{
+                        width: colWidths["status"]
+                          ? `${colWidths["status"]}px`
+                          : "120px",
+                      }}
+                    >
+                      {language === "en" ? "Status" : "Статус"}
+                      <div
+                        className="resizer"
+                        onMouseDown={(e) => handleMouseDown(e, "status")}
+                      />
+                    </th>
 
                     {visibleSchema.map((field) => (
-                      <th key={field.key}>{field.label || field.key}</th>
+                      <th
+                        key={field.key}
+                        style={{
+                          width: colWidths[field.key]
+                            ? `${colWidths[field.key]}px`
+                            : "auto",
+                        }}
+                      >
+                        {field.label || field.key}
+                        <div
+                          className="resizer"
+                          onMouseDown={(e) => handleMouseDown(e, field.key)}
+                        />
+                      </th>
                     ))}
 
-                    <th>{language === "en" ? "Created At" : "Створено"}</th>
-                    <th>{language === "en" ? "Updated At" : "Оновлено"}</th>
+                    <th
+                      style={{
+                        width: colWidths["createdAt"]
+                          ? `${colWidths["createdAt"]}px`
+                          : "140px",
+                      }}
+                    >
+                      {language === "en" ? "Created At" : "Створено"}
+                      <div
+                        className="resizer"
+                        onMouseDown={(e) => handleMouseDown(e, "createdAt")}
+                      />
+                    </th>
+
+                    <th
+                      style={{
+                        width: colWidths["updatedAt"]
+                          ? `${colWidths["updatedAt"]}px`
+                          : "140px",
+                      }}
+                    >
+                      {language === "en" ? "Updated At" : "Оновлено"}
+                      <div
+                        className="resizer"
+                        onMouseDown={(e) => handleMouseDown(e, "updatedAt")}
+                      />
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -175,14 +332,15 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
                           </span>
                         </td>
 
-                        {visibleSchema.map((field) => (
-                          <td key={field.key}>
-                            {fields[field.key] !== undefined &&
+                        {visibleSchema.map((field) => {
+                          const cellValue =
+                            fields[field.key] !== undefined &&
                             fields[field.key] !== ""
                               ? String(fields[field.key])
-                              : "—"}
-                          </td>
-                        ))}
+                              : "—";
+
+                          return <td key={field.key}>{cellValue}</td>;
+                        })}
 
                         <td className="leads-date">
                           {formatDate(lead.createdAt)}
