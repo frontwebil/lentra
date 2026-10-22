@@ -89,7 +89,9 @@ export async function POST(req: Request) {
 
       if (!isValidFormat) {
         return NextResponse.json(
-          { message: `${field.label} has an invalid date format` },
+          {
+            message: `${field.label} has an invalid date format , you need format YYYY-MM-DD`,
+          },
           { status: 400 },
         );
       }
@@ -103,6 +105,14 @@ export async function POST(req: Request) {
       userId: crmSite.userId,
       websiteId: crmSite.id,
       fields: leadData,
+      logs: [
+        {
+          type: "created-lead",
+          time: new Date().toISOString(),
+          text: "",
+        },
+      ],
+      notes: "",
     },
   });
 

@@ -70,6 +70,9 @@ model Lead {
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
 
+  notes     String?
+  logs      Json?
+
   @@index([userId])
   @@index([websiteId])
 }

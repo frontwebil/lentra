@@ -3,7 +3,7 @@
 import { Website } from "@/generated/prisma/client";
 import axios from "axios";
 import { Dispatch, SetStateAction, useState } from "react";
-import { RxCross2, RxPlus } from "react-icons/rx";
+import { RxChevronDown, RxChevronUp, RxCross2, RxPlus } from "react-icons/rx";
 import { toast } from "sonner";
 
 type LeadField = {
@@ -37,6 +37,50 @@ export function SitesConfigEditModal({
     website.leadSchema as LeadField[],
   );
 
+  // Перевірка, чи тип уже використовується в іншому полі
+  const isTypeSelected = (type: string, currentIndex: number) => {
+    return leadFields.some(
+      (field, idx) => idx !== currentIndex && field.type === type,
+    );
+  };
+
+  // Переміщення поля вгору або вниз
+  const moveField = (index: number, direction: "up" | "down") => {
+    const targetIndex = direction === "up" ? index - 1 : index + 1;
+    if (targetIndex < 0 || targetIndex >= leadFields.length) return;
+
+    const updated = [...leadFields];
+    const [movedItem] = updated.splice(index, 1);
+    updated.splice(targetIndex, 0, movedItem);
+    setLeadFields(updated);
+  };
+
+  // Зміна типу поля з автоматичною підстановкою label та key для Date/Time
+  const handleTypeChange = (index: number, newType: string) => {
+    const updated = [...leadFields];
+    const currentField = updated[index];
+
+    let newLabel = currentField.label;
+    let newKey = currentField.key;
+
+    if (newType === "date") {
+      newLabel = language === "en" ? "Booking date" : "Дата запису";
+      if (!newKey || newKey === "key") newKey = "booking_date";
+    } else if (newType === "time") {
+      newLabel = language === "en" ? "Booking time" : "Час запису";
+      if (!newKey || newKey === "key") newKey = "booking_time";
+    }
+
+    updated[index] = {
+      ...currentField,
+      type: newType,
+      label: newLabel,
+      key: newKey,
+    };
+
+    setLeadFields(updated);
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -65,9 +109,7 @@ export function SitesConfigEditModal({
 
       setWebsites((prev) =>
         prev.map((item) =>
-          item.id === website.id
-            ? { ...item, ...response.data.website }
-            : item,
+          item.id === website.id ? { ...item, ...response.data.website } : item,
         ),
       );
 
@@ -201,7 +243,52 @@ export function SitesConfigEditModal({
 
             <div className="lead-schema-fields">
               {leadFields.map((field, index) => (
-                <div className="lead-schema-field-row" key={index}>
+                <div
+                  className="lead-schema-field-row"
+                  key={index}
+                  style={{
+                    position: "relative",
+                    paddingLeft: "28px",
+                  }}
+                >
+                  {/* Колонка зі стрілочками ліворуч */}
+                  <div
+                    className="lead-schema-field-reorder"
+                    style={{
+                      position: "absolute",
+                      left: "4px",
+                      top: "50%",
+                      transform: "translateY(-50%)",
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      gap: "2px",
+                    }}
+                  >
+                    <button
+                      type="button"
+                      className="dashboard-icon-button"
+                      disabled={index === 0}
+                      onClick={() => moveField(index, "up")}
+                      title={
+                        language === "en" ? "Move up" : "Перемістити вгору"
+                      }
+                    >
+                      <RxChevronUp />
+                    </button>
+                    <button
+                      type="button"
+                      className="dashboard-icon-button"
+                      disabled={index === leadFields.length - 1}
+                      onClick={() => moveField(index, "down")}
+                      title={
+                        language === "en" ? "Move down" : "Перемістити вниз"
+                      }
+                    >
+                      <RxChevronDown />
+                    </button>
+                  </div>
+
                   <div className="lead-schema-field-input">
                     <span className="lead-schema-field-label">
                       {language === "en" ? "Field name" : "Назва поля"}
@@ -262,23 +349,24 @@ export function SitesConfigEditModal({
                     <select
                       className="dashboard-input"
                       value={field.type}
-                      onChange={(e) => {
-                        const updated = [...leadFields];
-
-                        updated[index] = {
-                          ...updated[index],
-                          type: e.target.value,
-                        };
-
-                        setLeadFields(updated);
-                      }}
+                      onChange={(e) => handleTypeChange(index, e.target.value)}
                     >
                       <option value="text">
                         {language === "en" ? "Text" : "Текст"}
                       </option>
 
-                      <option value="date">
-                        {language === "en" ? "Date" : "Дата"}
+                      <option
+                        value="date"
+                        disabled={isTypeSelected("date", index)}
+                      >
+                        {language === "en" ? "Booking date" : "Дата запису"}
+                      </option>
+
+                      <option
+                        value="time"
+                        disabled={isTypeSelected("time", index)}
+                      >
+                        {language === "en" ? "Booking time" : "Час запису"}
                       </option>
                     </select>
                   </div>

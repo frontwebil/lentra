@@ -170,7 +170,7 @@
   max-height: calc(100vh - 60px);
   overflow-y: auto;
   width: 100%;
-  max-width: 900px;
+  max-width: 1100px;
   padding: 24px;
   border-radius: 12px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
@@ -255,6 +255,7 @@
 }
 
 .lead-schema-field-row {
+  position: relative;
   display: flex;
   align-items: flex-end;
   gap: 10px;
@@ -291,7 +292,6 @@
 }
 
 .lead-schema-field-input select {
-  padding-right: 30px;
   cursor: pointer;
 }
 

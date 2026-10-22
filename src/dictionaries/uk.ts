@@ -138,8 +138,7 @@ Content-Type: application/json
     })
   }
 );
-
-// API перевіряє siteId та домен сайту`,
+`,
   },
 
   forAnyBusiness: {

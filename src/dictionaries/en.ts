@@ -139,7 +139,7 @@ Content-Type: application/json
   }
 );
 
-// The API validates the siteId and the website domain`,
+`,
   },
 
   forAnyBusiness: {
