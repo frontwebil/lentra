@@ -8,6 +8,7 @@ import { useState, useRef, useEffect } from "react";
 import { RxPencil1 } from "react-icons/rx";
 import "./style.css";
 import { SitesConfigEditModal } from "../../SitesConfig/SitesConfigEditModal";
+import { FaEye } from "react-icons/fa";
 
 type LeadField = {
   key: string;
@@ -316,6 +317,21 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
                         onMouseDown={(e) => handleMouseDown(e, "updatedAt")}
                       />
                     </th>
+
+                    {/* Колонка дій */}
+                    <th
+                      style={{
+                        width: colWidths["actions"]
+                          ? `${colWidths["actions"]}px`
+                          : "120px",
+                      }}
+                    >
+                      {language === "en" ? "Actions" : "Дії"}
+                      <div
+                        className="resizer"
+                        onMouseDown={(e) => handleMouseDown(e, "actions")}
+                      />
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -347,6 +363,27 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
                         </td>
                         <td className="leads-date">
                           {formatDate(lead.updatedAt)}
+                        </td>
+
+                        {/* Кнопка переходу на деталі ліда */}
+                        <td>
+                          <Link
+                            href={`/dashboard/lead/${lead.id}`}
+                            className="dashboard-primary-button dashboard-primary-button-standard"
+                            style={{
+                              padding: "6px 12px",
+                              fontSize: "13px",
+                              display: "inline-flex",
+                              alignItems: "center",
+                              gap: "6px",
+                              textDecoration: "none",
+                            }}
+                          >
+                            <FaEye />
+                            <span>
+                              {language === "en" ? "View" : "Переглянути"}
+                            </span>
+                          </Link>
                         </td>
                       </tr>
                     );
