@@ -1,0 +1,131 @@
+.website-modal-status {
+  border-radius: 12px;
+  width: 100%;
+  max-width: 600px;
+  max-height: calc(100vh - 60px);
+  padding: 24px;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px #0000001f;
+}
+
+.status-items-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 20px 0;
+}
+
+.status-edit-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background-color: #f9fafb;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+.status-name-input {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  outline: none;
+  min-width: 120px;
+}
+.status-name-input:focus {
+  border-color: #000;
+}
+
+.status-badge-preview {
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  min-width: 80px;
+  text-align: center;
+  user-select: none;
+}
+
+.status-color-picker {
+  display: flex;
+  gap: 6px;
+  padding: 0 8px;
+  border-left: 1px solid #e5e7eb;
+  border-right: 1px solid #e5e7eb;
+}
+
+.color-swatch {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition:
+    transform 0.15s ease,
+    border-color 0.15s ease;
+  padding: 0;
+}
+.color-swatch:hover {
+  transform: scale(1.15);
+}
+.color-swatch.active {
+  border-color: #000;
+  transform: scale(1.15);
+}
+
+.status-delete-btn {
+  background: none;
+  border: none;
+  color: #ef4444;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+}
+.status-delete-btn:hover {
+  background-color: #fee2e2;
+}
+
+.add-status-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 10px;
+  background-color: transparent;
+  border: 1px dashed #d1d5db;
+  border-radius: 8px;
+  color: #374151;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  margin-bottom: 24px;
+  transition:
+    border-color 0.2s,
+    color 0.2s;
+}
+.add-status-btn:hover {
+  border-color: #000;
+  color: #000;
+}
+
+/* Заглушка, коли статусів немає */
+.empty-status-state {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 32px 16px;
+  background-color: #f9fafb; /* світло-сірий фон */
+  border: 1px dashed #d1d5db; /* пунктирна рамка */
+  border-radius: 8px;
+  text-align: center;
+  color: #6b7280;
+  font-size: 14px;
+}

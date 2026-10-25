@@ -151,7 +151,7 @@
 .leads-total-count {
   display: flex;
   min-width: 30px;
-	width: 100%;
+  max-width: 50px;
   height: 30px;
   align-items: center;
   justify-content: center;
@@ -161,8 +161,8 @@
 }
 
 .leads-new-count {
-  background: #edf7f0;
-  color: #287a45;
+  background: #ef4444;
+  color: #ffffff;
 }
 
 .leads-row-actions {

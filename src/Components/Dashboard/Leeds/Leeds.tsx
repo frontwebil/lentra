@@ -167,9 +167,13 @@ export function Leeds() {
                           </span>
                         </td>
                         <td>
-                          <span className="leads-total-count leads-new-count">
-                            {row.newLeads ?? 0}
-                          </span>
+                          {row.newLeads <= 0 ? (
+                            <span className="leads-total-count">0</span>
+                          ) : (
+                            <span className="leads-total-count leads-new-count">
+                              {row.newLeads ?? 0}
+                            </span>
+                          )}
                         </td>
                         <td>
                           <div className="leads-row-actions">

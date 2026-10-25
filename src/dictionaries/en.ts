@@ -94,10 +94,10 @@ export const en: Dictionary = {
         label: "Statuses",
         description: "Configure statuses to match your workflow.",
       },
-      {
-        label: "Notifications",
-        description: "Get notified about new leads and changes instantly.",
-      },
+      // {
+      //   label: "Notifications",
+      //   description: "Get notified about new leads and changes instantly.",
+      // },
       {
         label: "API",
         description: "Integrate Lentra with any website or your own service.",

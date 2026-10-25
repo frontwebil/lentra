@@ -9,6 +9,7 @@ import { RxPencil1 } from "react-icons/rx";
 import "./style.css";
 import { SitesConfigEditModal } from "../../SitesConfig/SitesConfigEditModal";
 import { FaEye } from "react-icons/fa";
+import { StatusModalEdit } from "./StatusModalEdit/StatusModalEdit";
 
 type LeadField = {
   key: string;
@@ -19,7 +20,6 @@ type WebsiteWithLeads = Website & {
   leads: Lead[];
 };
 
-// Хелпери для роботи з Cookie
 const setCookie = (name: string, value: string, days = 365) => {
   if (typeof document === "undefined") return;
   const expires = new Date(Date.now() + days * 864e5).toUTCString();
@@ -41,6 +41,7 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
   const [currentWebsite, setCurrentWebsite] =
     useState<WebsiteWithLeads>(website);
   const [isModalEditOpen, setIsModalEditOpen] = useState(false);
+  const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
 
   useEffect(() => {
     setCurrentWebsite(website);
@@ -57,7 +58,6 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Стейт та реф для ширини колонок
   const [colWidths, setColWidths] = useState<Record<string, number>>({});
   const dragData = useRef<{
     key: string;
@@ -65,13 +65,10 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
     startWidth: number;
   } | null>(null);
 
-  // Ключі для Cookie на основі ID сайту
   const visibleKeysCookieName = `leads_visible_keys_${website.id}`;
   const colWidthsCookieName = `leads_col_widths_${website.id}`;
 
-  // 1. Читання з Cookie при маунті (hydration-safe)
   useEffect(() => {
-    // Зчитуємо видимі колонки
     const savedKeysJson = getCookie(visibleKeysCookieName);
     if (savedKeysJson) {
       try {
@@ -84,7 +81,6 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
       }
     }
 
-    // Зчитуємо ширину колонок
     const savedWidthsJson = getCookie(colWidthsCookieName);
     if (savedWidthsJson) {
       try {
@@ -98,7 +94,6 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
     }
   }, [website.id, visibleKeysCookieName, colWidthsCookieName]);
 
-  // Закриття дропдауну при кліку ззовні
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -113,7 +108,6 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isOpen]);
 
-  // Перемикання колонок та збереження в Cookie
   const toggleColumn = (key: string) => {
     setVisibleKeys((prev) => {
       const next = prev.includes(key)
@@ -138,7 +132,6 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
       minute: "2-digit",
     });
 
-  // Логіка зміни розміру колонок
   const handleMouseDown = (e: React.MouseEvent, key: string) => {
     e.preventDefault();
     const th = (e.currentTarget as HTMLElement).closest("th");
@@ -185,6 +178,7 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
       document.removeEventListener("mouseup", handleMouseUp);
       document.body.classList.remove("is-resizing");
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -221,37 +215,51 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
           </div>
 
           <div className="table-nav">
-            {schema.length > 0 && (
-              <div className="columns-dropdown-wrapper" ref={dropdownRef}>
-                <button
-                  type="button"
-                  className="columns-trigger-btn"
-                  onClick={() => setIsOpen((prev) => !prev)}
-                >
-                  {language === "en" ? "Columns" : "Колонки"}
-                </button>
+            <div className="table-nav-left">
+              {schema.length > 0 && (
+                <div className="columns-dropdown-wrapper" ref={dropdownRef}>
+                  <button
+                    type="button"
+                    className="table-nav-btn"
+                    onClick={() => setIsOpen((prev) => !prev)}
+                  >
+                    {language === "en" ? "Columns" : "Колонки"}
+                  </button>
 
-                {isOpen && (
-                  <div className="columns-dropdown-menu">
-                    <div className="dropdown-title">
-                      {language === "en" ? "Columns" : "Відображати поля"}
+                  {isOpen && (
+                    <div className="columns-dropdown-menu">
+                      <div className="dropdown-title">
+                        {language === "en" ? "Columns" : "Відображати поля"}
+                      </div>
+                      <div className="dropdown-list">
+                        {schema.map((field) => (
+                          <label key={field.key} className="dropdown-item">
+                            <input
+                              type="checkbox"
+                              checked={visibleKeys.includes(field.key)}
+                              onChange={() => toggleColumn(field.key)}
+                            />
+                            <span>{field.label || field.key}</span>
+                          </label>
+                        ))}
+                      </div>
                     </div>
-                    <div className="dropdown-list">
-                      {schema.map((field) => (
-                        <label key={field.key} className="dropdown-item">
-                          <input
-                            type="checkbox"
-                            checked={visibleKeys.includes(field.key)}
-                            onChange={() => toggleColumn(field.key)}
-                          />
-                          <span>{field.label || field.key}</span>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-                )}
+                  )}
+                </div>
+              )}
+              <div className="table-nav-btn" style={{ textAlign: "center" }}>
+                Filter
               </div>
-            )}
+            </div>
+
+            <div className="table-nav-right">
+              <button
+                className="table-nav-btn"
+                onClick={() => setIsStatusModalOpen(true)}
+              >
+                {language === "en" ? "Manage statuses" : "Налаштувати статуси"}
+              </button>
+            </div>
           </div>
 
           <div className="dashboard-surface leads-table-wrapper">
@@ -340,7 +348,7 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
 
                     return (
                       <tr key={lead.id}>
-                        <td>
+                        <td className="lead-cell-text">
                           <span
                             className={`status-badge ${lead.status.toLowerCase()}`}
                           >
@@ -355,14 +363,20 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
                               ? String(fields[field.key])
                               : "—";
 
-                          return <td key={field.key}>{cellValue}</td>;
+                          return (
+                            <td key={field.key}>
+                              <span className="lead-cell-text">
+                                {cellValue}
+                              </span>
+                            </td>
+                          );
                         })}
 
                         <td className="leads-date">
-                          {formatDate(lead.createdAt)}
+                          <span className="lead-cell-text">{formatDate(lead.createdAt)}</span>
                         </td>
                         <td className="leads-date">
-                          {formatDate(lead.updatedAt)}
+                          <span className="lead-cell-text">{formatDate(lead.updatedAt)}</span>
                         </td>
 
                         {/* Кнопка переходу на деталі ліда */}
@@ -420,6 +434,12 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
             }
           }}
           website={currentWebsite}
+        />
+      )}
+      {isStatusModalOpen && (
+        <StatusModalEdit
+          language={language}
+          setIsStatusModalOpen={setIsStatusModalOpen}
         />
       )}
     </div>
