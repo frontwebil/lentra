@@ -2,6 +2,8 @@
   width: 100%;
   min-height: 100vh;
   padding: 20px;
+
+  overflow: auto;
 }
 
 .dashboard-page-title {
@@ -197,6 +199,7 @@
 .LeedsPage {
   max-width: 100%;
   width: 100%;
+  overflow: auto;
 }
 
 .connect-leads-site-id {
