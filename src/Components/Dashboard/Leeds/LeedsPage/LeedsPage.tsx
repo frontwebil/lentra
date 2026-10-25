@@ -16,6 +16,12 @@ type LeadField = {
   label?: string;
 };
 
+type StatusItem = {
+  id: string;
+  name: string;
+  colorId: string;
+};
+
 type WebsiteWithLeads = Website & {
   leads: Lead[];
 };
@@ -40,8 +46,15 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
 
   const [currentWebsite, setCurrentWebsite] =
     useState<WebsiteWithLeads>(website);
+
   const [isModalEditOpen, setIsModalEditOpen] = useState(false);
   const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
+
+  const statuses = (currentWebsite.statuses as StatusItem[] | null) ?? [];
+
+  const availableStatuses = [
+    ...new Set(["NEW", ...statuses.map((status) => status.name)]),
+  ];
 
   useEffect(() => {
     setCurrentWebsite(website);
@@ -52,13 +65,27 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
     : [];
 
   const [visibleKeys, setVisibleKeys] = useState<string[]>(() =>
-    schema.map((f) => f.key),
+    schema.map((field) => field.key),
   );
 
-  const [isOpen, setIsOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const [visibleStatuses, setVisibleStatuses] = useState<string[]>(["NEW"]);
+
+  useEffect(() => {
+    const statusNames = Array.isArray(currentWebsite.statuses)
+      ? (currentWebsite.statuses as StatusItem[]).map((status) => status.name)
+      : [];
+
+    setVisibleStatuses([...new Set(["NEW", ...statusNames])]);
+  }, [currentWebsite.statuses]);
+
+  const [isOpenField, setIsOpenField] = useState(false);
+  const [isOpenStatuses, setIsOpenStatuses] = useState(false);
+
+  const dropdownRefField = useRef<HTMLDivElement>(null);
+  const dropdownRefStatuses = useRef<HTMLDivElement>(null);
 
   const [colWidths, setColWidths] = useState<Record<string, number>>({});
+
   const dragData = useRef<{
     key: string;
     startX: number;
@@ -70,9 +97,11 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
 
   useEffect(() => {
     const savedKeysJson = getCookie(visibleKeysCookieName);
+
     if (savedKeysJson) {
       try {
         const parsed = JSON.parse(savedKeysJson);
+
         if (Array.isArray(parsed)) {
           setVisibleKeys(parsed);
         }
@@ -82,9 +111,11 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
     }
 
     const savedWidthsJson = getCookie(colWidthsCookieName);
+
     if (savedWidthsJson) {
       try {
         const parsed = JSON.parse(savedWidthsJson);
+
         if (typeof parsed === "object" && parsed !== null) {
           setColWidths(parsed);
         }
@@ -97,30 +128,63 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
+        dropdownRefField.current &&
+        !dropdownRefField.current.contains(event.target as Node)
       ) {
-        setIsOpen(false);
+        setIsOpenField(false);
       }
     };
 
-    if (isOpen) document.addEventListener("mousedown", handleClickOutside);
+    if (isOpenField) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [isOpen]);
+  }, [isOpenField]);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRefStatuses.current &&
+        !dropdownRefStatuses.current.contains(event.target as Node)
+      ) {
+        setIsOpenStatuses(false);
+      }
+    };
+
+    if (isOpenStatuses) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isOpenStatuses]);
 
   const toggleColumn = (key: string) => {
     setVisibleKeys((prev) => {
       const next = prev.includes(key)
-        ? prev.filter((k) => k !== key)
+        ? prev.filter((item) => item !== key)
         : [...prev, key];
 
       setCookie(visibleKeysCookieName, JSON.stringify(next));
+
       return next;
     });
   };
 
+  const toggleStatus = (status: string) => {
+    setVisibleStatuses((prev) =>
+      prev.includes(status)
+        ? prev.filter((item) => item !== status)
+        : [...prev, status],
+    );
+  };
+
   const visibleSchema = schema.filter((field) =>
     visibleKeys.includes(field.key),
+  );
+
+  const filteredLeads = currentWebsite.leads.filter((lead) =>
+    visibleStatuses.includes(lead.status),
   );
 
   const formatDate = (date: Date | string) =>
@@ -134,7 +198,9 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
 
   const handleMouseDown = (e: React.MouseEvent, key: string) => {
     e.preventDefault();
+
     const th = (e.currentTarget as HTMLElement).closest("th");
+
     if (!th) return;
 
     dragData.current = {
@@ -150,22 +216,23 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
 
   const handleMouseMove = (e: MouseEvent) => {
     if (!dragData.current) return;
+
     const { key, startX, startWidth } = dragData.current;
     const diff = e.clientX - startX;
 
     setColWidths((prev) => ({
       ...prev,
-      [key]: Math.max(60, startWidth + diff), // Мін. ширина: 60px
+      [key]: Math.max(60, startWidth + diff),
     }));
   };
 
   const handleMouseUp = () => {
     dragData.current = null;
+
     document.removeEventListener("mousemove", handleMouseMove);
     document.removeEventListener("mouseup", handleMouseUp);
     document.body.classList.remove("is-resizing");
 
-    // Зберігаємо оновлені ширини в Cookie при завершенні drag-and-drop
     setColWidths((latestWidths) => {
       setCookie(colWidthsCookieName, JSON.stringify(latestWidths));
       return latestWidths;
@@ -194,6 +261,7 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
               <h1 className="dashboard-page-title dashboard-semibold">
                 {currentWebsite.websiteName}
               </h1>
+
               <Link
                 href={currentWebsite.websiteUrl}
                 className="dashboard-page-description"
@@ -208,6 +276,7 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
               onClick={() => setIsModalEditOpen(true)}
             >
               <RxPencil1 />
+
               <span>
                 {language === "en" ? "Edit website" : "Редагувати сайт"}
               </span>
@@ -217,20 +286,24 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
           <div className="table-nav">
             <div className="table-nav-left">
               {schema.length > 0 && (
-                <div className="columns-dropdown-wrapper" ref={dropdownRef}>
+                <div
+                  className="columns-dropdown-wrapper"
+                  ref={dropdownRefField}
+                >
                   <button
                     type="button"
                     className="table-nav-btn"
-                    onClick={() => setIsOpen((prev) => !prev)}
+                    onClick={() => setIsOpenField((prev) => !prev)}
                   >
                     {language === "en" ? "Columns" : "Колонки"}
                   </button>
 
-                  {isOpen && (
+                  {isOpenField && (
                     <div className="columns-dropdown-menu">
                       <div className="dropdown-title">
                         {language === "en" ? "Columns" : "Відображати поля"}
                       </div>
+
                       <div className="dropdown-list">
                         {schema.map((field) => (
                           <label key={field.key} className="dropdown-item">
@@ -239,6 +312,7 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
                               checked={visibleKeys.includes(field.key)}
                               onChange={() => toggleColumn(field.key)}
                             />
+
                             <span>{field.label || field.key}</span>
                           </label>
                         ))}
@@ -247,8 +321,41 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
                   )}
                 </div>
               )}
-              <div className="table-nav-btn" style={{ textAlign: "center" }}>
-                Filter
+
+              <div
+                className="columns-statuses-wrapper"
+                ref={dropdownRefStatuses}
+              >
+                <button
+                  type="button"
+                  className="table-nav-btn"
+                  style={{ textAlign: "center" }}
+                  onClick={() => setIsOpenStatuses((prev) => !prev)}
+                >
+                  {language === "en" ? "Statuses" : "Статуси"}
+                </button>
+
+                {isOpenStatuses && (
+                  <div className="columns-dropdown-menu">
+                    <div className="dropdown-title">
+                      {language === "en" ? "Statuses" : "Статуси"}
+                    </div>
+
+                    <div className="dropdown-list">
+                      {availableStatuses.map((status) => (
+                        <label key={status} className="dropdown-item">
+                          <input
+                            type="checkbox"
+                            checked={visibleStatuses.includes(status)}
+                            onChange={() => toggleStatus(status)}
+                          />
+
+                          <span>{status}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -263,7 +370,7 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
           </div>
 
           <div className="dashboard-surface leads-table-wrapper">
-            {currentWebsite.leads?.length ? (
+            {filteredLeads.length > 0 ? (
               <table className="leads-overview-table">
                 <thead>
                   <tr>
@@ -275,6 +382,7 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
                       }}
                     >
                       {language === "en" ? "Status" : "Статус"}
+
                       <div
                         className="resizer"
                         onMouseDown={(e) => handleMouseDown(e, "status")}
@@ -291,6 +399,7 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
                         }}
                       >
                         {field.label || field.key}
+
                         <div
                           className="resizer"
                           onMouseDown={(e) => handleMouseDown(e, field.key)}
@@ -306,6 +415,7 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
                       }}
                     >
                       {language === "en" ? "Created At" : "Створено"}
+
                       <div
                         className="resizer"
                         onMouseDown={(e) => handleMouseDown(e, "createdAt")}
@@ -320,13 +430,13 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
                       }}
                     >
                       {language === "en" ? "Updated At" : "Оновлено"}
+
                       <div
                         className="resizer"
                         onMouseDown={(e) => handleMouseDown(e, "updatedAt")}
                       />
                     </th>
 
-                    {/* Колонка дій */}
                     <th
                       style={{
                         width: colWidths["actions"]
@@ -335,6 +445,7 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
                       }}
                     >
                       {language === "en" ? "Actions" : "Дії"}
+
                       <div
                         className="resizer"
                         onMouseDown={(e) => handleMouseDown(e, "actions")}
@@ -342,8 +453,9 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
                     </th>
                   </tr>
                 </thead>
+
                 <tbody>
-                  {currentWebsite.leads.map((lead) => {
+                  {filteredLeads.map((lead) => {
                     const fields = (lead.fields as Record<string, any>) || {};
 
                     return (
@@ -373,13 +485,17 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
                         })}
 
                         <td className="leads-date">
-                          <span className="lead-cell-text">{formatDate(lead.createdAt)}</span>
-                        </td>
-                        <td className="leads-date">
-                          <span className="lead-cell-text">{formatDate(lead.updatedAt)}</span>
+                          <span className="lead-cell-text">
+                            {formatDate(lead.createdAt)}
+                          </span>
                         </td>
 
-                        {/* Кнопка переходу на деталі ліда */}
+                        <td className="leads-date">
+                          <span className="lead-cell-text">
+                            {formatDate(lead.updatedAt)}
+                          </span>
+                        </td>
+
                         <td>
                           <Link
                             href={`/dashboard/lead/${lead.id}`}
@@ -394,6 +510,7 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
                             }}
                           >
                             <FaEye />
+
                             <span>
                               {language === "en" ? "View" : "Переглянути"}
                             </span>
@@ -407,9 +524,13 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
             ) : (
               <div className="dashboard-empty-state">
                 <p>
-                  {language === "en"
-                    ? "No leads received yet."
-                    : "Ще немає отриманих заявок."}
+                  {currentWebsite.leads.length === 0
+                    ? language === "en"
+                      ? "No leads received yet."
+                      : "Ще немає отриманих заявок."
+                    : language === "en"
+                      ? "No leads match the selected statuses."
+                      : "Немає заявок із вибраними статусами."}
                 </p>
               </div>
             )}
@@ -425,6 +546,7 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
           setWebsites={(action) => {
             if (typeof action === "function") {
               const updatedList = action([currentWebsite]);
+
               if (updatedList[0]) {
                 setCurrentWebsite((prev) => ({
                   ...prev,
@@ -436,10 +558,20 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
           website={currentWebsite}
         />
       )}
+
       {isStatusModalOpen && (
         <StatusModalEdit
+          key={currentWebsite.id}
           language={language}
           setIsStatusModalOpen={setIsStatusModalOpen}
+          websiteStatuses={statuses}
+          website={currentWebsite}
+          setCurrentStatuses={(newStatuses: StatusItem[]) =>
+            setCurrentWebsite((prev) => ({
+              ...prev,
+              statuses: newStatuses,
+            }))
+          }
         />
       )}
     </div>

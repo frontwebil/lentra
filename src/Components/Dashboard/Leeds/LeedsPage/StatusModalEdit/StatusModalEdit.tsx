@@ -1,7 +1,10 @@
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { RxCross2, RxPlus, RxTrash } from "react-icons/rx";
 import "./style.css";
 import { STATUS_COLORS } from "@/dictionaries/status-colors";
+import axios from "axios";
+import { Website } from "@/generated/prisma/client";
+import { toast } from "sonner";
 
 type StatusItem = {
   id: string;
@@ -11,15 +14,22 @@ type StatusItem = {
 
 export function StatusModalEdit({
   language,
+  websiteStatuses,
   setIsStatusModalOpen,
+  website,
+  setCurrentStatuses,
 }: {
   setIsStatusModalOpen: Dispatch<SetStateAction<boolean>>;
   language: "uk" | "en" | undefined;
+  websiteStatuses: StatusItem[];
+  website: Website;
+  setCurrentStatuses: (newStatuses: StatusItem[]) => void;
 }) {
   const [formLoading, setFormLoading] = useState(false);
 
-  // Для тесту можете зробити масив порожнім: useState<StatusItem[]>([])
-  const [statuses, setStatuses] = useState<StatusItem[]>([]);
+  const [statuses, setStatuses] = useState<StatusItem[]>([
+    ...(websiteStatuses ?? []),
+  ]);
 
   const handleAddStatus = () => {
     setStatuses([
@@ -40,25 +50,51 @@ export function StatusModalEdit({
     );
   };
 
+  useEffect(() => {
+    setStatuses(websiteStatuses ?? []);
+  }, [websiteStatuses]);
+
   const handleRemoveStatus = (id: string) => {
     setStatuses(statuses.filter((status) => status.id !== id));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (formLoading) return;
+
     setFormLoading(true);
-    console.log("Saved statuses:", statuses);
-    setTimeout(() => {
-      setFormLoading(false);
+
+    try {
+      await axios.post("/api/crm/set-statuses", {
+        statuses,
+        websiteId: website.id,
+      });
+
+      setCurrentStatuses(statuses);
+
+      toast.success(
+        language === "en"
+          ? "Statuses saved successfully"
+          : "Статуси успішно збережено",
+      );
+
       setIsStatusModalOpen(false);
-    }, 1000);
+    } catch (error) {
+      console.error("Failed to save statuses:", error);
+
+      toast.error(
+        language === "en"
+          ? "Failed to save statuses"
+          : "Не вдалося зберегти статуси",
+      );
+    } finally {
+      setFormLoading(false);
+    }
   };
 
   return (
-    <div
-      className="dashboard-modal-overlay website-modal-overlay"
-      onClick={() => setIsStatusModalOpen(false)}
-    >
+    <div className="dashboard-modal-overlay website-modal-overlay">
       <div
         className="dashboard-surface website-modal-status"
         style={{ position: "relative" }}

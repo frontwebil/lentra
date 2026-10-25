@@ -11,8 +11,8 @@ body.is-resizing {
   margin-bottom: 24px;
 }
 
-/* Контейнер кнопки та випадаючого меню */
-.columns-dropdown-wrapper {
+.columns-dropdown-wrapper,
+.columns-statuses-wrapper {
   position: relative;
 }
 
