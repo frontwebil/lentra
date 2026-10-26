@@ -20,6 +20,15 @@ export default async function Page({ params }: Props) {
     },
   });
 
+  const website = await prisma.website.findFirst({
+    where: {
+      userId: session?.user.id,
+      id: lead?.websiteId,
+    },
+  });
+
+  console.log(website?.leadSchema)
+
   if (!lead) {
     redirect("/dashboard/leads");
   }

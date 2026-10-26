@@ -17,7 +17,7 @@ import { useSearchParams } from "next/navigation";
 
 type LeadField = {
   key: string;
-  type: "text" | "date";
+  type: "text" | "date" | "time";
   label: string;
   required: boolean;
 };
@@ -96,8 +96,11 @@ export function ConnectLeads() {
       : [];
 
     schema.forEach((field) => {
+      console.log(field);
       if (field.type === "date") {
         data[field.key] = new Date().toISOString().split("T")[0];
+      } else if (field.type === "time") {
+        data[field.key] = new Date().toTimeString().slice(0, 5);
       } else {
         data[field.key] = `Example ${field.label}`;
       }
