@@ -20,6 +20,15 @@ type LeadField = {
   required: boolean;
 };
 
+const LOG_MESSAGES = {
+  uk: {
+    createdLead: "Ліда створено",
+  },
+  en: {
+    createdLead: "Lead created",
+  },
+} as const;
+
 function isLeadSchema(value: unknown): value is LeadField[] {
   return (
     Array.isArray(value) &&
@@ -47,11 +56,16 @@ export async function POST(req: Request) {
     where: {
       xSiteId: siteId,
     },
+    include: {
+      user: true,
+    },
   });
 
   if (!crmSite) {
     return NextResponse.json({ message: "Invalid site ID" }, { status: 400 });
   }
+
+  const siteOwner = crmSite.user;
 
   const isAllowedDomain = origin == crmSite?.websiteUrl;
 
@@ -97,8 +111,25 @@ export async function POST(req: Request) {
       }
     }
 
+    if (field.type === "time" && value) {
+      const isValidFormat = /^([01]\d|2[0-3]):[0-5]\d$/.test(String(value));
+
+      if (!isValidFormat) {
+        return NextResponse.json(
+          {
+            message: `${field.label} has an invalid time format, you need format HH:MM`,
+          },
+          { status: 400 },
+        );
+      }
+    }
+
     leadData[field.key] = value ?? "";
   }
+
+  const lang = (siteOwner?.language as "uk" | "en") || "uk";
+  const logText =
+    LOG_MESSAGES[lang]?.createdLead ?? LOG_MESSAGES.uk.createdLead;
 
   await prisma.lead.create({
     data: {
@@ -108,8 +139,8 @@ export async function POST(req: Request) {
       logs: [
         {
           type: "created-lead",
+          text: logText,
           time: new Date().toISOString(),
-          text: "",
         },
       ],
       notes: "",

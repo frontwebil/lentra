@@ -1,3 +1,4 @@
+import { LeadPage } from "@/Components/Dashboard/Leeds/LeadPage/LeadPage";
 import { authOptions } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth";
@@ -27,13 +28,13 @@ export default async function Page({ params }: Props) {
     },
   });
 
-  console.log(website?.leadSchema)
+  if (!website) {
+    redirect("/dashboard/leads");
+  }
 
   if (!lead) {
     redirect("/dashboard/leads");
   }
 
-  console.log(lead);
-
-  return <div>Lead ID: {id}</div>;
+  return <LeadPage lead={lead} website={website} />;
 }
