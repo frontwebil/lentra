@@ -101,7 +101,7 @@ export function SideBar() {
         </div>
 
         <div className="side-bard-buttons">
-          <Link
+          {/* <Link
             href="/profile"
             className="dashboard-sidebar-item side-bar-button"
           >
@@ -112,7 +112,7 @@ export function SideBar() {
             {isOpen && (
               <span>{language === "en" ? "Setting" : "Налаштування"}</span>
             )}
-          </Link>
+          </Link> */}
 
           <button
             className="dashboard-sidebar-item side-bar-button side-bar-logout"
