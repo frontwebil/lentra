@@ -231,22 +231,22 @@ Content-Type: application/json
           { label: "API", href: "#api" },
         ],
       },
-      {
-        title: "Підтримка",
-        links: [
-          { label: "Документація", href: "#api" },
-          { label: "Поширені запитання", href: "#faq" },
-          { label: "Замовити консультацію", href: "#consultation" },
-        ],
-      },
-      {
-        title: "Компанія",
-        links: [
-          { label: "Про Lentra", href: "#" },
-          { label: "Умови використання", href: "#" },
-          { label: "Політика конфіденційності", href: "#" },
-        ],
-      },
+      // {
+      //   title: "Підтримка",
+      //   links: [
+      //     { label: "Документація", href: "#api" },
+      //     { label: "Поширені запитання", href: "#faq" },
+      //     { label: "Замовити консультацію", href: "#consultation" },
+      //   ],
+      // },
+      // {
+      //   title: "Компанія",
+      //   links: [
+      //     { label: "Про Lentra", href: "#" },
+      //     { label: "Умови використання", href: "#" },
+      //     { label: "Політика конфіденційності", href: "#" },
+      //   ],
+      // },
     ],
     rights: "Усі права захищені.",
     consultationLink: "Замовити консультацію →",

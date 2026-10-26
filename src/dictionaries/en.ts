@@ -231,22 +231,22 @@ Content-Type: application/json
           { label: "API", href: "#api" },
         ],
       },
-      {
-        title: "Support",
-        links: [
-          { label: "Documentation", href: "#api" },
-          { label: "FAQ", href: "#faq" },
-          { label: "Book a consultation", href: "#consultation" },
-        ],
-      },
-      {
-        title: "Company",
-        links: [
-          { label: "About Lentra", href: "#" },
-          { label: "Terms of use", href: "#" },
-          { label: "Privacy policy", href: "#" },
-        ],
-      },
+      // {
+      //   title: "Support",
+      //   links: [
+      //     { label: "Documentation", href: "#api" },
+      //     { label: "FAQ", href: "#faq" },
+      //     { label: "Book a consultation", href: "#consultation" },
+      //   ],
+      // },
+      // {
+      //   title: "Company",
+      //   links: [
+      //     { label: "About Lentra", href: "#" },
+      //     { label: "Terms of use", href: "#" },
+      //     { label: "Privacy policy", href: "#" },
+      //   ],
+      // },
     ],
     rights: "All rights reserved.",
     consultationLink: "Book a consultation →",
