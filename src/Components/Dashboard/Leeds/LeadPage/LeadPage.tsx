@@ -18,6 +18,7 @@ import { DeleteLeadModal } from "./DeleteLeadModal/DeleteLeadModal";
 import "../../SitesConfig/style.css";
 import { STATUS_COLORS } from "@/dictionaries/status-colors";
 import { normalizeLeadStatus } from "../LeedsPage/LeedsPage";
+import { EditLeadModal } from "./EditLeadModal/EditLeadModal";
 
 export type LeadSchemaField = {
   key: string;
@@ -206,6 +207,18 @@ export function LeadPage({ lead, website }: Props) {
   );
 
   const [isOpenDeleteModal, setIsOpenDeleteModal] = useState(false);
+  const [isOpenEditModal, setIsOpenEditModal] = useState(false);
+
+  const [currentFields, setCurrentFields] = useState<Record<string, unknown>>(
+    () =>
+      lead.fields &&
+      typeof lead.fields === "object" &&
+      !Array.isArray(lead.fields)
+        ? (lead.fields as Record<string, unknown>)
+        : {},
+  );
+
+  const [currentStatus, setCurrentStatus] = useState(lead.status);
 
   const [logs, setLogs] = useState<LeadLogItem[]>(() => parseLogs(lead.logs));
 
@@ -213,13 +226,7 @@ export function LeadPage({ lead, website }: Props) {
     ? website.leadSchema
     : []) as unknown as LeadSchemaField[];
 
-  const fields = (
-    lead.fields &&
-    typeof lead.fields === "object" &&
-    !Array.isArray(lead.fields)
-      ? lead.fields
-      : {}
-  ) as Record<string, unknown>;
+  const fields = currentFields;
 
   const formatDate = (date: Date | string) =>
     new Date(date).toLocaleString(language === "en" ? "en-GB" : "uk-UA", {
@@ -280,7 +287,7 @@ export function LeadPage({ lead, website }: Props) {
     }
   };
 
-  const status = normalizeLeadStatus(lead.status, language);
+  const status = normalizeLeadStatus(currentStatus, language);
 
   return (
     <div className="lead-container">
@@ -290,6 +297,25 @@ export function LeadPage({ lead, website }: Props) {
           setIsOpenDeleteModal={setIsOpenDeleteModal}
           leadId={lead.id}
           xSiteId={website.xSiteId}
+        />
+      )}
+      {isOpenEditModal && (
+        <EditLeadModal
+          lead={{
+            ...lead,
+            fields: currentFields as Lead["fields"],
+            status: currentStatus as Lead["status"],
+            logs: logs as Lead["logs"],
+          }}
+          website={website}
+          language={language}
+          schema={schema}
+          onClose={() => setIsOpenEditModal(false)}
+          onSaved={(data) => {
+            setCurrentFields(data.fields);
+            setCurrentStatus(data.status);
+            setLogs(data.logs);
+          }}
         />
       )}
       <div className="lead-top-nav">
@@ -302,7 +328,10 @@ export function LeadPage({ lead, website }: Props) {
         </Link>
 
         <div className="lead-top-actions">
-          <button className="lead-edit-button">
+          <button
+            className="lead-edit-button"
+            onClick={() => setIsOpenEditModal(true)}
+          >
             {language === "uk" ? "Редагувати" : "Edit"}
           </button>
 

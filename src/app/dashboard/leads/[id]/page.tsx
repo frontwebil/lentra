@@ -44,7 +44,11 @@ export default async function Page({
       xSiteId: id,
     },
     include: {
-      leads: true,
+      leads: {
+        orderBy: {
+          createdAt: "desc",
+        },
+      },
     },
   });
 
