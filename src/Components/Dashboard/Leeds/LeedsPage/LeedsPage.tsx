@@ -5,8 +5,8 @@
 import { Lead, Website } from "@/generated/prisma/client";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { useState, useRef, useEffect } from "react";
-import { RxPencil1 } from "react-icons/rx";
+import { useState, useRef, useEffect, useMemo } from "react";
+import { RxPencil1, RxExclamationTriangle } from "react-icons/rx";
 import "./style.css";
 import { SitesConfigEditModal } from "../../SitesConfig/SitesConfigEditModal";
 import { FaEye } from "react-icons/fa";
@@ -101,13 +101,55 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
 
   const statuses = (currentWebsite.statuses as StatusItem[] | null) ?? [];
 
-  const availableStatuses = [
-    ...new Set(["NEW", ...statuses.map((status) => status.name)]),
-  ];
-
   useEffect(() => {
     setCurrentWebsite(website);
   }, [website]);
+
+  // Формування списку всіх доступних статусів (конфігуровані + "сироти" з реальних заявок)
+  const statusOptions = useMemo(() => {
+    const configuredNames = new Set([
+      "NEW",
+      ...statuses.map((status) => status.name),
+    ]);
+
+    const statusMap = new Map<
+      string,
+      { key: string; text: string; count: number; isValid: boolean }
+    >();
+
+    // 1. Налаштовані валідні статуси
+    configuredNames.forEach((name) => {
+      const isNew = name.toLowerCase() === "new";
+      const key = isNew ? "NEW" : name;
+      const text = isNew ? (language === "en" ? "New" : "Новий") : name;
+      statusMap.set(key.toLowerCase(), {
+        key,
+        text,
+        count: 0,
+        isValid: true,
+      });
+    });
+
+    // 2. Аналізуємо реальні заявки на наявність недійсних або застарілих статусів
+    (currentWebsite.leads || []).forEach((lead) => {
+      const norm = normalizeLeadStatus(lead.status, language);
+      const lowerKey = norm.key.toLowerCase();
+
+      if (statusMap.has(lowerKey)) {
+        statusMap.get(lowerKey)!.count += 1;
+      } else {
+        // Статус є в заявці, але його видалили або перейменували в налаштуваннях
+        statusMap.set(lowerKey, {
+          key: norm.key,
+          text: norm.text,
+          count: 1,
+          isValid: false,
+        });
+      }
+    });
+
+    return Array.from(statusMap.values());
+  }, [statuses, currentWebsite.leads, language]);
 
   const schema = Array.isArray(currentWebsite.leadSchema)
     ? (currentWebsite.leadSchema as unknown as LeadField[])
@@ -117,15 +159,11 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
     schema.map((field) => field.key),
   );
 
-  const [visibleStatuses, setVisibleStatuses] = useState<string[]>(["NEW"]);
+  const [visibleStatuses, setVisibleStatuses] = useState<string[]>([]);
 
   useEffect(() => {
-    const statusNames = Array.isArray(currentWebsite.statuses)
-      ? (currentWebsite.statuses as StatusItem[]).map((status) => status.name)
-      : [];
-
-    setVisibleStatuses([...new Set(["NEW", ...statusNames])]);
-  }, [currentWebsite.statuses]);
+    setVisibleStatuses(statusOptions.map((opt) => opt.key));
+  }, [statusOptions]);
 
   const [isOpenField, setIsOpenField] = useState(false);
 
@@ -226,7 +264,7 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
   const toggleStatus = (status: string) => {
     setVisibleStatuses((prev) =>
       prev.includes(status)
-        ? prev.filter((item) => item !== status)
+        ? prev.filter((item) => item.toLowerCase() !== status.toLowerCase())
         : [...prev, status],
     );
   };
@@ -403,20 +441,75 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
                     </div>
 
                     <div className="dropdown-list">
-                      {availableStatuses.map((status) => (
-                        <label key={status} className="dropdown-item">
+                      {statusOptions.map((opt) => (
+                        <label
+                          key={opt.key}
+                          className="dropdown-item"
+                          style={
+                            !opt.isValid
+                              ? {
+                                  backgroundColor: "#fffbeb",
+                                  borderRadius: "4px",
+                                  padding: "2px 6px",
+                                }
+                              : undefined
+                          }
+                        >
                           <input
                             type="checkbox"
-                            checked={visibleStatuses.includes(status)}
-                            onChange={() => toggleStatus(status)}
+                            checked={visibleStatuses.some(
+                              (vs) =>
+                                vs.toLowerCase() === opt.key.toLowerCase(),
+                            )}
+                            onChange={() => toggleStatus(opt.key)}
                           />
 
-                          <span>
-                            {status === "NEW"
-                              ? language === "en"
-                                ? "New"
-                                : "Новий"
-                              : status}
+                          <span
+                            style={{
+                              display: "inline-flex",
+                              alignItems: "center",
+                              gap: "6px",
+                              width: "100%",
+                              justifyContent: "space-between",
+                            }}
+                          >
+                            <span
+                              style={{
+                                display: "inline-flex",
+                                alignItems: "center",
+                                gap: "4px",
+                              }}
+                            >
+                              {opt.text}
+                              {!opt.isValid && (
+                                <span
+                                  title={
+                                    language === "en"
+                                      ? "Status not found in site configuration. Needs update."
+                                      : "Статус відсутній в налаштуваннях сайту. Потребує оновлення."
+                                  }
+                                  style={{
+                                    display: "inline-flex",
+                                    alignItems: "center",
+                                    color: "#d97706",
+                                  }}
+                                >
+                                  <RxExclamationTriangle />
+                                </span>
+                              )}
+                            </span>
+
+                            {opt.count > 0 && (
+                              <span
+                                style={{
+                                  fontSize: "11px",
+                                  opacity: 0.6,
+                                  marginLeft: "auto",
+                                }}
+                              >
+                                ({opt.count})
+                              </span>
+                            )}
                           </span>
                         </label>
                       ))}
@@ -531,22 +624,61 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
                       (item) => item.id === status.colorId,
                     );
 
+                    const isStatusValid =
+                      status.key.toLowerCase() === "new" ||
+                      statuses.some(
+                        (s) =>
+                          s.name.toLowerCase() === status.key.toLowerCase(),
+                      );
+
                     return (
                       <tr key={lead.id}>
                         <td className="lead-cell-text">
-                          <span
-                            className={`status-badge ${status.colorId}`}
-                            style={
-                              statusColor
-                                ? {
-                                    background: statusColor.bg,
-                                    color: statusColor.text,
-                                  }
-                                : undefined
-                            }
+                          <div
+                            style={{
+                              display: "inline-flex",
+                              alignItems: "center",
+                              gap: "6px",
+                            }}
                           >
-                            {status.text}
-                          </span>
+                            <span
+                              className={`status-badge ${status.colorId}`}
+                              style={
+                                statusColor
+                                  ? {
+                                      background: statusColor.bg,
+                                      color: statusColor.text,
+                                    }
+                                  : !isStatusValid
+                                    ? {
+                                        background: "#fef3c7",
+                                        color: "#b45309",
+                                        border: "1px dashed #f59e0b",
+                                      }
+                                    : undefined
+                              }
+                            >
+                              {status.text}
+                            </span>
+
+                            {!isStatusValid && (
+                              <span
+                                title={
+                                  language === "en"
+                                    ? "Unmapped status! Not found in site configuration."
+                                    : "Застарілий/неузгоджений статус! Відсутній у налаштуваннях сайту."
+                                }
+                                style={{
+                                  display: "inline-flex",
+                                  alignItems: "center",
+                                  color: "#d97706",
+                                  fontSize: "14px",
+                                }}
+                              >
+                                <RxExclamationTriangle />
+                              </span>
+                            )}
+                          </div>
                         </td>
 
                         {visibleSchema.map((field) => {
@@ -590,8 +722,6 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
                               textDecoration: "none",
                             }}
                           >
-                            {/* <FaEye /> */}
-
                             <span>
                               {language === "en" ? "View" : "Переглянути"}
                             </span>
