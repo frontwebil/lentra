@@ -199,7 +199,7 @@ export function Leeds() {
                               href={`/dashboard/leads/${website.xSiteId}`}
                               className="dashboard-primary-button dashboard-primary-button-standard leads-view-button"
                             >
-                              <RxEyeOpen />
+                              {/* <RxEyeOpen /> */}
                               <span>
                                 {language === "en"
                                   ? "View leads"
