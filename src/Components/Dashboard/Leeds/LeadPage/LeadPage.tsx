@@ -17,6 +17,7 @@ import Link from "next/link";
 import { DeleteLeadModal } from "./DeleteLeadModal/DeleteLeadModal";
 import "../../SitesConfig/style.css";
 import { STATUS_COLORS } from "@/dictionaries/status-colors";
+import { normalizeLeadStatus } from "../LeedsPage/LeedsPage";
 
 export type LeadSchemaField = {
   key: string;
@@ -279,7 +280,7 @@ export function LeadPage({ lead, website }: Props) {
     }
   };
 
-  const status = lead.status as LeadStatus;
+  const status = normalizeLeadStatus(lead.status, language);
 
   return (
     <div className="lead-container">

@@ -7,6 +7,10 @@ import { redirect } from "next/navigation";
 export async function generateMetadata(): Promise<Metadata> {
   const session = await getServerSession(authOptions);
 
+  if (!session) {
+    redirect("/login");
+  }
+
   const language = session?.user?.language;
 
   return {

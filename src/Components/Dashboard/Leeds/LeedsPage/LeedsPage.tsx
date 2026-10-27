@@ -52,7 +52,7 @@ type LeadStatusValue =
   | null
   | undefined;
 
-const normalizeLeadStatus = (
+export const normalizeLeadStatus = (
   value: unknown,
   language: string,
 ): { key: string; text: string; colorId: string } => {

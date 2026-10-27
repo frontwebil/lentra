@@ -14,6 +14,10 @@ export default async function Page({ params }: Props) {
   const { id } = await params;
   const session = await getServerSession(authOptions);
 
+  if (!session) {
+    redirect("/login");
+  }
+
   const lead = await prisma.lead.findFirst({
     where: {
       userId: session?.user.id,
