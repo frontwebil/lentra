@@ -590,7 +590,7 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
                               textDecoration: "none",
                             }}
                           >
-                            <FaEye />
+                            {/* <FaEye /> */}
 
                             <span>
                               {language === "en" ? "View" : "Переглянути"}
