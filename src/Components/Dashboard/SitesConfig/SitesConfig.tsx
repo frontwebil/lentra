@@ -176,10 +176,11 @@ export function SitesConfig() {
                             language === "en" ? "en-US" : "uk-UA",
                             {
                               day: "2-digit",
-                              month: "2-digit",
+                              month: "short",
                               year: "numeric",
                               hour: "2-digit",
                               minute: "2-digit",
+                              hour12: false,
                             },
                           )}
                         </span>

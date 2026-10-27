@@ -24,16 +24,37 @@ export async function GET() {
         where: {
           isNew: true,
         },
+        select: {
+          id: true,
+        },
       },
     },
   });
 
-  const result = websites.map((website) => ({
-    ...website,
-    totalLeads: website._count.leads,
-    newLeads: website.leads.length,
-    leads: undefined,
-  }));
+  const result = await Promise.all(
+    websites.map(async (website) => {
+      const latestLead = await prisma.lead.findFirst({
+        where: {
+          websiteId: website.id,
+          userId: session.user.id,
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+        select: {
+          createdAt: true,
+        },
+      });
+
+      return {
+        ...website,
+        totalLeads: website._count.leads,
+        newLeads: website.leads.length,
+        latestLeadAt: latestLead?.createdAt ?? null,
+        leads: undefined,
+      };
+    }),
+  );
 
   return NextResponse.json({ websites: result }, { status: 200 });
 }

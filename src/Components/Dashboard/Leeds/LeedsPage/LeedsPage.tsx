@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+
 "use client";
 
 import { Lead, Website } from "@/generated/prisma/client";
@@ -10,6 +11,7 @@ import "./style.css";
 import { SitesConfigEditModal } from "../../SitesConfig/SitesConfigEditModal";
 import { FaEye } from "react-icons/fa";
 import { StatusModalEdit } from "./StatusModalEdit/StatusModalEdit";
+import { STATUS_COLORS } from "@/dictionaries/status-colors";
 
 type LeadField = {
   key: string;
@@ -28,26 +30,73 @@ type WebsiteWithLeads = Website & {
 
 const setCookie = (name: string, value: string, days = 365) => {
   if (typeof document === "undefined") return;
+
   const expires = new Date(Date.now() + days * 864e5).toUTCString();
+
   document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/; SameSite=Lax`;
 };
 
 const getCookie = (name: string): string => {
   if (typeof document === "undefined") return "";
+
   return document.cookie.split("; ").reduce((r, v) => {
     const parts = v.split("=");
+
     return parts[0] === name ? decodeURIComponent(parts[1] || "") : r;
   }, "");
 };
 
+type LeadStatusValue =
+  | string
+  | { colorId?: string; text?: string; name?: string }
+  | null
+  | undefined;
+
+const normalizeLeadStatus = (
+  value: unknown,
+  language: string,
+): { key: string; text: string; colorId: string } => {
+  let status: LeadStatusValue = value as LeadStatusValue;
+
+  if (typeof status === "string" && status.trim().startsWith("{")) {
+    try {
+      status = JSON.parse(status) as LeadStatusValue;
+    } catch {
+      // Keep the original status string.
+    }
+  }
+
+  if (typeof status === "object" && status !== null) {
+    const originalText = String(status.text ?? status.name ?? "NEW");
+    const isNew = originalText.toLowerCase() === "new";
+
+    return {
+      key: isNew ? "NEW" : originalText,
+      text: isNew ? (language === "en" ? "New" : "Новий") : originalText,
+      colorId: String(status.colorId ?? (isNew ? "new" : "gray")),
+    };
+  }
+
+  const originalText = String(status ?? "NEW");
+  const isNew = originalText.toLowerCase() === "new";
+
+  return {
+    key: isNew ? "NEW" : originalText,
+    text: isNew ? (language === "en" ? "New" : "Новий") : originalText,
+    colorId: isNew ? "new" : originalText.toLowerCase(),
+  };
+};
+
 export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
   const { data: session } = useSession();
+
   const language = session?.user?.language || "uk";
 
   const [currentWebsite, setCurrentWebsite] =
     useState<WebsiteWithLeads>(website);
 
   const [isModalEditOpen, setIsModalEditOpen] = useState(false);
+
   const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
 
   const statuses = (currentWebsite.statuses as StatusItem[] | null) ?? [];
@@ -79,9 +128,11 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
   }, [currentWebsite.statuses]);
 
   const [isOpenField, setIsOpenField] = useState(false);
+
   const [isOpenStatuses, setIsOpenStatuses] = useState(false);
 
   const dropdownRefField = useRef<HTMLDivElement>(null);
+
   const dropdownRefStatuses = useRef<HTMLDivElement>(null);
 
   const [colWidths, setColWidths] = useState<Record<string, number>>({});
@@ -93,6 +144,7 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
   } | null>(null);
 
   const visibleKeysCookieName = `leads_visible_keys_${website.id}`;
+
   const colWidthsCookieName = `leads_col_widths_${website.id}`;
 
   useEffect(() => {
@@ -183,17 +235,24 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
     visibleKeys.includes(field.key),
   );
 
-  const filteredLeads = currentWebsite.leads.filter((lead) =>
-    visibleStatuses.includes(lead.status),
-  );
+  const filteredLeads = currentWebsite.leads.filter((lead) => {
+    const status = normalizeLeadStatus(lead.status, language);
+
+    return visibleStatuses.some(
+      (visibleStatus) =>
+        visibleStatus.toLowerCase() === status.key.toLowerCase() ||
+        visibleStatus.toLowerCase() === status.text.toLowerCase(),
+    );
+  });
 
   const formatDate = (date: Date | string) =>
-    new Date(date).toLocaleString(language === "en" ? "en-US" : "uk-UA", {
+    new Date(date).toLocaleString(language === "en" ? "en-GB" : "uk-UA", {
       day: "2-digit",
       month: "short",
       year: "numeric",
       hour: "2-digit",
       minute: "2-digit",
+      hour12: false,
     });
 
   const handleMouseDown = (e: React.MouseEvent, key: string) => {
@@ -211,6 +270,7 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
 
     document.addEventListener("mousemove", handleMouseMove);
     document.addEventListener("mouseup", handleMouseUp);
+
     document.body.classList.add("is-resizing");
   };
 
@@ -231,6 +291,7 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
 
     document.removeEventListener("mousemove", handleMouseMove);
     document.removeEventListener("mouseup", handleMouseUp);
+
     document.body.classList.remove("is-resizing");
 
     setColWidths((latestWidths) => {
@@ -243,9 +304,9 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
     return () => {
       document.removeEventListener("mousemove", handleMouseMove);
       document.removeEventListener("mouseup", handleMouseUp);
+
       document.body.classList.remove("is-resizing");
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -350,7 +411,13 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
                             onChange={() => toggleStatus(status)}
                           />
 
-                          <span>{status}</span>
+                          <span>
+                            {status === "NEW"
+                              ? language === "en"
+                                ? "New"
+                                : "Новий"
+                              : status}
+                          </span>
                         </label>
                       ))}
                     </div>
@@ -458,13 +525,27 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
                   {filteredLeads.map((lead) => {
                     const fields = (lead.fields as Record<string, any>) || {};
 
+                    const status = normalizeLeadStatus(lead.status, language);
+
+                    const statusColor = STATUS_COLORS.find(
+                      (item) => item.id === status.colorId,
+                    );
+
                     return (
                       <tr key={lead.id}>
                         <td className="lead-cell-text">
                           <span
-                            className={`status-badge ${lead.status.toLowerCase()}`}
+                            className={`status-badge ${status.colorId}`}
+                            style={
+                              statusColor
+                                ? {
+                                    background: statusColor.bg,
+                                    color: statusColor.text,
+                                  }
+                                : undefined
+                            }
                           >
-                            {lead.status}
+                            {status.text}
                           </span>
                         </td>
 

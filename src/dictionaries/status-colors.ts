@@ -1,4 +1,5 @@
 export const STATUS_COLORS = [
+  { id: "new", bg: "#edf7f0", text: "#287a45" },
   { id: "gray", bg: "#F3F4F6", text: "#374151" },
   { id: "blue", bg: "#DBEAFE", text: "#1E40AF" },
   { id: "green", bg: "#D1FAE5", text: "#065F46" },

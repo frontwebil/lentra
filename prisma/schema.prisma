@@ -62,7 +62,7 @@ model Lead {
   websiteId String     
 
   fields    Json
-  status    String     @default("NEW")
+  status    Json     
 
   user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   website   Website    @relation(fields: [websiteId], references: [id], onDelete: Cascade)

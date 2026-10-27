@@ -171,11 +171,8 @@
   border-radius: 9999px;
   font-size: 0.75rem;
   font-weight: 600;
-  background-color: #e5e7eb;
-  color: #374151;
   text-transform: uppercase;
 }
-
 
 .badge {
   display: inline-flex;
@@ -373,4 +370,51 @@
 
 .lead-back-button:hover .back-icon {
   transform: translateX(-3px);
+}
+
+.lead-top-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.lead-top-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.lead-edit-button,
+.lead-delete-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 9px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.lead-edit-button {
+  background: #5b55f7;
+  color: #fff;
+  border: 1px solid #5b55f7;
+}
+
+.lead-edit-button:hover {
+  background: #4942e5;
+}
+
+.lead-delete-button {
+  background: #fff0f0;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+}
+
+.lead-delete-button:hover {
+  background: #fee2e2;
 }

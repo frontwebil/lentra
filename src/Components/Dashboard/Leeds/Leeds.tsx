@@ -148,13 +148,14 @@ export function Leeds() {
                         <td className="leads-last-date">
                           {row.latestLeadAt
                             ? new Date(row.latestLeadAt).toLocaleString(
-                                language === "en" ? "en-US" : "uk-UA",
+                                language === "en" ? "en-GB" : "uk-UA",
                                 {
                                   day: "2-digit",
                                   month: "short",
                                   year: "numeric",
                                   hour: "2-digit",
                                   minute: "2-digit",
+                                  hour12: false,
                                 },
                               )
                             : language === "en"

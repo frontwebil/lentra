@@ -14,6 +14,9 @@ import "./style.css";
 import axios from "axios";
 import { toast } from "sonner";
 import Link from "next/link";
+import { DeleteLeadModal } from "./DeleteLeadModal/DeleteLeadModal";
+import "../../SitesConfig/style.css";
+import { STATUS_COLORS } from "@/dictionaries/status-colors";
 
 export type LeadSchemaField = {
   key: string;
@@ -36,6 +39,11 @@ export type LeadLogItem = {
 type Props = {
   lead: Lead;
   website: Website;
+};
+
+type LeadStatus = {
+  colorId: string;
+  text: string;
 };
 
 const dictionary = {
@@ -87,7 +95,6 @@ const dictionary = {
   },
 };
 
-// Хелпер для безпечного парсингу та нормалізації нотаток
 function parseNotes(
   rawNotes: unknown,
   fallbackDate: Date | string,
@@ -134,7 +141,6 @@ function parseNotes(
   return [];
 }
 
-// Хелпер для безпечного парсингу логів
 function parseLogs(rawLogs: unknown): LeadLogItem[] {
   if (!rawLogs) return [];
 
@@ -198,6 +204,8 @@ export function LeadPage({ lead, website }: Props) {
     parseNotes(lead.notes, lead.createdAt),
   );
 
+  const [isOpenDeleteModal, setIsOpenDeleteModal] = useState(false);
+
   const [logs, setLogs] = useState<LeadLogItem[]>(() => parseLogs(lead.logs));
 
   const schema = (Array.isArray(website.leadSchema)
@@ -213,12 +221,13 @@ export function LeadPage({ lead, website }: Props) {
   ) as Record<string, unknown>;
 
   const formatDate = (date: Date | string) =>
-    new Date(date).toLocaleString(language === "en" ? "en-US" : "uk-UA", {
+    new Date(date).toLocaleString(language === "en" ? "en-GB" : "uk-UA", {
       day: "2-digit",
       month: "short",
       year: "numeric",
       hour: "2-digit",
       minute: "2-digit",
+      hour12: false,
     });
 
   const handleSaveNotes = async () => {
@@ -270,12 +279,39 @@ export function LeadPage({ lead, website }: Props) {
     }
   };
 
+  const status = lead.status as LeadStatus;
+
   return (
     <div className="lead-container">
-      <Link href={`/dashboard/leads/${website.xSiteId}`} className="lead-back-button">
-        <FaArrowLeft className="back-icon" />
-        <span>{language === "uk" ? "Назад до лідів" : "Back to leads"}</span>
-      </Link>
+      {isOpenDeleteModal && (
+        <DeleteLeadModal
+          language={language}
+          setIsOpenDeleteModal={setIsOpenDeleteModal}
+          leadId={lead.id}
+        />
+      )}
+      <div className="lead-top-nav">
+        <Link
+          href={`/dashboard/leads/${website.xSiteId}`}
+          className="lead-back-button"
+        >
+          <FaArrowLeft className="back-icon" />
+          <span>{language === "uk" ? "Назад до лідів" : "Back to leads"}</span>
+        </Link>
+
+        <div className="lead-top-actions">
+          <button className="lead-edit-button">
+            {language === "uk" ? "Редагувати" : "Edit"}
+          </button>
+
+          <button
+            className="lead-delete-button"
+            onClick={() => setIsOpenDeleteModal(true)}
+          >
+            {language === "uk" ? "Видалити" : "Delete"}
+          </button>
+        </div>
+      </div>
       <div className="lead-header">
         <div>
           <h1 className="lead-title">{t.title}</h1>
@@ -284,9 +320,21 @@ export function LeadPage({ lead, website }: Props) {
           </p>
         </div>
         <div className="lead-header-right">
-          <span className={`status-badge ${lead.status.toLowerCase()}`}>
-            {lead.status}
-          </span>
+          {(() => {
+            const colors = STATUS_COLORS.find((el) => el.id === status.colorId);
+
+            return (
+              <span
+                className={`status-badge ${status.colorId}`}
+                style={{
+                  backgroundColor: colors?.bg,
+                  color: colors?.text,
+                }}
+              >
+                {status.text}
+              </span>
+            );
+          })()}
           <div className="lead-badge-id">ID: {lead.id}</div>
         </div>
       </div>

@@ -136,6 +136,7 @@ export async function POST(req: Request) {
       userId: crmSite.userId,
       websiteId: crmSite.id,
       fields: leadData,
+      status: { colorId: "new", text: "New" },
       logs: [
         {
           type: "created-lead",

@@ -114,7 +114,7 @@ export function ConnectLeads() {
       return "";
     }
 
-    return `fetch("https://www.lentra.tech/api/leed", {
+    return `fetch("https://www.lentra.tech/api/lead", {
   method: "POST",
   headers: {
     "Content-Type": "application/json",
