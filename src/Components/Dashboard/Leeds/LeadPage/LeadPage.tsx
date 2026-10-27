@@ -288,6 +288,7 @@ export function LeadPage({ lead, website }: Props) {
           language={language}
           setIsOpenDeleteModal={setIsOpenDeleteModal}
           leadId={lead.id}
+          xSiteId={website.xSiteId}
         />
       )}
       <div className="lead-top-nav">
@@ -341,7 +342,6 @@ export function LeadPage({ lead, website }: Props) {
 
       <div className="lead-dashboard-layout">
         <div className="lead-main-column">
-          {/* Картка з полями ліда */}
           <div className="lead-block-card">
             {schema.length === 0 ? (
               <div className="lead-empty-state">{t.schemaNotConfigured}</div>

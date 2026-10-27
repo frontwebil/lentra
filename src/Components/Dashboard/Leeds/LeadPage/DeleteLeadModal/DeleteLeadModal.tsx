@@ -1,21 +1,52 @@
+import axios from "axios";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { RxCross2, RxTrash } from "react-icons/rx";
+import { toast } from "sonner";
 
 type Props = {
   language: "uk" | "en" | undefined;
   setIsOpenDeleteModal: (isOpen: boolean) => void;
   leadId: string;
+  xSiteId: string;
 };
 
 export function DeleteLeadModal({
   language,
   setIsOpenDeleteModal,
   leadId,
+  xSiteId,
 }: Props) {
   const [loading, setLoading] = useState(false);
-
+  const router = useRouter();
   const handleDelete = async () => {
+    if (loading) {
+      return;
+    }
+
     setLoading(true);
+
+    try {
+      await axios.delete("/api/crm/delete-lead", {
+        data: { leadId: leadId },
+      });
+
+      toast.success(
+        language === "en"
+          ? "Lead deleted successfully"
+          : "Ліда успішно видалено",
+      );
+      router.replace(`/dashboard/leads/${xSiteId}`);
+      setIsOpenDeleteModal(false);
+    } catch (error) {
+      console.error(error);
+
+      toast.error(
+        language === "en" ? "Something went wrong" : "Щось пішло не так",
+      );
+    } finally {
+      setLoading(false);
+    }
   };
   return (
     <div className="dashboard-modal-overlay delete-modal-overlay">
