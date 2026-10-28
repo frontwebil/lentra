@@ -325,6 +325,7 @@ export function SitesConfigAddModal({
                     <input
                       type="text"
                       className="dashboard-input"
+                      disabled={field.key === "name"}
                       placeholder={
                         language === "en" ? "e.g. phone" : "Наприклад, phone"
                       }
