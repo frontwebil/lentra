@@ -69,6 +69,7 @@ export async function POST(req: Request) {
       websiteUrl: normalizeUrl(url),
       xSiteId,
       leadSchema: leadFields,
+      statuses: [],
     },
   });
 
