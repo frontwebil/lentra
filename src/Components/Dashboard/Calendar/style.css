@@ -24,3 +24,9 @@
 
 /* Keep stacked appointments readable when several bookings share a time range. */
 .calendar-event { min-height: 72px; }
+.calendar-day-body { height: auto; min-height: 897px; background-image: none; }
+.calendar-hour-row { display: flex; flex-direction: column; gap: 5px; box-sizing: border-box; padding: 5px; border-bottom: 1px solid #e5e5e5; }
+.calendar-hour-row .calendar-event { position: relative; inset: auto; width: 100% !important; flex: 0 0 auto; box-sizing: border-box; }
+.calendar-day { min-width: 0; }
+.calendar-time-column span { padding-top: 0; line-height: 1; }
+.calendar-time-column span:first-child { color: #9a9a9a; }
