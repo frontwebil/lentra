@@ -13,6 +13,7 @@ import {
   RxGlobe,
   RxExit,
   RxLink2,
+  RxCalendar,
 } from "react-icons/rx";
 import { usePathname } from "next/navigation";
 import { useDispatch } from "react-redux";
@@ -36,6 +37,11 @@ export function SideBar() {
       href: "/dashboard/leads",
       icon: <RxPerson />,
       label: language === "en" ? "Leads" : "Заявки",
+    },
+    {
+      href: "/dashboard/calendar",
+      icon: <RxCalendar />,
+      label: language === "en" ? "Calendar" : "Календар",
     },
     {
       href: "/dashboard/sites-config",
