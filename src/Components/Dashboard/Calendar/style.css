@@ -366,3 +366,8 @@
 .calendar-time-column span:first-child {
   color: #9a9a9a;
 }
+.calendar-event-site { margin-top: 4px; }
+.calendar-status-badge { display: inline-flex !important; align-items: center; gap: 5px; width: fit-content !important; margin-top: 6px !important; padding: 3px 7px; border-radius: 999px; font-size: 9px; font-weight: 600; line-height: 1.2; }
+.calendar-status-badge i { display: block; width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+.calendar-hour-row .calendar-event { display: flex; flex-direction: column; }
+.calendar-hour-row .calendar-status-badge { order: -1; margin-top: 0 !important; margin-bottom: 5px; }
