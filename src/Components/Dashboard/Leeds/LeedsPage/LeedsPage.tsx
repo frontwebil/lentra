@@ -159,6 +159,11 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
     schema.map((field) => field.key),
   );
 
+  const [visibleMetaColumns, setVisibleMetaColumns] = useState<string[]>([
+    "createdAt",
+    "updatedAt",
+  ]);
+
   const [visibleStatuses, setVisibleStatuses] = useState<string[]>([]);
 
   useEffect(() => {
@@ -182,6 +187,8 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
   } | null>(null);
 
   const visibleKeysCookieName = `leads_visible_keys_${website.id}`;
+
+  const visibleMetaColumnsCookieName = `leads_visible_meta_columns_${website.id}`;
 
   const colWidthsCookieName = `leads_col_widths_${website.id}`;
 
@@ -213,7 +220,21 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
         console.error("Error parsing column widths cookie", e);
       }
     }
-  }, [website.id, visibleKeysCookieName, colWidthsCookieName]);
+
+    const savedMetaColumnsJson = getCookie(visibleMetaColumnsCookieName);
+
+    if (savedMetaColumnsJson) {
+      try {
+        const parsed = JSON.parse(savedMetaColumnsJson);
+
+        if (Array.isArray(parsed)) {
+          setVisibleMetaColumns(parsed);
+        }
+      } catch (e) {
+        console.error("Error parsing visible meta columns cookie", e);
+      }
+    }
+  }, [website.id, visibleKeysCookieName, colWidthsCookieName, visibleMetaColumnsCookieName]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -257,6 +278,17 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
 
       setCookie(visibleKeysCookieName, JSON.stringify(next));
 
+      return next;
+    });
+  };
+
+  const toggleMetaColumn = (key: string) => {
+    setVisibleMetaColumns((prev) => {
+      const next = prev.includes(key)
+        ? prev.filter((item) => item !== key)
+        : [...prev, key];
+
+      setCookie(visibleMetaColumnsCookieName, JSON.stringify(next));
       return next;
     });
   };
@@ -415,6 +447,26 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
                             <span>{field.label || field.key}</span>
                           </label>
                         ))}
+
+                        {["createdAt", "updatedAt"].map((key) => (
+                          <label key={key} className="dropdown-item">
+                            <input
+                              type="checkbox"
+                              checked={visibleMetaColumns.includes(key)}
+                              onChange={() => toggleMetaColumn(key)}
+                            />
+
+                            <span>
+                              {key === "createdAt"
+                                ? language === "en"
+                                  ? "Created At"
+                                  : "Створено"
+                                : language === "en"
+                                  ? "Updated At"
+                                  : "Оновлено"}
+                            </span>
+                          </label>
+                        ))}
                       </div>
                     </div>
                   )}
@@ -567,7 +619,8 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
                       </th>
                     ))}
 
-                    <th
+                    {visibleMetaColumns.includes("createdAt") && (
+                      <th
                       style={{
                         width: colWidths["createdAt"]
                           ? `${colWidths["createdAt"]}px`
@@ -580,9 +633,11 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
                         className="resizer"
                         onMouseDown={(e) => handleMouseDown(e, "createdAt")}
                       />
-                    </th>
+                      </th>
+                    )}
 
-                    <th
+                    {visibleMetaColumns.includes("updatedAt") && (
+                      <th
                       style={{
                         width: colWidths["updatedAt"]
                           ? `${colWidths["updatedAt"]}px`
@@ -595,7 +650,8 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
                         className="resizer"
                         onMouseDown={(e) => handleMouseDown(e, "updatedAt")}
                       />
-                    </th>
+                      </th>
+                    )}
 
                     <th
                       style={{
@@ -697,17 +753,21 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
                           );
                         })}
 
-                        <td className="leads-date">
+                        {visibleMetaColumns.includes("createdAt") && (
+                          <td className="leads-date">
                           <span className="lead-cell-text">
                             {formatDate(lead.createdAt)}
                           </span>
-                        </td>
+                          </td>
+                        )}
 
-                        <td className="leads-date">
+                        {visibleMetaColumns.includes("updatedAt") && (
+                          <td className="leads-date">
                           <span className="lead-cell-text">
                             {formatDate(lead.updatedAt)}
                           </span>
-                        </td>
+                          </td>
+                        )}
 
                         <td>
                           <Link
