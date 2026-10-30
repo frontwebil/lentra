@@ -84,10 +84,21 @@ export function Calendar() {
     const fields = new Map<string, CardField>();
     websites.filter((site) => selectedSites.includes(site.id)).forEach((site) => {
       const schema = Array.isArray(site.leadSchema) ? site.leadSchema as SchemaField[] : [];
-      schema.forEach((field) => fields.set(field.key, { key: field.key, label: field.label || field.key }));
+      schema
+        .filter((field) => field.type !== "date" && field.type !== "time")
+        .forEach((field) => fields.set(field.key, { key: field.key, label: field.label || field.key }));
     });
     return Array.from(fields.values());
   }, [websites, selectedSites]);
+
+  useEffect(() => {
+    setSelectedCardFields((current) => {
+      const availableKeys = new Set(availableCardFields.map((field) => field.key));
+      const next = current.filter((key) => availableKeys.has(key));
+      if (next.length !== current.length) setCookie("calendar_card_fields", JSON.stringify(next));
+      return next;
+    });
+  }, [availableCardFields]);
 
   const toggleCardField = (key: string) => {
     setSelectedCardFields((current) => {
