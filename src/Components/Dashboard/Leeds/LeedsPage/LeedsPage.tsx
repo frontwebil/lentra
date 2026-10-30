@@ -9,7 +9,6 @@ import { useState, useRef, useEffect, useMemo } from "react";
 import { RxPencil1, RxExclamationTriangle } from "react-icons/rx";
 import "./style.css";
 import { SitesConfigEditModal } from "../../SitesConfig/SitesConfigEditModal";
-import { FaEye } from "react-icons/fa";
 import { StatusModalEdit } from "./StatusModalEdit/StatusModalEdit";
 import { STATUS_COLORS } from "@/dictionaries/status-colors";
 

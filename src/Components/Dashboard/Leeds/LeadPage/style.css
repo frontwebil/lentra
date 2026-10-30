@@ -52,6 +52,57 @@
   border: 1px solid #e5e7eb;
 }
 
+.lead-client-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 1.25rem 0 1.5rem;
+  padding: 1rem 1.125rem;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.lead-client-info { display: flex; align-items: center; gap: 0.75rem; min-width: 0; }
+.lead-client-icon { display: grid; place-items: center; width: 2.5rem; height: 2.5rem; flex: 0 0 auto; border-radius: 0.65rem; color: #4f46e5; background: #eef2ff; }
+.lead-client-info strong { display: block; color: #111827; font-size: 0.9rem; }
+.lead-client-info p { margin: 0.2rem 0 0; color: #6b7280; font-size: 0.82rem; overflow-wrap: anywhere; }
+.lead-client-link { color: #4f46e5; font-weight: 600; text-decoration: none; }
+.lead-client-link:hover { text-decoration: underline; }
+.lead-client-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 0.5rem; }
+.lead-client-actions button, .client-primary-button, .client-secondary-button { display: inline-flex; align-items: center; justify-content: center; gap: 0.45rem; min-height: 2.35rem; padding: 0.5rem 0.75rem; border: 1px solid #4f46e5; border-radius: 0.5rem; color: white; background: #4f46e5; font-size: 0.8rem; font-weight: 600; cursor: pointer; }
+.lead-client-actions button.secondary, .client-secondary-button { color: #374151; border-color: #d1d5db; background: white; }
+.lead-client-actions button:hover, .client-primary-button:hover { background: #4338ca; }
+.lead-client-actions button.secondary:hover, .client-secondary-button:hover { background: #f9fafb; }
+.client-primary-button:disabled { opacity: 0.55; cursor: not-allowed; }
+
+.client-dialog-backdrop { position: fixed; z-index: 1000; inset: 0; display: grid; place-items: center; padding: 1rem; background: rgba(17, 24, 39, 0.48); }
+.client-dialog { width: min(100%, 31rem); max-height: min(90vh, 42rem); overflow: auto; padding: 1.25rem; border: 1px solid #e5e7eb; border-radius: 0.9rem; background: white; box-shadow: 0 20px 50px rgba(17, 24, 39, 0.22); }
+.client-dialog-header { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1.25rem; }
+.client-dialog-header h2 { margin: 0; color: #111827; font-size: 1.15rem; }
+.client-dialog-header button { width: 2rem; height: 2rem; border: 0; border-radius: 0.4rem; color: #6b7280; background: #f3f4f6; font-size: 1.4rem; cursor: pointer; }
+.client-dialog-form { display: flex; flex-direction: column; gap: 1rem; }
+.client-dialog-form > label:not(.client-match-option) { display: flex; flex-direction: column; gap: 0.4rem; color: #374151; font-size: 0.83rem; font-weight: 600; }
+.client-dialog-form input:not([type="checkbox"]):not([type="radio"]), .client-dialog-form select { width: 100%; min-height: 2.6rem; padding: 0.55rem 0.7rem; border: 1px solid #d1d5db; border-radius: 0.5rem; color: #111827; background: white; font: inherit; font-weight: 400; }
+.client-match-option { display: flex; align-items: flex-start; gap: 0.6rem; color: #4b5563; font-size: 0.84rem; line-height: 1.4; cursor: pointer; }
+.client-match-option input { margin-top: 0.15rem; accent-color: #4f46e5; }
+.client-dialog-hint { margin: 0; color: #6b7280; font-size: 0.84rem; line-height: 1.5; }
+.client-dialog-actions { display: flex; justify-content: flex-end; gap: 0.55rem; margin-top: 0.35rem; }
+.client-options-list { display: flex; flex-direction: column; gap: 0.5rem; max-height: 17rem; overflow-y: auto; }
+.client-option { display: flex; align-items: center; gap: 0.65rem; padding: 0.7rem; border: 1px solid #e5e7eb; border-radius: 0.55rem; cursor: pointer; }
+.client-option.selected { border-color: #6366f1; background: #eef2ff; }
+.client-option input { accent-color: #4f46e5; }
+.client-option span { display: flex; flex-direction: column; gap: 0.15rem; color: #111827; font-size: 0.87rem; }
+.client-option small { color: #6b7280; font-size: 0.78rem; }
+
+@media (max-width: 640px) {
+  .lead-client-card { align-items: stretch; flex-direction: column; }
+  .lead-client-actions { justify-content: stretch; }
+  .lead-client-actions button { flex: 1; }
+}
+
 /* Двоколоночна сітка */
 .lead-dashboard-layout {
   display: grid;

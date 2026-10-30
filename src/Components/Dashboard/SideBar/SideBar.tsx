@@ -14,6 +14,7 @@ import {
   RxLink2,
   RxCalendar,
 } from "react-icons/rx";
+import { FaUsers } from "react-icons/fa";
 import { usePathname } from "next/navigation";
 import { useDispatch } from "react-redux";
 import { setLanguage } from "@/app/redux/languague/languageSlice";
@@ -41,6 +42,11 @@ export function SideBar() {
       href: "/dashboard/calendar",
       icon: <RxCalendar />,
       label: language === "en" ? "Calendar" : "Календар",
+    },
+    {
+      href: "/dashboard/clients",
+      icon: <FaUsers />,
+      label: language === "en" ? "Clients" : "Клієнти",
     },
     {
       href: "/dashboard/sites-config",

@@ -9,6 +9,8 @@ import {
   FaRegClock,
   FaSave,
   FaArrowLeft,
+  FaUserPlus,
+  FaLink,
 } from "react-icons/fa";
 import "./style.css";
 import axios from "axios";
@@ -41,16 +43,33 @@ export type LeadLogItem = {
 type Props = {
   lead: Lead;
   website: Website;
+  client?: { id: string; name: string; phone: string | null } | null;
 };
 
-type LeadStatus = {
-  colorId: string;
-  text: string;
-};
+type ClientSummary = { id: string; name: string; phone: string | null; _count?: { leads: number } };
 
 const dictionary = {
   uk: {
     title: "Деталі ліда",
+    clientSection: "Клієнт",
+    createClient: "Створити клієнта на основі заявки",
+    linkClient: "Прив’язати до наявного клієнта",
+    changeClient: "Змінити клієнта",
+    linkedTo: "Заявка прив’язана до клієнта",
+    createClientTitle: "Створення клієнта",
+    linkClientTitle: "Виберіть клієнта",
+    clientName: "Ім’я клієнта",
+    phoneField: "Поле з номером телефону",
+    matchPhoneLeads: "Прив’язати інші заявки з таким самим номером телефону",
+    noPhoneField: "У схемі сайту не знайдено поле телефону. Інші заявки не будуть зіставлятися автоматично.",
+    searchClients: "Пошук за ім’ям або телефоном",
+    noClients: "Клієнтів поки немає. Створіть клієнта із заявки.",
+    saveClient: "Створити клієнта",
+    linkSelected: "Прив’язати заявку",
+    cancel: "Скасувати",
+    clientCreated: "Клієнта створено й прив’язано до заявки",
+    clientLinked: "Заявку прив’язано до клієнта",
+    clientActionError: "Не вдалося виконати дію з клієнтом",
     received: "Отримано",
     schemaNotConfigured: "Схема полів для цього сайту ще не налаштована.",
     notSpecified: "Не вказано",
@@ -74,6 +93,25 @@ const dictionary = {
   },
   en: {
     title: "Lead Details",
+    clientSection: "Client",
+    createClient: "Create client from this lead",
+    linkClient: "Link to an existing client",
+    changeClient: "Change client",
+    linkedTo: "Lead linked to client",
+    createClientTitle: "Create client",
+    linkClientTitle: "Choose a client",
+    clientName: "Client name",
+    phoneField: "Phone number field",
+    matchPhoneLeads: "Link other leads with the same phone number",
+    noPhoneField: "No phone field was found in this website schema. Other leads will not be matched automatically.",
+    searchClients: "Search by name or phone",
+    noClients: "There are no clients yet. Create a client from a lead.",
+    saveClient: "Create client",
+    linkSelected: "Link lead",
+    cancel: "Cancel",
+    clientCreated: "Client created and linked to this lead",
+    clientLinked: "Lead linked to client",
+    clientActionError: "Could not complete the client action",
     received: "Received",
     schemaNotConfigured: "Field schema for this website is not configured yet.",
     notSpecified: "Not specified",
@@ -194,7 +232,7 @@ function formatFieldValue(
   return String(value);
 }
 
-export function LeadPage({ lead, website }: Props) {
+export function LeadPage({ lead, website, client: initialClient = null }: Props) {
   const { data: session } = useSession();
   const language = (session?.user?.language as "uk" | "en") || "uk";
   const t = useMemo(() => dictionary[language] || dictionary.uk, [language]);
@@ -227,6 +265,83 @@ export function LeadPage({ lead, website }: Props) {
     : []) as unknown as LeadSchemaField[];
 
   const fields = currentFields;
+  const phoneFields = schema.filter((field) => /phone|mobile|tel|телефон|мобіль/i.test(`${field.key} ${field.label ?? ""}`));
+  const suggestedNameField = schema.find((field) => /name|ім.?я|піб|contact/i.test(`${field.key} ${field.label ?? ""}`));
+  const suggestedPhoneField = phoneFields[0];
+  const [client, setClient] = useState<ClientSummary | null>(initialClient);
+  const [clientDialog, setClientDialog] = useState<"create" | "link" | null>(null);
+  const [clients, setClients] = useState<ClientSummary[]>([]);
+  const [clientSearch, setClientSearch] = useState("");
+  const [selectedClientId, setSelectedClientId] = useState("");
+  const [clientName, setClientName] = useState(() => {
+    const name = suggestedNameField ? String(currentFields[suggestedNameField.key] ?? "").trim() : "";
+    const phone = suggestedPhoneField ? String(currentFields[suggestedPhoneField.key] ?? "").trim() : "";
+    return name || phone;
+  });
+  const [phoneFieldKey, setPhoneFieldKey] = useState(suggestedPhoneField?.key ?? "");
+  const [attachMatchingLeads, setAttachMatchingLeads] = useState(true);
+  const [isSavingClient, setIsSavingClient] = useState(false);
+
+  const openClientDialog = async (mode: "create" | "link") => {
+    setClientDialog(mode);
+    setClientSearch("");
+    if (mode === "create") {
+      const name = suggestedNameField ? String(currentFields[suggestedNameField.key] ?? "").trim() : "";
+      const phone = suggestedPhoneField ? String(currentFields[suggestedPhoneField.key] ?? "").trim() : "";
+      setClientName(name || phone);
+      setPhoneFieldKey(suggestedPhoneField?.key ?? "");
+      setAttachMatchingLeads(true);
+      return;
+    }
+    try {
+      const response = await axios.get("/api/crm/clients");
+      setClients(response.data.clients ?? []);
+      setSelectedClientId(client?.id ?? "");
+    } catch {
+      toast.error(t.clientActionError);
+      setClientDialog(null);
+    }
+  };
+
+  const handleCreateClient = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setIsSavingClient(true);
+    try {
+      const response = await axios.post("/api/crm/clients", {
+        leadId: lead.id,
+        name: clientName.trim(),
+        phoneFieldKey,
+        attachMatchingLeads: attachMatchingLeads && Boolean(phoneFieldKey),
+      });
+      setClient(response.data.client);
+      setClientDialog(null);
+      const linkedLeads = response.data.linkedLeads ?? 1;
+      toast.success(linkedLeads > 1 ? `${t.clientCreated} (${linkedLeads})` : t.clientCreated);
+    } catch (error) {
+      console.error("Create client error:", error);
+      toast.error(t.clientActionError);
+    } finally {
+      setIsSavingClient(false);
+    }
+  };
+
+  const handleLinkClient = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!selectedClientId) return;
+    setIsSavingClient(true);
+    try {
+      await axios.post("/api/crm/clients/link", { leadId: lead.id, clientId: selectedClientId });
+      const selected = clients.find((item) => item.id === selectedClientId);
+      if (selected) setClient(selected);
+      setClientDialog(null);
+      toast.success(t.clientLinked);
+    } catch (error) {
+      console.error("Link client error:", error);
+      toast.error(t.clientActionError);
+    } finally {
+      setIsSavingClient(false);
+    }
+  };
 
   const formatDate = (date: Date | string) =>
     new Date(date).toLocaleString(language === "en" ? "en-GB" : "uk-UA", {
@@ -291,6 +406,50 @@ export function LeadPage({ lead, website }: Props) {
 
   return (
     <div className="lead-container">
+      {clientDialog && (
+        <div className="client-dialog-backdrop" onMouseDown={(event) => { if (event.target === event.currentTarget) setClientDialog(null); }}>
+          <section className="client-dialog" role="dialog" aria-modal="true" aria-labelledby="client-dialog-title">
+            <div className="client-dialog-header">
+              <h2 id="client-dialog-title">{clientDialog === "create" ? t.createClientTitle : t.linkClientTitle}</h2>
+              <button type="button" onClick={() => setClientDialog(null)} aria-label={t.cancel}>×</button>
+            </div>
+            {clientDialog === "create" ? (
+              <form onSubmit={handleCreateClient} className="client-dialog-form">
+                <label>{t.clientName}<input value={clientName} onChange={(event) => setClientName(event.target.value)} required /></label>
+                {phoneFields.length > 0 ? (
+                  <>
+                    <label>{t.phoneField}<select value={phoneFieldKey} onChange={(event) => setPhoneFieldKey(event.target.value)}>
+                      {phoneFields.map((field) => <option key={field.key} value={field.key}>{field.label || field.key}</option>)}
+                    </select></label>
+                    <label className="client-match-option"><input type="checkbox" checked={attachMatchingLeads} onChange={(event) => setAttachMatchingLeads(event.target.checked)} /><span>{t.matchPhoneLeads}</span></label>
+                  </>
+                ) : <p className="client-dialog-hint">{t.noPhoneField}</p>}
+                <div className="client-dialog-actions">
+                  <button type="button" className="client-secondary-button" onClick={() => setClientDialog(null)}>{t.cancel}</button>
+                  <button type="submit" className="client-primary-button" disabled={isSavingClient || !clientName.trim()}>{isSavingClient ? t.saving : t.saveClient}</button>
+                </div>
+              </form>
+            ) : (
+              <form onSubmit={handleLinkClient} className="client-dialog-form">
+                <input className="client-search-input" value={clientSearch} onChange={(event) => setClientSearch(event.target.value)} placeholder={t.searchClients} />
+                <div className="client-options-list">
+                  {clients.filter((item) => `${item.name} ${item.phone ?? ""}`.toLowerCase().includes(clientSearch.toLowerCase())).map((item) => (
+                    <label className={`client-option ${selectedClientId === item.id ? "selected" : ""}`} key={item.id}>
+                      <input type="radio" name="existing-client" value={item.id} checked={selectedClientId === item.id} onChange={() => setSelectedClientId(item.id)} />
+                      <span><strong>{item.name}</strong>{item.phone && <small>{item.phone}</small>}</span>
+                    </label>
+                  ))}
+                  {clients.filter((item) => `${item.name} ${item.phone ?? ""}`.toLowerCase().includes(clientSearch.toLowerCase())).length === 0 && <p className="client-dialog-hint">{t.noClients}</p>}
+                </div>
+                <div className="client-dialog-actions">
+                  <button type="button" className="client-secondary-button" onClick={() => setClientDialog(null)}>{t.cancel}</button>
+                  <button type="submit" className="client-primary-button" disabled={isSavingClient || !selectedClientId}>{isSavingClient ? t.saving : t.linkSelected}</button>
+                </div>
+              </form>
+            )}
+          </section>
+        </div>
+      )}
       {isOpenDeleteModal && (
         <DeleteLeadModal
           language={language}
@@ -369,6 +528,20 @@ export function LeadPage({ lead, website }: Props) {
           <div className="lead-badge-id">ID: {lead.id}</div>
         </div>
       </div>
+
+      <section className="lead-client-card">
+        <div className="lead-client-info">
+          <span className="lead-client-icon"><FaLink /></span>
+          <div>
+            <strong>{t.clientSection}</strong>
+            <p>{client ? <>{t.linkedTo}: <Link className="lead-client-link" href={`/dashboard/clients/${client.id}`}>{client.name}</Link>{client.phone ? ` · ${client.phone}` : ""}</> : (language === "uk" ? "Заявка ще не прив’язана до клієнта" : "This lead is not linked to a client yet")}</p>
+          </div>
+        </div>
+        <div className="lead-client-actions">
+          {!client && <button type="button" onClick={() => void openClientDialog("create")}><FaUserPlus />{t.createClient}</button>}
+          <button type="button" className="secondary" onClick={() => void openClientDialog("link")}><FaLink />{client ? t.changeClient : t.linkClient}</button>
+        </div>
+      </section>
 
       <div className="lead-dashboard-layout">
         <div className="lead-main-column">

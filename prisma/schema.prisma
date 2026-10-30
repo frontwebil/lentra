@@ -18,28 +18,48 @@ enum CrmLanguage {
 }
 
 model User {
-  id          String       @id @default(cuid())
+  id String @id @default(cuid())
 
-  phone       String       @unique
+  phone       String @unique
   companyName String
-  email       String       @unique
+  email       String @unique
   password    String
 
-  language    CrmLanguage  @default(uk)
-  isConfirmed Boolean      @default(false)
+  language    CrmLanguage @default(uk)
+  isConfirmed Boolean     @default(false)
 
-  websites    Website[]
-  leeds       Lead[]
+  websites Website[]
+  leeds    Lead[]
+  clients  Client[]
 
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Client {
+  id              String  @id @default(cuid())
+  userId          String
+  name            String
+  phone           String?
+  fields          Json
+  notes           String? @db.Text
+  discountPercent Float?
+
+  user  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  leads Lead[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([phone])
 }
 
 model Website {
-  id          String    @id @default(cuid())
-  userId      String
+  id     String @id @default(cuid())
+  userId String
 
-  xSiteId     String   @unique
+  xSiteId String @unique
 
   websiteName String
   websiteUrl  String
@@ -47,33 +67,35 @@ model Website {
   statuses    Json?
   leads       Lead[]
 
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([userId])
 }
 
-
 model Lead {
-  id        String     @id @default(cuid())
+  id        String  @id @default(cuid())
   userId    String
-  websiteId String     
+  websiteId String
+  clientId  String?
 
-  fields    Json
-  status    Json     
+  fields Json
+  status Json
 
-  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  website   Website    @relation(fields: [websiteId], references: [id], onDelete: Cascade)
-  isNew     Boolean?   @default(true)
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  website Website  @relation(fields: [websiteId], references: [id], onDelete: Cascade)
+  client  Client?  @relation(fields: [clientId], references: [id], onDelete: SetNull)
+  isNew   Boolean? @default(true)
 
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  notes     Json?
-  logs      Json?
+  notes Json?
+  logs  Json?
 
   @@index([userId])
   @@index([websiteId])
+  @@index([clientId])
 }

@@ -23,6 +23,7 @@ export default async function Page({ params }: Props) {
       userId: session?.user.id,
       id,
     },
+    include: { client: { select: { id: true, name: true, phone: true } } },
   });
 
   const website = await prisma.website.findFirst({
@@ -40,5 +41,5 @@ export default async function Page({ params }: Props) {
     redirect("/dashboard/leads");
   }
 
-  return <LeadPage lead={lead} website={website} />;
+  return <LeadPage lead={lead} website={website} client={lead.client} />;
 }
