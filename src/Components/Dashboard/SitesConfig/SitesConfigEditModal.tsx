@@ -69,6 +69,12 @@ export function SitesConfigEditModal({
     } else if (newType === "time") {
       newLabel = language === "en" ? "Booking time" : "Час запису";
       if (!newKey || newKey === "key") newKey = "booking_time";
+    } else if (newType === "category") {
+      newLabel = language === "en" ? "Category" : "Категорія";
+      if (!newKey || newKey === "key") newKey = "category";
+    } else if (newType === "price") {
+      newLabel = language === "en" ? "Price" : "Ціна";
+      if (!newKey || newKey === "key") newKey = "price";
     }
 
     updated[index] = {
@@ -368,6 +374,14 @@ export function SitesConfigEditModal({
                         disabled={isTypeSelected("time", index)}
                       >
                         {language === "en" ? "Booking time" : "Час запису"}
+                      </option>
+
+                      <option value="category">
+                        {language === "en" ? "Category" : "Категорія"}
+                      </option>
+
+                      <option value="price">
+                        {language === "en" ? "Price" : "Ціна"}
                       </option>
                     </select>
                   </div>

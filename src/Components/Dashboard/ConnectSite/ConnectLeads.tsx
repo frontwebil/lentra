@@ -17,7 +17,7 @@ import { useSearchParams } from "next/navigation";
 
 type LeadField = {
   key: string;
-  type: "text" | "date" | "time";
+  type: "text" | "date" | "time" | "category" | "price";
   label: string;
   required: boolean;
 };
@@ -89,7 +89,7 @@ export function ConnectLeads() {
       return {};
     }
 
-    const data: Record<string, string> = {};
+    const data: Record<string, string | number> = {};
 
     const schema = Array.isArray(selectedWebsite.leadSchema)
       ? selectedWebsite.leadSchema
@@ -101,6 +101,10 @@ export function ConnectLeads() {
         data[field.key] = new Date().toISOString().split("T")[0];
       } else if (field.type === "time") {
         data[field.key] = new Date().toTimeString().slice(0, 5);
+      } else if (field.type === "price") {
+        data[field.key] = 99.99;
+      } else if (field.type === "category") {
+        data[field.key] = `Example ${field.label}`;
       } else {
         data[field.key] = `Example ${field.label}`;
       }
@@ -366,7 +370,17 @@ export function ConnectLeads() {
                           </div>
 
                           <span className="connect-leads-field-type">
-                            {field.type === "date" ? "date" : field.type}
+                            {field.type === "category"
+                              ? language === "en"
+                                ? "Category"
+                                : "Категорія"
+                              : field.type === "price"
+                                ? language === "en"
+                                  ? "Price"
+                                  : "Ціна"
+                                : field.type === "date"
+                                  ? "date"
+                                  : field.type}
                           </span>
 
                           <span

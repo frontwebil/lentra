@@ -215,11 +215,14 @@ export function EditLeadModal({
                   ) : (
                     <input
                       id={`edit-${field.key}`}
+                      step={field.type === "price" ? "any" : undefined}
                       type={
-                        ["text", "number", "date", "time"].includes(
+                        ["text", "number", "date", "time", "price"].includes(
                           field.type || "text",
                         )
-                          ? field.type
+                          ? field.type === "price"
+                            ? "number"
+                            : field.type
                           : "text"
                       }
                       value={
@@ -231,7 +234,7 @@ export function EditLeadModal({
                       }
                       onChange={(e) => {
                         const nextValue =
-                          field.type === "number"
+                          field.type === "number" || field.type === "price"
                             ? e.target.value === ""
                               ? ""
                               : Number(e.target.value)

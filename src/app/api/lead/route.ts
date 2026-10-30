@@ -92,9 +92,31 @@ export async function POST(req: Request) {
   for (const field of siteSchema) {
     const value = data[field.key];
 
-    if (field.required && (!value || String(value).trim() === "")) {
+    const isEmpty =
+      value === undefined || value === null || String(value).trim() === "";
+
+    if (field.required && isEmpty) {
       return NextResponse.json(
         { message: `${field.label} is required` },
+        { status: 400 },
+      );
+    }
+
+    if (field.type === "price" && !isEmpty) {
+      const price = typeof value === "number" ? value : Number(value);
+      if (!Number.isFinite(price) || price < 0) {
+        return NextResponse.json(
+          { message: `${field.label} must be a non-negative number` },
+          { status: 400 },
+        );
+      }
+      leadData[field.key] = price;
+      continue;
+    }
+
+    if (field.type === "category" && !isEmpty && typeof value !== "string") {
+      return NextResponse.json(
+        { message: `${field.label} must be text` },
         { status: 400 },
       );
     }
@@ -125,7 +147,7 @@ export async function POST(req: Request) {
       }
     }
 
-    leadData[field.key] = value ?? "";
+    leadData[field.key] = isEmpty ? "" : value;
   }
 
   const lang = (siteOwner?.language as "uk" | "en") || "uk";

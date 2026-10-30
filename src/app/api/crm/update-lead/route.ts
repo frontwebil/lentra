@@ -108,9 +108,36 @@ export async function PATCH(req: NextRequest) {
       const value = fields[field.key];
 
       if (
+        field.type === "price" &&
+        value !== undefined &&
         value !== null &&
         value !== "" &&
-        field.type === "number" &&
+        (typeof value !== "number" || !Number.isFinite(value) || value < 0)
+      ) {
+        return NextResponse.json(
+          { message: `Invalid price: ${field.key}` },
+          { status: 400 },
+        );
+      }
+
+      if (
+        field.type === "category" &&
+        value !== undefined &&
+        value !== null &&
+        value !== "" &&
+        typeof value !== "string"
+      ) {
+        return NextResponse.json(
+          { message: `Invalid category: ${field.key}` },
+          { status: 400 },
+        );
+      }
+
+      if (
+        value !== undefined &&
+        value !== null &&
+        value !== "" &&
+        (field.type === "number" || field.type === "price") &&
         (typeof value !== "number" || !Number.isFinite(value))
       ) {
         return NextResponse.json(
@@ -120,6 +147,7 @@ export async function PATCH(req: NextRequest) {
       }
 
       if (
+        value !== undefined &&
         value !== null &&
         value !== "" &&
         field.type === "boolean" &&
