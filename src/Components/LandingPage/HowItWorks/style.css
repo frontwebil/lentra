@@ -1,138 +1,158 @@
 .HowItWorks {
-  padding: 60px 0;
+  padding: 88px 0;
+  background: #fff;
 }
 
-.how-it-works-cards {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  width: 100%;
+.how-it-works-subtitle {
+  max-width: 680px;
+  margin: 16px auto 0;
+  color: #697087;
+  font-size: 17px;
+  line-height: 1.65;
+  text-align: center;
+}
 
-  margin-top: 30px;
+.how-it-works-flow {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  max-width: 1200px;
+  margin: 40px auto 0;
+}
+
+.how-it-works-flow-item {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+  gap: 16px;
 }
 
 .how-it-works-card {
-  position: relative;
   display: flex;
+  flex: 1;
   flex-direction: column;
-  align-items: center;
-  text-align: center;
-  padding: 20px 20px;
+  align-items: flex-start;
+  align-self: stretch;
+  min-width: 0;
+  padding: 24px;
+  border: 1px solid #e8eaf3;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 8px 28px rgba(24, 31, 68, 0.045);
 }
 
 .how-it-works-card-top {
   display: flex;
+  width: 100%;
   align-items: center;
-  gap: 10px;
-
-  margin-bottom: 16px;
+  justify-content: space-between;
+  margin-bottom: 22px;
 }
 
 .how-it-works-step-num {
-  width: 52px;
-  height: 52px;
-  border-radius: 50%;
-  border: 1.5px solid #e0e1fa;
-  background: #f0f0fd;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #6366f1;
-
-  font-weight: 600;
+  color: #a0a5b7;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
 }
 
 .how-it-works-icon-wrap {
-  width: 52px;
-  height: 52px;
-  border-radius: 50%;
-  border: 1.5px solid #e0e1fa;
-  background: #f0f0fd;
   display: flex;
+  width: 46px;
+  height: 46px;
   align-items: center;
   justify-content: center;
-  color: #6366f1;
+  border: 1px solid #e0e1fa;
+  border-radius: 13px;
+  background: #f0f0fd;
+  color: #5b55f7;
+}
+
+.how-it-works-icon-wrap svg {
+  width: 19px;
+  height: 19px;
 }
 
 .how-it-works-title {
-  font-size: 16px;
-  font-weight: 600;
-  color: #0f1730;
   margin: 0 0 10px;
+  color: #0f1730;
+  font-size: 17px;
+  font-weight: 700;
 }
 
 .how-it-works-desc {
-  font-size: 14px;
-  color: #31374a;
-  line-height: 125%;
   margin: 0;
-  max-width: 250px;
+  color: #626a80;
+  font-size: 14px;
+  line-height: 1.65;
 }
 
-.api-example {
-  margin-top: 24px;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 8px;
-}
-
-.api-example-card {
-  border: 1px solid #e5e8f0;
-  box-shadow: 0px 7px 16px 0px #17204f0c;
-  padding: 20px 10px;
-  border-radius: 10px;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-
-  max-width: 130px;
-  width: 100%;
-}
-.api-example-card-text {
-  font-size: 16px;
-  font-weight: 500;
-}
-
-.api-example-card svg {
-  width: 40%;
-  height: auto;
-  margin-bottom: 20px;
-}
-
-.api-example-wrapper-next {
-  color: #9DA4B6;
+.how-it-works-flow-arrow {
+  width: 20px;
+  height: 20px;
+  flex: 0 0 20px;
+  color: #a5a8ba;
 }
 
 @media (max-width: 900px) {
-  .how-it-works-cards {
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
+  .HowItWorks {
+    padding: 68px 0;
+  }
+
+  .how-it-works-flow,
+  .how-it-works-flow-item {
+    gap: 10px;
   }
 
   .how-it-works-card {
-    padding: 16px 20px;
+    padding: 18px;
   }
 
-  .how-it-works-desc {
-    max-width: 320px;
+  .how-it-works-flow-arrow {
+    width: 14px;
+    height: 14px;
+    flex-basis: 14px;
   }
 }
 
 @media (max-width: 560px) {
-  .api-example {
-    flex-wrap: wrap;
+  .HowItWorks {
+    padding: 54px 0;
   }
 
-  .api-example-card {
-    max-width: calc(50% - 22px);
+  .how-it-works-subtitle {
+    font-size: 15px;
   }
 
-  .api-example-wrapper-next svg {
-    width: 16px;
-    height: 16px;
+  .how-it-works-flow {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    margin-top: 28px;
+  }
+
+  .how-it-works-flow-item {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .how-it-works-card {
+    min-height: 0;
+    padding: 20px;
+  }
+
+  .how-it-works-card-top {
+    margin-bottom: 16px;
+  }
+
+  .how-it-works-flow-arrow {
+    align-self: center;
+    transform: rotate(90deg);
+  }
+
+  .how-it-works-title {
+    font-size: 16px;
   }
 }

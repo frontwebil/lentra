@@ -1,7 +1,7 @@
 import { Header } from "@/Components/LandingPage/Header/Header";
 import { Hero } from "@/Components/LandingPage/Hero/Hero";
+import { ProductTour } from "@/Components/LandingPage/ProductTour/ProductTour";
 import { HowItWorks } from "@/Components/LandingPage/HowItWorks/HowItWorks";
-import { InOnePlace } from "@/Components/LandingPage/InOnePlace/InOnePlace";
 import { OneApiForAll } from "@/Components/LandingPage/OneApiForAll/OneApiForAll";
 import { Possibility } from "@/Components/LandingPage/Possibility/Possibility";
 import { ForAnyBusiness } from "@/Components/LandingPage/ForAnyBusiness/ForAnyBusiness";
@@ -57,6 +57,7 @@ export function Landing({ dict, locale, description }: Props) {
       />
       <Header dict={dict.header} locale={locale} />
       <Hero dict={dict.hero} />
+      <ProductTour dict={dict.productTour} />
       {/* <InOnePlace dict={dict.inOnePlace} /> */}
       <HowItWorks dict={dict.howItWorks} />
       <Possibility dict={dict.possibility} />

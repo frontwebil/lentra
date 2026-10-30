@@ -5,6 +5,7 @@ export const en: Dictionary = {
 
   header: {
     nav: [
+      { label: "CRM tour", href: "#product" },
       { label: "Features", href: "#possibility" },
       { label: "How it works", href: "#how-it-works" },
       { label: "API", href: "#api" },
@@ -25,6 +26,53 @@ export const en: Dictionary = {
       "No developer? No problem.",
       "We will help you connect Lentra to your website and set up everything you need to start receiving leads.",
     ],
+  },
+
+  productTour: {
+    eyebrow: "Inside Lentra",
+    title: "Everything you need to manage leads, in one workspace",
+    subtitle:
+      "See how your team reviews new inquiries, schedules appointments, and follows each client from first request to outcome.",
+    features: [
+      {
+        title: "Leads from every website, in one list",
+        description:
+          "Review activity across your websites and find the right lead without switching between inboxes, spreadsheets, and dashboards.",
+        points: ["A separate source for each website", "Statuses and lead fields at a glance"],
+        screenLabel: "Leads",
+        imageAlt: "Website sources and lead activity in the Lentra dashboard",
+        note: "Every lead in one workspace",
+      },
+      {
+        title: "A complete history on every client card",
+        description:
+          "Contact details, requests, manager notes, and status changes stay together, so your team never loses the context.",
+        points: ["Team notes on the client card", "A timeline of changes and statuses"],
+        screenLabel: "Client card",
+        imageAlt: "Client card with contact details, manager notes, and activity history",
+        note: "The full interaction history, in view",
+      },
+      {
+        title: "A calendar for appointments and leads",
+        description:
+          "Plan the week at a glance, review appointments, and keep track of each meeting's status.",
+        points: ["Day, week, and month views", "Appointments from different websites"],
+        screenLabel: "Calendar",
+        imageAlt: "Weekly calendar of appointments received from websites",
+        note: "Your work week at a glance",
+      },
+      {
+        title: "Connect a website in a few steps",
+        description:
+          "Add a website and send leads to Lentra with a simple API request. Each source gets its own identifier.",
+        points: ["Multiple websites in one account", "A ready-to-use integration example"],
+        screenLabel: "Connect website",
+        imageAlt: "Website connection screen and an example request for sending a lead to Lentra",
+        note: "Your website connected to the CRM",
+      },
+    ],
+    ctaText: "Want to see Lentra with your leads?",
+    ctaButton: "Try for free",
   },
 
   inOnePlace: {
@@ -56,21 +104,22 @@ export const en: Dictionary = {
 
   howItWorks: {
     title: "How it works",
-    nodes: ["Your website", "API", "CRM"],
+    subtitle: "Three steps from your website to leads in Lentra.",
     steps: [
       {
-        title: "Connect the API",
-        description: "Create an API key and integrate Lentra with your website.",
+        title: "Add a website to the CRM",
+        description:
+          "Create a website in your Lentra dashboard to give its leads a dedicated source.",
       },
       {
-        title: "Send leads",
+        title: "Get the API request for your developer",
         description:
-          "New leads flow into the CRM automatically and are stored in one place.",
+          "Your dashboard provides the API request URL and a ready-to-use code example. Your developer just adapts the fields to your form — usually a 5–10 minute task.",
       },
       {
-        title: "Manage clients",
+        title: "Connect your site or service",
         description:
-          "Process leads, update statuses, and keep the full history of every client interaction.",
+          "Add an API request to your website or integrate another service, and new leads will flow into the CRM.",
       },
     ],
   },
