@@ -7,7 +7,6 @@ import "./style.css";
 
 import {
   RxHamburgerMenu,
-  RxDashboard,
   RxPerson,
   RxGear,
   RxGlobe,
@@ -107,18 +106,20 @@ export function SideBar() {
         </div>
 
         <div className="side-bard-buttons">
-          {/* <Link
-            href="/profile"
-            className="dashboard-sidebar-item side-bar-button"
+          <Link
+            href="/dashboard/settings"
+            className={`dashboard-sidebar-item side-bar-button ${
+              pathname === "/dashboard/settings" ? "active" : ""
+            }`}
           >
             <span className="side-bar-button-icon">
               <RxGear />
             </span>
 
             {isOpen && (
-              <span>{language === "en" ? "Setting" : "Налаштування"}</span>
+              <span>{language === "en" ? "Settings" : "Налаштування"}</span>
             )}
-          </Link> */}
+          </Link>
 
           <button
             className="dashboard-sidebar-item side-bar-button side-bar-logout"

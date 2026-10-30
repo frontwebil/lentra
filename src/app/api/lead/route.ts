@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import prisma from "@/lib/prisma";
+import { notifyUserAboutNewLead } from "@/lib/telegramNotifications";
 import { NextResponse } from "next/server";
 
 export async function OPTIONS() {
@@ -146,6 +147,14 @@ export async function POST(req: Request) {
       ],
       notes: "",
     },
+  });
+
+  await notifyUserAboutNewLead({
+    userId: siteOwner.id,
+    language: lang,
+    websiteName: crmSite.websiteName,
+    fields: leadData,
+    schema: siteSchema,
   });
 
   return NextResponse.json(

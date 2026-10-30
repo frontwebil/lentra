@@ -89,13 +89,32 @@ export const authOptions: AuthOptions = {
   },
 
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger }) {
       if (user) {
         token.id = user.id;
         token.email = user.email;
         token.phone = user.phone;
         token.companyName = user.companyName;
         token.language = user.language;
+      }
+
+      if (trigger === "update" && token.id) {
+        const freshUser = await prisma.user.findUnique({
+          where: { id: token.id as string },
+          select: {
+            email: true,
+            phone: true,
+            companyName: true,
+            language: true,
+          },
+        });
+
+        if (freshUser) {
+          token.email = freshUser.email;
+          token.phone = freshUser.phone;
+          token.companyName = freshUser.companyName;
+          token.language = freshUser.language;
+        }
       }
 
       return token;
