@@ -39,14 +39,14 @@ export function SideBar() {
       label: language === "en" ? "Leads" : "Заявки",
     },
     {
-      href: "/dashboard/calendar",
-      icon: <RxCalendar />,
-      label: language === "en" ? "Calendar" : "Календар",
-    },
-    {
       href: "/dashboard/clients",
       icon: <FaUsers />,
       label: language === "en" ? "Clients" : "Клієнти",
+    },
+    {
+      href: "/dashboard/calendar",
+      icon: <RxCalendar />,
+      label: language === "en" ? "Calendar" : "Календар",
     },
     {
       href: "/dashboard/sites-config",
