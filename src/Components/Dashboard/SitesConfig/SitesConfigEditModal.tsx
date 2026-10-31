@@ -11,7 +11,16 @@ type LeadField = {
   key: string;
   required: boolean;
   type: string;
+  currency?: string;
 };
+
+const currencies = [
+  { code: "UAH", symbol: "₴" },
+  { code: "USD", symbol: "$" },
+  { code: "EUR", symbol: "€" },
+  { code: "PLN", symbol: "zł" },
+  { code: "GBP", symbol: "£" },
+];
 
 export function SitesConfigEditModal({
   setIsModalEditOpen,
@@ -82,6 +91,7 @@ export function SitesConfigEditModal({
       type: newType,
       label: newLabel,
       key: newKey,
+      currency: newType === "price" ? currentField.currency || "UAH" : undefined,
     };
 
     setLeadFields(updated);
@@ -385,6 +395,29 @@ export function SitesConfigEditModal({
                       </option>
                     </select>
                   </div>
+
+                  {field.type === "price" && (
+                    <div className="lead-schema-field-input lead-schema-field-type">
+                      <span className="lead-schema-field-label">
+                        {language === "en" ? "Currency" : "Валюта"}
+                      </span>
+                      <select
+                        className="dashboard-input"
+                        value={field.currency || "UAH"}
+                        onChange={(e) => {
+                          const updated = [...leadFields];
+                          updated[index] = { ...updated[index], currency: e.target.value };
+                          setLeadFields(updated);
+                        }}
+                      >
+                        {currencies.map((currency) => (
+                          <option key={currency.code} value={currency.code}>
+                            {currency.code} ({currency.symbol})
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
 
                   <label className="lead-schema-required-label">
                     <input

@@ -11,10 +11,13 @@ import "./style.css";
 import { SitesConfigEditModal } from "../../SitesConfig/SitesConfigEditModal";
 import { StatusModalEdit } from "./StatusModalEdit/StatusModalEdit";
 import { STATUS_COLORS } from "@/dictionaries/status-colors";
+import { formatPrice } from "@/lib/format-price";
 
 type LeadField = {
   key: string;
   label?: string;
+  type?: string;
+  currency?: string;
 };
 
 type StatusItem = {
@@ -737,11 +740,12 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
                         </td>
 
                         {visibleSchema.map((field) => {
-                          const cellValue =
-                            fields[field.key] !== undefined &&
-                            fields[field.key] !== ""
-                              ? String(fields[field.key])
-                              : "—";
+                          const rawValue = fields[field.key];
+                          const cellValue = rawValue !== undefined && rawValue !== ""
+                            ? field.type === "price" && Number.isFinite(Number(rawValue))
+                              ? formatPrice(Number(rawValue), field.currency || "UAH", language === "en" ? "en" : "uk")
+                              : String(rawValue)
+                            : "—";
 
                           return (
                             <td key={field.key}>

@@ -19,6 +19,7 @@ import Link from "next/link";
 import { DeleteLeadModal } from "./DeleteLeadModal/DeleteLeadModal";
 import "../../SitesConfig/style.css";
 import { STATUS_COLORS } from "@/dictionaries/status-colors";
+import { formatPrice } from "@/lib/format-price";
 import { normalizeLeadStatus } from "../LeedsPage/LeedsPage";
 import { EditLeadModal } from "./EditLeadModal/EditLeadModal";
 
@@ -26,6 +27,7 @@ export type LeadSchemaField = {
   key: string;
   label: string;
   type?: "text" | "number" | "boolean" | "date" | string;
+  currency?: string;
 };
 
 export type NoteItem = {
@@ -204,6 +206,8 @@ function parseLogs(rawLogs: unknown): LeadLogItem[] {
 function formatFieldValue(
   value: unknown,
   t: typeof dictionary.uk,
+  field?: LeadSchemaField,
+  language: "uk" | "en" = "uk",
 ): React.ReactNode {
   if (value === null || value === undefined || value === "") {
     return <span className="lead-empty-text">{t.notSpecified}</span>;
@@ -215,6 +219,13 @@ function formatFieldValue(
     ) : (
       <span className="badge badge-danger">{t.no}</span>
     );
+  }
+
+  if (field?.type === "price") {
+    const amount = Number(value);
+    if (Number.isFinite(amount)) {
+      return formatPrice(amount, field.currency || "UAH", language);
+    }
   }
 
   if (Array.isArray(value)) {
@@ -556,7 +567,7 @@ export function LeadPage({ lead, website, client: initialClient = null }: Props)
                     <div key={f.key} className="lead-field-card">
                       <dt className="lead-field-label">{f.label || f.key}</dt>
                       <dd className="lead-field-value">
-                        {formatFieldValue(rawValue, t)}
+                        {formatFieldValue(rawValue, t, f, language)}
                       </dd>
                     </div>
                   );

@@ -187,7 +187,7 @@ export function EditLeadModal({
               return (
                 <div className="edit-lead-field" key={field.key}>
                   <label htmlFor={`edit-${field.key}`}>
-                    {field.label || field.key}
+                    {field.label || field.key}{field.type === "price" ? ` (${field.currency || "UAH"})` : ""}
                   </label>
 
                   {field.type === "boolean" ? (

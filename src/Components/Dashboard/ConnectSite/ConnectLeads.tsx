@@ -20,6 +20,7 @@ type LeadField = {
   type: "text" | "date" | "time" | "category" | "price";
   label: string;
   required: boolean;
+  currency?: string;
 };
 
 type Website = {
@@ -376,8 +377,8 @@ export function ConnectLeads() {
                                 : "Категорія"
                               : field.type === "price"
                                 ? language === "en"
-                                  ? "Price"
-                                  : "Ціна"
+                                  ? `Price · ${field.currency || "UAH"}`
+                                  : `Ціна · ${field.currency || "UAH"}`
                                 : field.type === "date"
                                   ? "date"
                                   : field.type}
