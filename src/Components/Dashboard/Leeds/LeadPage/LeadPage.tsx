@@ -11,6 +11,7 @@ import {
   FaArrowLeft,
   FaUserPlus,
   FaLink,
+  FaUnlink,
 } from "react-icons/fa";
 import "./style.css";
 import axios from "axios";
@@ -57,6 +58,7 @@ const dictionary = {
     createClient: "Створити клієнта на основі заявки",
     linkClient: "Прив’язати до наявного клієнта",
     changeClient: "Змінити клієнта",
+    unlinkClient: "Відв’язати клієнта",
     linkedTo: "Заявка прив’язана до клієнта",
     createClientTitle: "Створення клієнта",
     linkClientTitle: "Виберіть клієнта",
@@ -71,6 +73,7 @@ const dictionary = {
     cancel: "Скасувати",
     clientCreated: "Клієнта створено й прив’язано до заявки",
     clientLinked: "Заявку прив’язано до клієнта",
+    clientUnlinked: "Клієнта відв’язано від заявки",
     clientActionError: "Не вдалося виконати дію з клієнтом",
     received: "Отримано",
     schemaNotConfigured: "Схема полів для цього сайту ще не налаштована.",
@@ -91,6 +94,8 @@ const dictionary = {
       "created-lead": "Заявку отримано та створено в системі",
       "status-changed": "Змінено статус заявки",
       "note-added": "Додано нотатку",
+      "client-linked": "Заявку прив’язано до клієнта",
+      "client-unlinked": "Клієнта відв’язано від заявки",
     } as Record<string, string>,
   },
   en: {
@@ -99,6 +104,7 @@ const dictionary = {
     createClient: "Create client from this lead",
     linkClient: "Link to an existing client",
     changeClient: "Change client",
+    unlinkClient: "Unlink client",
     linkedTo: "Lead linked to client",
     createClientTitle: "Create client",
     linkClientTitle: "Choose a client",
@@ -113,6 +119,7 @@ const dictionary = {
     cancel: "Cancel",
     clientCreated: "Client created and linked to this lead",
     clientLinked: "Lead linked to client",
+    clientUnlinked: "Client unlinked from lead",
     clientActionError: "Could not complete the client action",
     received: "Received",
     schemaNotConfigured: "Field schema for this website is not configured yet.",
@@ -133,6 +140,8 @@ const dictionary = {
       "created-lead": "Lead received and created in system",
       "status-changed": "Lead status updated",
       "note-added": "Note added",
+      "client-linked": "Lead linked to client",
+      "client-unlinked": "Client unlinked from lead",
     } as Record<string, string>,
   },
 };
@@ -325,6 +334,7 @@ export function LeadPage({ lead, website, client: initialClient = null }: Props)
         attachMatchingLeads: attachMatchingLeads && Boolean(phoneFieldKey),
       });
       setClient(response.data.client);
+      if (Array.isArray(response.data.leadLogs)) setLogs(response.data.leadLogs);
       setClientDialog(null);
       const linkedLeads = response.data.linkedLeads ?? 1;
       toast.success(linkedLeads > 1 ? `${t.clientCreated} (${linkedLeads})` : t.clientCreated);
@@ -341,13 +351,30 @@ export function LeadPage({ lead, website, client: initialClient = null }: Props)
     if (!selectedClientId) return;
     setIsSavingClient(true);
     try {
-      await axios.post("/api/crm/clients/link", { leadId: lead.id, clientId: selectedClientId });
+      const response = await axios.post("/api/crm/clients/link", { leadId: lead.id, clientId: selectedClientId });
       const selected = clients.find((item) => item.id === selectedClientId);
       if (selected) setClient(selected);
+      if (Array.isArray(response.data.logs)) setLogs(response.data.logs);
       setClientDialog(null);
       toast.success(t.clientLinked);
     } catch (error) {
       console.error("Link client error:", error);
+      toast.error(t.clientActionError);
+    } finally {
+      setIsSavingClient(false);
+    }
+  };
+
+  const handleUnlinkClient = async () => {
+    if (!client || isSavingClient) return;
+    setIsSavingClient(true);
+    try {
+      const response = await axios.post("/api/crm/clients/link", { leadId: lead.id, clientId: null });
+      setClient(null);
+      if (Array.isArray(response.data.logs)) setLogs(response.data.logs);
+      toast.success(t.clientUnlinked);
+    } catch (error) {
+      console.error("Unlink client error:", error);
       toast.error(t.clientActionError);
     } finally {
       setIsSavingClient(false);
@@ -551,6 +578,7 @@ export function LeadPage({ lead, website, client: initialClient = null }: Props)
         <div className="lead-client-actions">
           {!client && <button type="button" onClick={() => void openClientDialog("create")}><FaUserPlus />{t.createClient}</button>}
           <button type="button" className="secondary" onClick={() => void openClientDialog("link")}><FaLink />{client ? t.changeClient : t.linkClient}</button>
+          {client && <button type="button" className="danger" onClick={() => void handleUnlinkClient()} disabled={isSavingClient}><FaUnlink />{t.unlinkClient}</button>}
         </div>
       </section>
 

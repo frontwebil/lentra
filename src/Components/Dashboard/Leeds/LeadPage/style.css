@@ -74,6 +74,9 @@
 .lead-client-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 0.5rem; }
 .lead-client-actions button, .client-primary-button, .client-secondary-button { display: inline-flex; align-items: center; justify-content: center; gap: 0.45rem; min-height: 2.35rem; padding: 0.5rem 0.75rem; border: 1px solid #4f46e5; border-radius: 0.5rem; color: white; background: #4f46e5; font-size: 0.8rem; font-weight: 600; cursor: pointer; }
 .lead-client-actions button.secondary, .client-secondary-button { color: #374151; border-color: #d1d5db; background: white; }
+.lead-client-actions button.danger { color: #b42318; border-color: #f2c7c4; background: #fff; }
+.lead-client-actions button.danger:hover { border-color: #e8a39e; background: #fff5f4; }
+.lead-client-actions button:disabled { opacity: 0.6; cursor: wait; }
 .lead-client-actions button:hover, .client-primary-button:hover { background: #4338ca; }
 .lead-client-actions button.secondary:hover, .client-secondary-button:hover { background: #f9fafb; }
 .client-primary-button:disabled { opacity: 0.55; cursor: not-allowed; }

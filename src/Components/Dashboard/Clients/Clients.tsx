@@ -128,16 +128,20 @@ export function Clients({ initialClientId }: { initialClientId?: string }) {
 
   const dateLabel = (value: string) => new Date(value).toLocaleDateString(language === "en" ? "en-GB" : "uk-UA", { day: "numeric", month: "short", year: "numeric" });
   const clientFieldLabels = new Map<string, string>();
+  const excludedClientFieldKeys = new Set<string>();
   selectedClient?.leads.forEach((lead) => {
     if (!Array.isArray(lead.website.leadSchema)) return;
     lead.website.leadSchema.forEach((field) => {
       if (field && typeof field === "object" && "key" in field && typeof field.key === "string") {
-        const schemaField = field as { key: string; label?: unknown };
+        const schemaField = field as { key: string; label?: unknown; type?: unknown };
         clientFieldLabels.set(schemaField.key, typeof schemaField.label === "string" && schemaField.label ? schemaField.label : schemaField.key);
+        if (schemaField.type === "category" || schemaField.type === "date" || schemaField.type === "time") {
+          excludedClientFieldKeys.add(schemaField.key);
+        }
       }
     });
   });
-  const clientFields = selectedClient ? Object.entries(clientInfoFields) : [];
+  const clientFields = selectedClient ? Object.entries(clientInfoFields).filter(([key]) => !excludedClientFieldKeys.has(key)) : [];
   const displayFieldValue = (value: unknown) => Array.isArray(value) ? value.join(", ") : typeof value === "object" && value !== null ? JSON.stringify(value) : String(value);
   const availableLeadFields = new Map<string, { label: string; value: unknown }>();
   selectedClient?.leads.forEach((lead) => {
@@ -146,7 +150,8 @@ export function Clients({ initialClientId }: { initialClientId?: string }) {
     lead.website.leadSchema.forEach((field) => {
       if (!field || typeof field !== "object" || !("key" in field) || typeof field.key !== "string") return;
       if (!Object.prototype.hasOwnProperty.call(leadValues, field.key) || leadValues[field.key] == null || leadValues[field.key] === "") return;
-      const schemaField = field as { key: string; label?: unknown };
+      const schemaField = field as { key: string; label?: unknown; type?: unknown };
+      if (schemaField.type === "category" || schemaField.type === "date" || schemaField.type === "time") return;
       if (!availableLeadFields.has(schemaField.key)) availableLeadFields.set(schemaField.key, {
         label: typeof schemaField.label === "string" && schemaField.label ? schemaField.label : schemaField.key,
         value: leadValues[schemaField.key],

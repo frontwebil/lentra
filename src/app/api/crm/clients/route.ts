@@ -72,6 +72,12 @@ export async function POST(req: Request) {
 
   const fields = asRecord(lead.fields);
   const schema = asSchema(lead.website.leadSchema);
+  const clientFields = Object.fromEntries(
+    Object.entries(fields).filter(([key]) => {
+      const type = schema.find((field) => field.key === key)?.type;
+      return type !== "category" && type !== "date" && type !== "time";
+    }),
+  );
   const phoneField = schema.find((field) => field.key === phoneFieldKey) ?? schema.find(isPhoneField);
   const phoneValue = phoneField ? String(fields[phoneField.key] ?? "").trim() : "";
   const phone = normalizePhone(phoneValue);
@@ -94,27 +100,37 @@ export async function POST(req: Request) {
   }
 
   try {
-    const client = await prisma.$transaction(async (tx) => {
+    const result = await prisma.$transaction(async (tx) => {
       const created = await tx.client.create({
         data: {
           userId: session.user.id,
           name,
           phone: phoneValue || null,
-          fields: fields as Prisma.InputJsonValue,
+          fields: clientFields as Prisma.InputJsonValue,
         },
     select: { id: true, name: true, phone: true, discountPercent: true },
       });
-      await tx.lead.updateMany({
-        where: {
-          id: { in: [...matchingLeadIds] },
-          userId: session.user.id,
-          clientId: null,
-        },
-        data: { clientId: created.id },
+      const matchingLeads = await tx.lead.findMany({
+        where: { id: { in: [...matchingLeadIds] }, userId: session.user.id, clientId: null },
+        select: { id: true, logs: true },
       });
-      return created;
+      const isUk = session.user.language !== "en";
+      const now = new Date().toISOString();
+      let leadLogs: { type: string; time: string; text?: string }[] = [];
+      await Promise.all(matchingLeads.map((matchingLead) => {
+        const oldLogs = Array.isArray(matchingLead.logs)
+          ? matchingLead.logs as { type: string; time: string; text?: string }[]
+          : [];
+        const text = matchingLead.id === lead.id
+          ? (isUk ? `Створено клієнта «${created.name}» та прив’язано заявку` : `Created client “${created.name}” and linked the lead`)
+          : (isUk ? `Заявку автоматично прив’язано до клієнта: ${created.name}` : `Lead automatically linked to client: ${created.name}`);
+        const logs = [{ type: "client-linked", time: now, text }, ...oldLogs];
+        if (matchingLead.id === lead.id) leadLogs = logs;
+        return tx.lead.update({ where: { id: matchingLead.id }, data: { clientId: created.id, logs } });
+      }));
+      return { client: created, linkedLeads: matchingLeads.length, leadLogs };
     });
-    return NextResponse.json({ client, linkedLeads: matchingLeadIds.size });
+    return NextResponse.json(result);
   } catch (error) {
     console.error("Create client from lead error:", error);
     return NextResponse.json({ message: "Failed to create client" }, { status: 500 });
