@@ -75,7 +75,7 @@ export async function POST(req: Request) {
   const clientFields = Object.fromEntries(
     Object.entries(fields).filter(([key]) => {
       const type = schema.find((field) => field.key === key)?.type;
-      return type !== "category" && type !== "date" && type !== "time";
+      return type !== "category" && type !== "date" && type !== "time" && type !== "price";
     }),
   );
   const phoneField = schema.find((field) => field.key === phoneFieldKey) ?? schema.find(isPhoneField);

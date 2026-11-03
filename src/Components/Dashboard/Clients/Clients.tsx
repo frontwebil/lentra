@@ -135,7 +135,7 @@ export function Clients({ initialClientId }: { initialClientId?: string }) {
       if (field && typeof field === "object" && "key" in field && typeof field.key === "string") {
         const schemaField = field as { key: string; label?: unknown; type?: unknown };
         clientFieldLabels.set(schemaField.key, typeof schemaField.label === "string" && schemaField.label ? schemaField.label : schemaField.key);
-        if (schemaField.type === "category" || schemaField.type === "date" || schemaField.type === "time") {
+        if (schemaField.type === "category" || schemaField.type === "date" || schemaField.type === "time" || schemaField.type === "price") {
           excludedClientFieldKeys.add(schemaField.key);
         }
       }
@@ -151,7 +151,7 @@ export function Clients({ initialClientId }: { initialClientId?: string }) {
       if (!field || typeof field !== "object" || !("key" in field) || typeof field.key !== "string") return;
       if (!Object.prototype.hasOwnProperty.call(leadValues, field.key) || leadValues[field.key] == null || leadValues[field.key] === "") return;
       const schemaField = field as { key: string; label?: unknown; type?: unknown };
-      if (schemaField.type === "category" || schemaField.type === "date" || schemaField.type === "time") return;
+      if (schemaField.type === "category" || schemaField.type === "date" || schemaField.type === "time" || schemaField.type === "price") return;
       if (!availableLeadFields.has(schemaField.key)) availableLeadFields.set(schemaField.key, {
         label: typeof schemaField.label === "string" && schemaField.label ? schemaField.label : schemaField.key,
         value: leadValues[schemaField.key],
