@@ -23,6 +23,7 @@ import { STATUS_COLORS } from "@/dictionaries/status-colors";
 import { formatPrice } from "@/lib/format-price";
 import { normalizeLeadStatus } from "../LeedsPage/LeedsPage";
 import { EditLeadModal } from "./EditLeadModal/EditLeadModal";
+import { ClientDiscountBadge } from "../LeadSearch/LeadSearchInput";
 
 export type LeadSchemaField = {
   key: string;
@@ -46,10 +47,16 @@ export type LeadLogItem = {
 type Props = {
   lead: Lead;
   website: Website;
-  client?: { id: string; name: string; phone: string | null } | null;
+  client?: ClientSummary | null;
 };
 
-type ClientSummary = { id: string; name: string; phone: string | null; _count?: { leads: number } };
+type ClientSummary = {
+  id: string;
+  name: string;
+  phone: string | null;
+  discountPercent?: number | null;
+  _count?: { leads: number };
+};
 
 const dictionary = {
   uk: {
@@ -571,7 +578,10 @@ export function LeadPage({ lead, website, client: initialClient = null }: Props)
         <div className="lead-client-info">
           <span className="lead-client-icon"><FaLink /></span>
           <div>
-            <strong>{t.clientSection}</strong>
+            <div className="lead-client-heading">
+              <strong>{t.clientSection}</strong>
+              {client && <ClientDiscountBadge percent={client.discountPercent} language={language} />}
+            </div>
             <p>{client ? <>{t.linkedTo}: <Link className="lead-client-link" href={`/dashboard/clients/${client.id}`}>{client.name}</Link>{client.phone ? ` · ${client.phone}` : ""}</> : (language === "uk" ? "Заявка ще не прив’язана до клієнта" : "This lead is not linked to a client yet")}</p>
           </div>
         </div>

@@ -78,9 +78,17 @@ export function Leeds() {
                   : "Переглядайте заявки з усіх підключених сайтів."}
               </p>
             </div>
-            <span className="leads-site-count">
-              {websites.length} {language === "en" ? "websites" : "сайтів"}
-            </span>
+            <div className="leads-overview-top-actions">
+              <span className="leads-site-count">
+                {websites.length} {language === "en" ? "websites" : "сайтів"}
+              </span>
+              <Link
+                href="/dashboard/all-leads"
+                className="dashboard-primary-button dashboard-primary-button-standard"
+              >
+                {language === "en" ? "All leads" : "Усі ліди"}
+              </Link>
+            </div>
           </div>
 
           <div className="dashboard-surface leads-table-wrapper">

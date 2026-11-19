@@ -10,6 +10,14 @@
   margin-bottom: 26px;
 }
 
+.leads-overview-top-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
 .leads-site-count {
   flex-shrink: 0;
   color: #777;

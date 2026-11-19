@@ -12,6 +12,10 @@ import { SitesConfigEditModal } from "../../SitesConfig/SitesConfigEditModal";
 import { StatusModalEdit } from "./StatusModalEdit/StatusModalEdit";
 import { STATUS_COLORS } from "@/dictionaries/status-colors";
 import { formatPrice } from "@/lib/format-price";
+import {
+  ClientDiscountBadge,
+  LeadSearchInput,
+} from "../LeadSearch/LeadSearchInput";
 
 type LeadField = {
   key: string;
@@ -26,8 +30,19 @@ type StatusItem = {
   colorId: string;
 };
 
+export type LeadListRow = Lead & {
+  client?: { id: string; name: string; discountPercent: number | null } | null;
+};
+
 type WebsiteWithLeads = Website & {
-  leads: Lead[];
+  leads: LeadListRow[];
+};
+
+/** Column preferences, read from cookies on the server to avoid a flash. */
+export type LeadsTablePrefs = {
+  visibleKeys?: string[];
+  visibleMetaColumns?: string[];
+  colWidths?: Record<string, number>;
 };
 
 const setCookie = (name: string, value: string, days = 365) => {
@@ -36,16 +51,6 @@ const setCookie = (name: string, value: string, days = 365) => {
   const expires = new Date(Date.now() + days * 864e5).toUTCString();
 
   document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/; SameSite=Lax`;
-};
-
-const getCookie = (name: string): string => {
-  if (typeof document === "undefined") return "";
-
-  return document.cookie.split("; ").reduce((r, v) => {
-    const parts = v.split("=");
-
-    return parts[0] === name ? decodeURIComponent(parts[1] || "") : r;
-  }, "");
 };
 
 type LeadStatusValue =
@@ -89,7 +94,15 @@ export const normalizeLeadStatus = (
   };
 };
 
-export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
+export function LeedsPage({
+  website,
+  searchQuery = "",
+  initialPrefs = {},
+}: {
+  website: WebsiteWithLeads;
+  searchQuery?: string;
+  initialPrefs?: LeadsTablePrefs;
+}) {
   const { data: session } = useSession();
 
   const language = session?.user?.language || "uk";
@@ -101,11 +114,17 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
 
   const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
 
-  const statuses = (currentWebsite.statuses as StatusItem[] | null) ?? [];
-
-  useEffect(() => {
+  // New server data (e.g. after a search) replaces the local copy.
+  const [prevWebsite, setPrevWebsite] = useState(website);
+  if (website !== prevWebsite) {
+    setPrevWebsite(website);
     setCurrentWebsite(website);
-  }, [website]);
+  }
+
+  const statuses = useMemo(
+    () => (currentWebsite.statuses as StatusItem[] | null) ?? [],
+    [currentWebsite.statuses],
+  );
 
   // Формування списку всіх доступних статусів (конфігуровані + "сироти" з реальних заявок)
   const statusOptions = useMemo(() => {
@@ -157,20 +176,17 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
     ? (currentWebsite.leadSchema as unknown as LeadField[])
     : [];
 
-  const [visibleKeys, setVisibleKeys] = useState<string[]>(() =>
-    schema.map((field) => field.key),
+  const [visibleKeys, setVisibleKeys] = useState<string[]>(
+    () => initialPrefs.visibleKeys ?? schema.map((field) => field.key),
   );
 
-  const [visibleMetaColumns, setVisibleMetaColumns] = useState<string[]>([
-    "createdAt",
-    "updatedAt",
-  ]);
+  const [visibleMetaColumns, setVisibleMetaColumns] = useState<string[]>(
+    () => initialPrefs.visibleMetaColumns ?? ["createdAt", "updatedAt"],
+  );
 
-  const [visibleStatuses, setVisibleStatuses] = useState<string[]>([]);
-
-  useEffect(() => {
-    setVisibleStatuses(statusOptions.map((opt) => opt.key));
-  }, [statusOptions]);
+  // Stored as the *hidden* set, so statuses that appear later (e.g. after the
+  // search results change) are visible by default and the user's choice is kept.
+  const [hiddenStatuses, setHiddenStatuses] = useState<string[]>([]);
 
   const [isOpenField, setIsOpenField] = useState(false);
 
@@ -180,7 +196,9 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
 
   const dropdownRefStatuses = useRef<HTMLDivElement>(null);
 
-  const [colWidths, setColWidths] = useState<Record<string, number>>({});
+  const [colWidths, setColWidths] = useState<Record<string, number>>(
+    () => initialPrefs.colWidths ?? {},
+  );
 
   const dragData = useRef<{
     key: string;
@@ -193,50 +211,6 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
   const visibleMetaColumnsCookieName = `leads_visible_meta_columns_${website.id}`;
 
   const colWidthsCookieName = `leads_col_widths_${website.id}`;
-
-  useEffect(() => {
-    const savedKeysJson = getCookie(visibleKeysCookieName);
-
-    if (savedKeysJson) {
-      try {
-        const parsed = JSON.parse(savedKeysJson);
-
-        if (Array.isArray(parsed)) {
-          setVisibleKeys(parsed);
-        }
-      } catch (e) {
-        console.error("Error parsing visible keys cookie", e);
-      }
-    }
-
-    const savedWidthsJson = getCookie(colWidthsCookieName);
-
-    if (savedWidthsJson) {
-      try {
-        const parsed = JSON.parse(savedWidthsJson);
-
-        if (typeof parsed === "object" && parsed !== null) {
-          setColWidths(parsed);
-        }
-      } catch (e) {
-        console.error("Error parsing column widths cookie", e);
-      }
-    }
-
-    const savedMetaColumnsJson = getCookie(visibleMetaColumnsCookieName);
-
-    if (savedMetaColumnsJson) {
-      try {
-        const parsed = JSON.parse(savedMetaColumnsJson);
-
-        if (Array.isArray(parsed)) {
-          setVisibleMetaColumns(parsed);
-        }
-      } catch (e) {
-        console.error("Error parsing visible meta columns cookie", e);
-      }
-    }
-  }, [website.id, visibleKeysCookieName, colWidthsCookieName, visibleMetaColumnsCookieName]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -295,11 +269,13 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
     });
   };
 
+  const isStatusVisible = (key: string) =>
+    !hiddenStatuses.includes(key.toLowerCase());
+
   const toggleStatus = (status: string) => {
-    setVisibleStatuses((prev) =>
-      prev.includes(status)
-        ? prev.filter((item) => item.toLowerCase() !== status.toLowerCase())
-        : [...prev, status],
+    const key = status.toLowerCase();
+    setHiddenStatuses((prev) =>
+      prev.includes(key) ? prev.filter((item) => item !== key) : [...prev, key],
     );
   };
 
@@ -310,11 +286,7 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
   const filteredLeads = currentWebsite.leads.filter((lead) => {
     const status = normalizeLeadStatus(lead.status, language);
 
-    return visibleStatuses.some(
-      (visibleStatus) =>
-        visibleStatus.toLowerCase() === status.key.toLowerCase() ||
-        visibleStatus.toLowerCase() === status.text.toLowerCase(),
-    );
+    return isStatusVisible(status.key);
   });
 
   const formatDate = (date: Date | string) =>
@@ -418,6 +390,8 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
 
           <div className="table-nav">
             <div className="table-nav-left">
+              <LeadSearchInput language={language} />
+
               {schema.length > 0 && (
                 <div
                   className="columns-dropdown-wrapper"
@@ -511,10 +485,7 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
                         >
                           <input
                             type="checkbox"
-                            checked={visibleStatuses.some(
-                              (vs) =>
-                                vs.toLowerCase() === opt.key.toLowerCase(),
-                            )}
+                            checked={isStatusVisible(opt.key)}
                             onChange={() => toggleStatus(opt.key)}
                           />
 
@@ -582,6 +553,14 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
               </button>
             </div>
           </div>
+
+          {searchQuery && (
+            <p className="lead-search-summary">
+              {language === "en" ? "Found" : "Знайдено"}:{" "}
+              <strong>{filteredLeads.length}</strong>{" "}
+              {language === "en" ? "for" : "за запитом"} «{searchQuery}»
+            </p>
+          )}
 
           <div className="dashboard-surface leads-table-wrapper">
             {filteredLeads.length > 0 ? (
@@ -736,6 +715,12 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
                                 <RxExclamationTriangle />
                               </span>
                             )}
+
+                            <ClientDiscountBadge
+                              percent={lead.client?.discountPercent}
+                              language={language}
+                              compact
+                            />
                           </div>
                         </td>
 
@@ -798,7 +783,11 @@ export function LeedsPage({ website }: { website: WebsiteWithLeads }) {
             ) : (
               <div className="dashboard-empty-state">
                 <p>
-                  {currentWebsite.leads.length === 0
+                  {searchQuery && currentWebsite.leads.length === 0
+                    ? language === "en"
+                      ? `Nothing found for «${searchQuery}».`
+                      : `За запитом «${searchQuery}» нічого не знайдено.`
+                    : currentWebsite.leads.length === 0
                     ? language === "en"
                       ? "No leads received yet."
                       : "Ще немає отриманих заявок."

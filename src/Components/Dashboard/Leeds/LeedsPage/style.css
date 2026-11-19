@@ -202,12 +202,17 @@ body.is-resizing {
 
 .table-nav {
   display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   justify-content: space-between;
+  gap: 10px;
   margin-bottom: 20px;
 }
 
 .table-nav-left {
   display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   gap: 10px;
 }
 

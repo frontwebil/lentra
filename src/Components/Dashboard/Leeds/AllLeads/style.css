@@ -1,0 +1,150 @@
+.all-leads-select {
+  height: 36px;
+  padding: 0 30px 0 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #171717;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  max-width: 220px;
+}
+
+.all-leads-select:focus {
+  outline: none;
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
+}
+
+.all-leads-reset {
+  display: inline-flex;
+  align-items: center;
+  height: 36px;
+  text-decoration: none;
+}
+
+.all-leads-pending {
+  opacity: 0.6;
+  transition: opacity 0.15s ease;
+}
+
+.all-leads-table {
+  min-width: 1040px;
+}
+
+.all-leads-table td {
+  font-size: 13px;
+  color: #171717;
+}
+
+.all-leads-site {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 100%;
+  color: #374151;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.all-leads-site svg {
+  flex: 0 0 auto;
+  color: #6b7280;
+}
+
+.all-leads-site span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.all-leads-site:hover span {
+  text-decoration: underline;
+}
+
+.all-leads-contact,
+.all-leads-details,
+.all-leads-client {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.all-leads-client {
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.all-leads-contact-name {
+  font-weight: 600;
+  color: #111827;
+}
+
+.all-leads-details > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.all-leads-muted {
+  color: #6b7280;
+}
+
+.all-leads-client-link {
+  color: #4f46e5;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.all-leads-client-link:hover {
+  text-decoration: underline;
+}
+
+.all-leads-view {
+  padding: 6px 12px;
+  font-size: 13px;
+  text-decoration: none;
+  display: inline-flex;
+}
+
+.all-leads-pagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 16px;
+  font-size: 13px;
+}
+
+.all-leads-pages {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.all-leads-pages .table-nav-btn {
+  display: inline-grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+}
+
+.all-leads-pages .table-nav-btn.is-disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.all-leads-page-label {
+  color: #374151;
+}
+
+@media (max-width: 720px) {
+  .all-leads-select {
+    flex: 1 1 140px;
+    max-width: none;
+  }
+}

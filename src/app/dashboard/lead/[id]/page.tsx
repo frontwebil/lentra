@@ -23,7 +23,11 @@ export default async function Page({ params }: Props) {
       userId: session?.user.id,
       id,
     },
-    include: { client: { select: { id: true, name: true, phone: true } } },
+    include: {
+      client: {
+        select: { id: true, name: true, phone: true, discountPercent: true },
+      },
+    },
   });
 
   const website = await prisma.website.findFirst({

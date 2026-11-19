@@ -68,6 +68,7 @@
 .lead-client-info { display: flex; align-items: center; gap: 0.75rem; min-width: 0; }
 .lead-client-icon { display: grid; place-items: center; width: 2.5rem; height: 2.5rem; flex: 0 0 auto; border-radius: 0.65rem; color: #4f46e5; background: #eef2ff; }
 .lead-client-info strong { display: block; color: #111827; font-size: 0.9rem; }
+.lead-client-heading { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; }
 .lead-client-info p { margin: 0.2rem 0 0; color: #6b7280; font-size: 0.82rem; overflow-wrap: anywhere; }
 .lead-client-link { color: #4f46e5; font-weight: 600; text-decoration: none; }
 .lead-client-link:hover { text-decoration: underline; }

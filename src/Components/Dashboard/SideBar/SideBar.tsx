@@ -13,6 +13,7 @@ import {
   RxExit,
   RxLink2,
   RxCalendar,
+  RxListBullet,
 } from "react-icons/rx";
 import { FaUsers } from "react-icons/fa";
 import { usePathname } from "next/navigation";
@@ -37,6 +38,11 @@ export function SideBar() {
       href: "/dashboard/leads",
       icon: <RxPerson />,
       label: language === "en" ? "Leads" : "Заявки",
+    },
+    {
+      href: "/dashboard/all-leads",
+      icon: <RxListBullet />,
+      label: language === "en" ? "All leads" : "Усі ліди",
     },
     {
       href: "/dashboard/clients",
