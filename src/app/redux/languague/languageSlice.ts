@@ -6,22 +6,20 @@ interface LanguageState {
   language: Language;
 }
 
-const getInitialLanguage = (): Language => {
-  if (typeof window === "undefined") {
-    return "en";
-  }
-
-  const savedLanguage = localStorage.getItem("language");
-
-  if (!savedLanguage) {
-    return "en";
-  }
-
-  return savedLanguage === "en" ? "en" : "uk";
+// Must match on server and client for hydration; the saved language is
+// applied after mount by StoreProvider via readSavedLanguage().
+const initialState: LanguageState = {
+  language: "en",
 };
 
-const initialState: LanguageState = {
-  language: getInitialLanguage(),
+export const readSavedLanguage = (): Language | null => {
+  try {
+    const savedLanguage = localStorage.getItem("language");
+    if (!savedLanguage) return null;
+    return savedLanguage === "en" ? "en" : "uk";
+  } catch {
+    return null;
+  }
 };
 
 const languageSlice = createSlice({
