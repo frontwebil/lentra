@@ -132,15 +132,16 @@ export function ClientDiscountBadge({
       ? `Discount ${value} %`
       : `Знижка ${value} %`;
   return (
-    <span
-      className={`client-discount-badge ${compact ? "compact" : ""}`}
-      title={
-        language === "en"
-          ? `Client's personal discount: ${value} %`
-          : `Персональна знижка клієнта: ${value} %`
-      }
-    >
-      {text}
-    </span>
+    <></>
+    // <span
+    //   className={`client-discount-badge ${compact ? "compact" : ""}`}
+    //   title={
+    //     language === "en"
+    //       ? `Client's personal discount: ${value} %`
+    //       : `Персональна знижка клієнта: ${value} %`
+    //   }
+    // >
+    //   {text}
+    // </span>
   );
 }
