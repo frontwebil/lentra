@@ -3,15 +3,37 @@ import prisma from "@/lib/prisma";
 import { notifyUserAboutNewLead } from "@/lib/telegramNotifications";
 import { NextResponse } from "next/server";
 
+// Leads are posted cross-origin from customers' sites. Every response needs
+// these headers, otherwise the browser reports any 4xx/5xx as a CORS error
+// and the real message is hidden from the site.
+const CORS_HEADERS = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, X-Site-ID",
+};
+
 export async function OPTIONS() {
-  return new Response(null, {
-    status: 204,
-    headers: {
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "POST, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type, X-Site-ID",
-    },
-  });
+  return new Response(null, { status: 204, headers: CORS_HEADERS });
+}
+
+export async function POST(req: Request) {
+  let res: Response;
+
+  try {
+    res = await createLead(req);
+  } catch (error) {
+    console.error("[api/lead] Failed to create lead:", error);
+    res = NextResponse.json(
+      { message: "Internal server error" },
+      { status: 500 },
+    );
+  }
+
+  for (const [key, value] of Object.entries(CORS_HEADERS)) {
+    res.headers.set(key, value);
+  }
+
+  return res;
 }
 
 type LeadField = {
@@ -45,7 +67,7 @@ function isLeadSchema(value: unknown): value is LeadField[] {
   );
 }
 
-export async function POST(req: Request) {
+async function createLead(req: Request): Promise<Response> {
   const origin = req.headers.get("origin");
   const siteId = req.headers.get("x-site-id");
 
@@ -171,23 +193,22 @@ export async function POST(req: Request) {
     },
   });
 
-  await notifyUserAboutNewLead({
-    userId: siteOwner.id,
-    language: lang,
-    websiteName: crmSite.websiteName,
-    fields: leadData,
-    schema: siteSchema,
-  });
+  // The lead is already saved; a notification failure must not turn this
+  // into an error, or the site may resubmit and create a duplicate.
+  try {
+    await notifyUserAboutNewLead({
+      userId: siteOwner.id,
+      language: lang,
+      websiteName: crmSite.websiteName,
+      fields: leadData,
+      schema: siteSchema,
+    });
+  } catch (error) {
+    console.error("[api/lead] Failed to send new lead notification:", error);
+  }
 
-  return NextResponse.json(
-    {
-      success: true,
-      message: "Lead created successfully",
-    },
-    {
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-      },
-    },
-  );
+  return NextResponse.json({
+    success: true,
+    message: "Lead created successfully",
+  });
 }
